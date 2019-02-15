@@ -3,11 +3,32 @@ import { View, Text, StyleSheet, ImageBackground } from 'react-native';
 import { SocialIcon } from 'react-native-elements';
 import {Header} from "react-native-elements";
 import Colors from "../config/Colors";
+import Service from "../utils/Service";
+import * as Alert from "react-native";
 
 class LoginScreen extends React.Component {
 
     login = () => {
-        Alert
+        Service.loginFacebook({email: 'jackallcock@yahoo.co.uk', password: '12345'},(error) => {
+            if(error){
+
+            }else{
+                Alert.alert(
+                    'Alert Title',
+                    'My Alert Msg',
+                    [
+                        {text: 'Ask me later', onPress: () => console.log('Ask me later pressed')},
+                        {
+                            text: 'Cancel',
+                            onPress: () => console.log('Cancel Pressed'),
+                            style: 'cancel',
+                        },
+                        {text: 'OK', onPress: () => console.log('OK Pressed')},
+                    ],
+                    {cancelable: false},
+                );
+            }
+        });
     };
 
     render() {

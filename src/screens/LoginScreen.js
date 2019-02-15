@@ -55,20 +55,21 @@ class LoginScreen extends React.Component {
 
                 <View style={styles.inputs}>
 
-                    <Button
-                        containerStyle={styles.signUpContainer}
-                        buttonStyle={styles.signUpButton}
-                        iconContainerStyle={styles.icon}
-                        raised
-                        icon={
-                            <Icon
-                                style={styles.icon}
-                                name="user-plus"
-                                size={15}
-                                color="white"
-                            />
-                        }
-                        title='Create account' />
+                    {/*<Button*/}
+                        {/*containerStyle={styles.signUpContainer}*/}
+                        {/*buttonStyle={styles.signUpButton}*/}
+                        {/*iconContainerStyle={styles.icon}*/}
+                        {/*raised*/}
+                        {/*icon={*/}
+                            {/*<Icon*/}
+                                {/*style={styles.icon}*/}
+                                {/*name="user-plus"*/}
+                                {/*size={15}*/}
+                                {/*color="white"*/}
+                            {/*/>*/}
+                        {/*}*/}
+                        {/*title='Create account' />*/}
+                    <Text style={styles.slogen}>A smarter way to live</Text>
 
                    <Input
                         leftIcon={{ type: 'font-awesome', name: 'user' }}
@@ -103,6 +104,10 @@ class LoginScreen extends React.Component {
                         }
                     />
 
+                    <Text style={styles.createAccount}>Don't have an account? <Text style={{color: 'tomato'}}>
+                        Sign up
+                    </Text></Text>
+
                 </View>
             </ImageBackground>
         );
@@ -130,6 +135,15 @@ const styles = StyleSheet.create({
         letterSpacing: 1.2,
         fontWeight: "bold",
         padding: 10
+    },
+    slogen: {
+        color: 'tomato',
+        fontSize: 20,
+        letterSpacing: 1.2,
+        fontWeight: "normal",
+        padding: 10,
+        marginTop: -80,
+        marginBottom: 80,
     },
     inputs: {
         width: '100%',
@@ -159,7 +173,8 @@ const styles = StyleSheet.create({
         padding: 20,
         backgroundColor: 'tomato'
     },
-    text: {
+    createAccount: {
+        paddingTop: 20,
         color: 'tomato'
     },
     signUpContainer : {

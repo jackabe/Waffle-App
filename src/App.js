@@ -11,6 +11,7 @@ import AddressScreen from "./screens/AddressScreen";
 import ConfirmationScreen from "./screens/ConfirmationScreen";
 import OffersScreen from "./screens/OffersScreen";
 import SettingsScreen from "./screens/SettingsScreen";
+import LoginScreen from "./screens/LoginScreen";
 
 const strings = Tools.getStrings();
 
@@ -41,8 +42,8 @@ const AppStack = createBottomTabNavigator(
     {
         Booking: createStackNavigator(
             {
-                Address: AddressScreen,
-                Booking: BookingScreen,
+                Booking: AddressScreen,
+                GetSpace: BookingScreen,
                 Confirm: ConfirmationScreen,
             },
             tabBarScreenOptions("Booking")
@@ -100,14 +101,19 @@ const AppStack = createBottomTabNavigator(
     }
 );
 
-const RootStack = createSwitchNavigator({
-        App: AppStack,
-        // Auth: AuthStack
+const AuthStack = createStackNavigator({
+        Login: LoginScreen,
     },
-    mainStackOptions("App"));
+    mainStackOptions("Login"));
+
+const RootStack = createSwitchNavigator({
+        Auth: AuthStack,
+        App: AppStack,
+    },
+    mainStackOptions("Auth"));
 
 export default class App extends React.Component {
     render() {
-        return <RootStack />;
+        return <RootStack/>;
     }
 }

@@ -13,13 +13,11 @@ export default StyleSheet.create({
         borderBottomWidth: 0,
     },
     headerTitleStyle: {
-        color: Colors.COLOR_BLACK,
-        fontSize: 18,
-        letterSpacing: 0,
-        fontWeight: "normal",
-        flex:1,
-        textAlign: "center",
-        alignSelf: "center"
+        color: 'tomato',
+        fontSize: 35,
+        letterSpacing: 1.2,
+        fontWeight: "bold",
+        padding: 10
     },
     headerMainTitleStyle: {
         color: Colors.COLOR_BLUE,

@@ -1,6 +1,5 @@
 import React, { Component } from 'react';
-import { StyleSheet, TouchableOpacity, Image } from 'react-native';
-import profile from "../assets/images/ic_my_account.png";
+import { StyleSheet, TouchableOpacity } from 'react-native';
 import Ionicons from "react-native-vector-icons/Ionicons";
 
 class ProfileHeaderButton extends Component {
@@ -9,7 +8,7 @@ class ProfileHeaderButton extends Component {
             <TouchableOpacity style={this.props.buttonStyle} onPress={() => {
                 this.props.navigation.navigate("MyAccount");
             }}>
-                <Ionicons name='contact' style={styles.icon} color={tintColor} />
+                <Ionicons name='ios-contact' size={28} color={'tomato'} style={styles.icon}  />
             </TouchableOpacity>
         );
     }

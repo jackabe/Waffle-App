@@ -5,12 +5,16 @@
   "scripts": {
     "start": "node node_modules/react-native/local-cli/cli.js start",
     "test": "jest",
-    "build-android": "react-native bundle --platform android --dev false --entry-file index.js --bundle-output android/app/src/main/assets/index.android.bundle --assets-dest and roid/app/src/main/res && react-native run-android"
+    "build-ios": "react-native bundle --entry-file index.js --platform ios --dev false --bundle-output ios/main.jsbundle --assets-dest ios && react-native run-ios",
+    "build-android": "react-native bundle --platform android --dev false --entry-file index.js --bundle-output android/app/src/main/assets/index.android.bundle --assets-dest android/app/src/main/res && react-native run-android"
   },
   "dependencies": {
     "react": "16.6.3",
     "react-native": "0.58.4",
-    "react-native-vector-icons": "^6.3.0"
+    "react-native-awesome-alerts": "^1.2.0",
+    "react-native-elements": "^1.0.0",
+    "react-native-vector-icons": "^6.3.0",
+    "react-native-firebase": "^5.1.1"
   },
   "devDependencies": {
     "babel-core": "7.0.0-bridge.0",

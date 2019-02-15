@@ -8,9 +8,8 @@ class BookingScreen extends React.Component {
         return {
             headerStyle: headerStyling.headerStyle,
             headerTitleStyle: headerStyling.headerTitleStyle,
-            headerTitle: "Waffle",
+            headerTitle: "waffle",
             headerRight: <ProfileHeaderButton navigation={navigation}/>,
-            headerLeft: <View style={{width: 26}}/>
         };
     };
 

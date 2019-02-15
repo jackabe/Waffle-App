@@ -1,0 +1,3 @@
+rootProject.name = 'waffle_app'
+
+include ':app'

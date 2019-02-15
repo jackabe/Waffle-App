@@ -5,37 +5,71 @@ import Colors from "../config/Colors";
 import Service from "../utils/Service";
 import Icon from 'react-native-vector-icons/FontAwesome';
 import { Input, Button} from 'react-native-elements';
+import firebase from 'react-native-firebase';
 
 class LoginScreen extends React.Component {
 
-    login = () => {
-        Service.loginFacebook({email: 'jackallcock@yahoo.co.uk', password: '12345'},(error) => {
-            if(error){
-
-            }else{
-                Alert.alert(
-                    'Alert Title',
-                    'My Alert Msg',
-                    [
-                        {text: 'Ask me later', onPress: () => console.log('Ask me later pressed')},
-                        {
-                            text: 'Cancel',
-                            onPress: () => console.log('Cancel Pressed'),
-                            style: 'cancel',
-                        },
-                        {text: 'OK', onPress: () => console.log('OK Pressed')},
-                    ],
-                    {cancelable: false},
-                );
-            }
+    constructor() {
+        super();
+        this.state = {
+            loading: true,
+        };
+    }
+    /**
+     * When the App component mounts, we listen for any authentication
+     * state changes in Firebase.
+     * Once subscribed, the 'user' parameter will either be null
+     * (logged out) or an Object (logged in)
+     */
+    componentDidMount() {
+        this.authSubscription = firebase.auth().onAuthStateChanged((user) => {
+            this.setState({
+                loading: false,
+                user,
+            });
         });
+    }
+    /**
+     * Don't forget to stop listening for authentication state changes
+     * when the component unmounts.
+     */
+    componentWillUnmount() {
+        this.authSubscription();
+    }
+
+    login = () => {
+        const { email, password } = this.state;
+        firebase.auth().signInWithEmailAndPassword('jackallcock@yahoo.co.uk', 'Tinker6*')
+            .then((user) => {
+                Alert.alert('Congrats');
+            })
+            .catch((error) => {
+                const { code, message } = error;
+                // For details of error codes, see the docs
+                // The message contains the default Firebase string
+                // representation of the error
+            });
     };
+
+    onRegister = () => {
+        const { email, password } = this.state;
+        firebase.auth().createUserWithEmailAndPassword(email, password)
+            .then((user) => {
+                // If you need to do anything with the user, do it here
+                // The user will be logged in automatically by the
+                // `onAuthStateChanged` listener we set up in App.js earlier
+            })
+            .catch((error) => {
+                const { code, message } = error;
+                // For details of error codes, see the docs
+                // The message contains the default Firebase string
+                // representation of the error
+            });
+    }
 
     render() {
         return (
             <ImageBackground
-                // source={{uri: 'https://cdn.wallpapersafari.com/71/75/rO3vmn.jpg'}}
-                // source={{uri: 'https://ak7.picdn.net/shutterstock/videos/11927447/thumb/1.jpg'}}
                 source={{uri: 'https://www.pixelstalk.net/wp-content/uploads/images2/Minimalist-Abstract_arrows-wallpaper-2560x1600.jpg'}}
                 style={styles.container}
             >
@@ -93,7 +127,7 @@ class LoginScreen extends React.Component {
                         containerStyle={styles.buttonContainer}
                         buttonStyle={styles.button}
                         onPress={() => {
-                            Alert.alert('You tapped the button!');
+                            this.login();
                         }}
                         icon={
                             <Icon

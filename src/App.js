@@ -6,13 +6,11 @@ import Ionicons from 'react-native-vector-icons/Ionicons';
 import headerStyling from "./styles/ui/Header";
 import Tools from "./utils/Tools";
 
-import TabBarLabel from "./components/TabBarLabel";
-import TabBarIcon from "./components/TabBarIcon";
-
-import homeActive from "./assets/images/but_tab_home-active.png";
-import homeInactive from "./assets/images/but_tab_home-inactive.png";
-import HomeScreen from "./screens/HomeScreen";
-import DetailsScreen from "./screens/DetailsScreen";
+import BookingScreen from "./screens/BookingScreen";
+import AddressScreen from "./screens/AddressScreen";
+import ConfirmationScreen from "./screens/ConfirmationScreen";
+import OffersScreen from "./screens/OffersScreen";
+import SettingsScreen from "./screens/SettingsScreen";
 
 const strings = Tools.getStrings();
 
@@ -41,18 +39,33 @@ function mainStackOptions(n) {
 
 const AppStack = createBottomTabNavigator(
     {
-        Home: createStackNavigator(
+        Booking: createStackNavigator(
             {
-                Home: HomeScreen,
-                Details: DetailsScreen
+                Address: AddressScreen,
+                Booking: BookingScreen,
+                Confirm: ConfirmationScreen,
             },
-            tabBarScreenOptions("Home")
+            tabBarScreenOptions("Booking")
+        ),
+        Offers: createStackNavigator(
+            {
+                Offers: OffersScreen,
+            },
+            tabBarScreenOptions("Offers")
+        ),
+        Settings: createStackNavigator(
+            {
+                Settings: SettingsScreen,
+            },
+            tabBarScreenOptions("Settings")
         ),
     },
     {
         tabBarOptions: {
             showIcon: true,
             showLabel: true,
+            activeTintColor: 'tomato',
+            inactiveTintColor: 'gray',
             style: {
                 height: 50,
                 paddingTop: Platform.OS === "android" ? 0 : 5,
@@ -70,10 +83,13 @@ const AppStack = createBottomTabNavigator(
             tabBarIcon: ({ focused, horizontal, tintColor }) => {
                 const { routeName } = navigation.state;
                 let iconName;
-                if (routeName === 'Home') {
-                    iconName = `ios-information-circle${focused ? '' : '-outline'}`;
-                } else if (routeName === 'Settings') {
-                    iconName = `ios-options${focused ? '' : '-outline'}`;
+                if (routeName === 'Booking') {
+                    iconName = `ios-car`;
+                } else if (routeName === 'Offers') {
+                    iconName = `ios-bookmark`;
+                }
+                else {
+                    iconName = `ios-settings`;
                 }
 
                 // You can return any component that you like here! We usually use an

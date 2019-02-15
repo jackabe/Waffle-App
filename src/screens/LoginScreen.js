@@ -13,6 +13,8 @@ class LoginScreen extends React.Component {
         super();
         this.state = {
             loading: true,
+            email: '',
+            password: ''
         };
     }
     /**
@@ -23,10 +25,7 @@ class LoginScreen extends React.Component {
      */
     componentDidMount() {
         this.authSubscription = firebase.auth().onAuthStateChanged((user) => {
-            this.setState({
-                loading: false,
-                user,
-            });
+            // this.props.navigation.navigate("App");
         });
     }
     /**
@@ -39,16 +38,22 @@ class LoginScreen extends React.Component {
 
     login = () => {
         const { email, password } = this.state;
-        firebase.auth().signInWithEmailAndPassword('jackallcock@yahoo.co.uk', 'Tinker6*')
+        firebase.auth().signInWithEmailAndPassword(email.trim(), password)
             .then((user) => {
-                Alert.alert('Congrats');
+                Alert.alert('Logged in');
+                this.props.navigation.navigate("App");
             })
             .catch((error) => {
                 const { code, message } = error;
+                Alert.alert(message);
                 // For details of error codes, see the docs
                 // The message contains the default Firebase string
                 // representation of the error
             });
+    };
+
+    openSignedUpModal = () => {
+
     };
 
     onRegister = () => {
@@ -77,6 +82,7 @@ class LoginScreen extends React.Component {
                         barStyle="light-content"
                         centerComponent={<Text style={styles.heading}>waffle</Text>}
                         containerStyle={{
+                            width: '100%',
                             backgroundColor: 'transparent',
                             shadowRadius: 0,
                             shadowOffset: {
@@ -111,6 +117,7 @@ class LoginScreen extends React.Component {
                         inputContainerStyle={styles.inputContainer}
                         placeholder='Username'
                         containerStyle={styles.inputOuterContainer}
+                        onChangeText={(text) => this.setState({email: text})}
                     />
 
                     <Input
@@ -118,7 +125,9 @@ class LoginScreen extends React.Component {
                         inputStyle={styles.inputStyle}
                         inputContainerStyle={styles.inputContainer}
                         placeholder='Password'
+                        secureTextEntry={true}
                         containerStyle={styles.inputOuterContainer}
+                        onChangeText={(text) => this.setState({password: text})}
                     />
 
                     <Text style={styles.text}>Forgotten password?</Text>
@@ -168,7 +177,7 @@ const styles = StyleSheet.create({
         fontSize: 35,
         letterSpacing: 1.2,
         fontWeight: "bold",
-        padding: 10
+        padding: 10,
     },
     slogen: {
         color: 'tomato',

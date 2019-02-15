@@ -1,6 +1,6 @@
 import React from 'react';
 import { View, Text, StyleSheet, ImageBackground, Alert} from 'react-native';
-import {Header} from "react-native-elements";
+import {Header, Overlay} from "react-native-elements";
 import Colors from "../config/Colors";
 import Service from "../utils/Service";
 import Icon from 'react-native-vector-icons/FontAwesome';
@@ -14,7 +14,8 @@ class LoginScreen extends React.Component {
         this.state = {
             loading: true,
             email: '',
-            password: ''
+            password: '',
+            showSignUp: false
         };
     }
     /**
@@ -52,8 +53,10 @@ class LoginScreen extends React.Component {
             });
     };
 
-    openSignedUpModal = () => {
-
+    openSignUpModal = () => {
+        this.setState({
+            showSignUp: true
+        })
     };
 
     onRegister = () => {
@@ -78,6 +81,24 @@ class LoginScreen extends React.Component {
                 source={{uri: 'https://www.pixelstalk.net/wp-content/uploads/images2/Minimalist-Abstract_arrows-wallpaper-2560x1600.jpg'}}
                 style={styles.container}
             >
+
+                <Overlay
+                    isVisible={this.state.isVisible}
+                    windowBackgroundColor="rgba(255, 255, 255, .5)"
+                    overlayBackgroundColor="red"
+                    width="auto"
+                    height="auto"><Text>Hello from Overlay!</Text></Overlay>;
+                
+                {/*<Overlay*/}
+                    {/*isVisible={this.state.isVisible}*/}
+                    {/*windowBackgroundColor="rgba(255, 255, 255, .5)"*/}
+                    {/*overlayBackgroundColor="red"*/}
+                    {/*width="auto"*/}
+                    {/*height="auto"*/}
+                {/*>*/}
+                    {/*<Text>Hello from Overlay!</Text>*/}
+                {/*</Overlay>;*/}
+
                 <Header style={{borderBottomWidth: 0}}
                         barStyle="light-content"
                         centerComponent={<Text style={styles.heading}>waffle</Text>}
@@ -147,7 +168,7 @@ class LoginScreen extends React.Component {
                         }
                     />
 
-                    <Text style={styles.createAccount}>Don't have an account? <Text style={{color: 'tomato'}}>
+                    <Text onPress={this.openSignUpModal} style={styles.createAccount}>Don't have an account? <Text style={{color: 'tomato'}}>
                         Sign up
                     </Text></Text>
 

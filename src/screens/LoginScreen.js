@@ -1,25 +1,211 @@
 import React from 'react';
-import { View, Text, StyleSheet, ImageBackground } from 'react-native';
-import { SocialIcon } from 'react-native-elements';
-import {Header} from "react-native-elements";
+import { View, Text, StyleSheet, ImageBackground, Alert, TouchableHighlight} from 'react-native';
+import {Header, Overlay} from "react-native-elements";
 import Colors from "../config/Colors";
+import Service from "../utils/Service";
+import Icon from 'react-native-vector-icons/FontAwesome';
+import { Input, Button} from 'react-native-elements';
+import firebase from 'react-native-firebase';
+import DatePicker from 'react-native-datepicker'
+import Ionicons from "react-native-vector-icons/Ionicons";
 
 class LoginScreen extends React.Component {
 
+    constructor() {
+        super();
+        this.state = {
+            loading: true,
+            email: '',
+            password: '',
+            date: '',
+            firstName: '',
+            surname: '',
+            showSignUp: false
+        };
+    }
+    /**
+     * When the App component mounts, we listen for any authentication
+     * state changes in Firebase.
+     * Once subscribed, the 'user' parameter will either be null
+     * (logged out) or an Object (logged in)
+     */
+    componentDidMount() {
+        this.authSubscription = firebase.auth().onAuthStateChanged((user) => {
+            // this.props.navigation.navigate("App");
+        });
+    }
+    /**
+     * Don't forget to stop listening for authentication state changes
+     * when the component unmounts.
+     */
+    componentWillUnmount() {
+        this.authSubscription();
+    };
+
+    checkInformation() {
+        const { firstName, surname, email, password, date } = this.state;
+        return !(firstName.length > 2 && surname.length > 2 && email.length > 2 && password.length > 2 && date.length > 2);
+    };
+
+    checkLogin() {
+        const {email, password} = this.state;
+        return !(email.length > 2 && password.length > 2);
+    }
+
     login = () => {
-        Alert
+        const { email, password } = this.state;
+        firebase.auth().signInWithEmailAndPassword(email.trim(), password)
+            .then((user) => {
+                Alert.alert('Logged in');
+                this.props.navigation.navigate("App");
+            })
+            .catch((error) => {
+                const { code, message } = error;
+                Alert.alert(message);
+                // For details of error codes, see the docs
+                // The message contains the default Firebase string
+                // representation of the error
+            });
+    };
+
+    openSignUpModal = () => {
+        this.setState({
+            showSignUp: true
+        })
+    };
+
+    closeSignUpModal = () => {
+        Alert.alert('hi');
+        this.setState({
+            showSignUp: false
+        })
+    };
+
+    onRegister = () => {
+        const { email, password } = this.state;
+        firebase.auth().createUserWithEmailAndPassword(email, password)
+            .then((user) => {
+                    Alert.alert('Logged in');
+                    this.props.navigation.navigate("App");
+            })
+            .catch((error) => {
+                const { code, message } = error;
+                // For details of error codes, see the docs
+                // The message contains the default Firebase string
+                // representation of the error
+            });
     };
 
     render() {
         return (
             <ImageBackground
-                source={{uri: 'https://i.ibb.co/MnqwfYS/background2.png'}}
+                source={{uri: 'https://www.pixelstalk.net/wp-content/uploads/images2/Minimalist-Abstract_arrows-wallpaper-2560x1600.jpg'}}
                 style={styles.container}
             >
+                {
+                    this.state.showSignUp && (
+                        <Overlay
+                            isVisible
+                            windowBackgroundColor="white"
+                            overlayBackgroundColor="white"
+                            fullScreen={true}>
+                            <TouchableHighlight style={styles.closeView} onPress={this.closeSignUpModal}>
+                                <View>
+                                    <Icon
+                                        name="close"
+                                        size={20}
+                                        color="tomato"
+                                    />
+                                </View>
+                            </TouchableHighlight>
+
+                            <Text style={styles.signUpHeading}>Sign Up</Text>
+
+                            <View style={styles.signUpContainer}>
+
+                                <Input
+                                    leftIcon={{ type: 'font-awesome', name: 'user' }}
+                                    inputStyle={styles.inputStyle}
+                                    inputContainerStyle={styles.inputContainer}
+                                    placeholder='First name'
+                                    containerStyle={styles.inputOuterContainer}
+                                    onChangeText={(text) => this.setState({firstName: text})}
+                                />
+                                <Input
+                                    leftIcon={{ type: 'font-awesome', name: 'user' }}
+                                    inputStyle={styles.inputStyle}
+                                    inputContainerStyle={styles.inputContainer}
+                                    placeholder='Surname'
+                                    containerStyle={styles.inputOuterContainer}
+                                    onChangeText={(text) => this.setState({surname: text})}
+                                />
+                                <Input
+                                    leftIcon={{ type: 'Zocial', name: 'email' }}
+                                    inputStyle={styles.inputStyle}
+                                    inputContainerStyle={styles.inputContainer}
+                                    placeholder='Email'
+                                    containerStyle={styles.inputOuterContainer}
+                                    onChangeText={(text) => this.setState({email: text})}
+                                />
+                                <Input
+                                    leftIcon={{ type: 'font-awesome', name: 'lock' }}
+                                    inputStyle={styles.inputStyle}
+                                    inputContainerStyle={styles.inputContainer}
+                                    placeholder='Password'
+                                    secureTextEntry={true}
+                                    containerStyle={styles.inputOuterContainer}
+                                    onChangeText={(text) => this.setState({password: text})}
+                                />
+                                <DatePicker
+                                    style={styles.inputOuterContainer}
+                                    date={this.state.date}
+                                    mode="date"
+                                    placeholder="Enter date of birth"
+                                    format="DD-MM-YYYY"
+                                    minDate="01-01-1900"
+                                    maxDate="01-01-2000"
+                                    confirmBtnText="Confirm"
+                                    cancelBtnText="Cancel"
+                                    customStyles={{
+                                        dateIcon: {
+                                            position: 'absolute',
+                                            right: 0,
+                                            top: 4,
+                                            marginLeft: 35
+                                        },
+                                        dateInput: {
+                                            marginLeft: 0
+                                        }
+                                        // ... You can check the source to find the other keys.
+                                    }}
+                                    onDateChange={(date) => {this.setState({date: date})}}
+                                />
+
+                                <Button
+                                    containerStyle={styles.signUpModalButtonContainer}
+                                    buttonStyle={styles.signUpModalButton}
+                                    disabled={this.checkInformation()}
+                                    onPress={() => {
+                                        this.onRegister();
+                                    }}
+                                    icon={
+                                        <Icon
+                                            name="check"
+                                            size={20}
+                                            color="white"
+                                        />
+                                    }
+                                />
+                            </View>
+                        </Overlay>
+                    )
+                }
+
                 <Header style={{borderBottomWidth: 0}}
                         barStyle="light-content"
-                        centerComponent={<Text style={styles.heading}>waffle</Text>}
+                        centerComponent={<Text style={styles.heading}>waffle </Text>}
                         containerStyle={{
+                            width: '100%',
                             backgroundColor: 'transparent',
                             shadowRadius: 0,
                             shadowOffset: {
@@ -30,25 +216,66 @@ class LoginScreen extends React.Component {
                         }}
                 />
 
-                    <View style={styles.content}>
+                <View style={styles.inputs}>
 
-                        <Text style={styles.loginText}>Please login</Text>
+                    {/*<Button*/}
+                        {/*containerStyle={styles.signUpContainer}*/}
+                        {/*buttonStyle={styles.signUpButton}*/}
+                        {/*iconContainerStyle={styles.icon}*/}
+                        {/*raised*/}
+                        {/*icon={*/}
+                            {/*<Icon*/}
+                                {/*style={styles.icon}*/}
+                                {/*name="user-plus"*/}
+                                {/*size={15}*/}
+                                {/*color="white"*/}
+                            {/*/>*/}
+                        {/*}*/}
+                        {/*title='Create account' />*/}
+                    <Text style={styles.slogen}>A smarter way to live</Text>
 
-                        <SocialIcon
-                            title='Sign In With Facebook'
-                            button
-                            raised={true}
-                            style={styles.button}
-                            type='facebook'
-                        />
-                        <SocialIcon
-                            title='Sign In With Google'
-                            button
-                            raised={true}
-                            style={styles.googleButton}
-                            type='google'
-                        />
-                    </View>
+                   <Input
+                        leftIcon={{ type: 'font-awesome', name: 'user' }}
+                        inputStyle={styles.inputStyle}
+                        inputContainerStyle={styles.inputContainer}
+                        placeholder='Email'
+                        containerStyle={styles.inputOuterContainer}
+                        onChangeText={(text) => this.setState({email: text})}
+                    />
+
+                    <Input
+                        leftIcon={{ type: 'font-awesome', name: 'lock' }}
+                        inputStyle={styles.inputStyle}
+                        inputContainerStyle={styles.inputContainer}
+                        placeholder='Password'
+                        secureTextEntry={true}
+                        containerStyle={styles.inputOuterContainer}
+                        onChangeText={(text) => this.setState({password: text})}
+                    />
+
+                    <Text style={styles.text}>Forgotten password?</Text>
+
+                    <Button
+                        containerStyle={styles.buttonContainer}
+                        buttonStyle={styles.button}
+                        disabled={this.checkLogin()}
+                        onPress={() => {
+                            this.login();
+                        }}
+                        icon={
+                            <Icon
+                                name="check"
+                                size={20}
+                                color="white"
+                            />
+                        }
+                    />
+
+                    <Text onPress={this.openSignUpModal} style={styles.createAccount}>Don't have an account? <Text style={{color: 'tomato'}}>
+                        Sign up
+                    </Text></Text>
+
+                </View>
             </ImageBackground>
         );
     }
@@ -74,26 +301,88 @@ const styles = StyleSheet.create({
         fontSize: 35,
         letterSpacing: 1.2,
         fontWeight: "bold",
-        padding: 10
+        padding: 10,
     },
-    loginText: {
+    slogen: {
         color: 'tomato',
-        fontSize: 25,
+        fontSize: 20,
+        letterSpacing: 1.2,
+        fontWeight: "normal",
+        padding: 10,
+        marginTop: -80,
+        marginBottom: 80,
+    },
+    inputs: {
+        width: '100%',
+        marginTop: '50%',
+        alignItems: 'center',
+        textAlign: 'center',
+    },
+    inputContainer: {
+        backgroundColor: '#ffffff',
+        color: '#000000',
+        textAlign: 'center'
+    },
+    inputStyle: {
+        textAlign: 'center'
+
+    },
+    inputOuterContainer : {
+        borderRadius: 50,
+        width: '80%',
+        margin: 20,
+        textAlign: 'center'
+    },
+    buttonContainer : {
+        marginTop: '20%',
+        backgroundColor: 'tomato',
+        alignItems: 'center',
+    },
+    button : {
+        padding: 20,
+        backgroundColor: 'tomato'
+    },
+    createAccount: {
+        paddingTop: 20,
+        color: 'tomato'
+    },
+    signUpContainer : {
+        width: '100%',
+        alignItems: 'center',
+        textAlign: 'center',
+    },
+    signUpButton : {
+        padding: 10,
+        backgroundColor: 'tomato'
+    },
+    icon: {
+        paddingRight: 5
+    },
+    signUpHeading: {
+        color: 'tomato',
+        fontSize: 28,
         letterSpacing: 1.2,
         fontWeight: "bold",
         padding: 10,
-        marginTop: -50,
         marginBottom: 20
     },
-    button: {
-        margin: 10,
-        padding: 30
+    closeView : {
+        position: 'absolute',
+        right: 0,
+        margin: 20,
+        backgroundColor: 'white',
+        alignItems: 'center',
     },
-    googleButton: {
-        margin: 10,
-        padding: 30,
-        backgroundColor: Colors.COLOR_GRAY
+    signUpModalButtonContainer : {
+        marginTop: '10%',
+        backgroundColor: 'tomato',
+        alignItems: 'center',
+    },
+    signUpModalButton : {
+        padding: 20,
+        backgroundColor: 'tomato'
     }
 });
 
 export default LoginScreen;
+

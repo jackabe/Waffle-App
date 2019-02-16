@@ -1,7 +1,8 @@
 import React from 'react';
-import { View, Text } from 'react-native';
+import {View, Text, ImageBackground} from 'react-native';
 import headerStyling from "../styles/ui/Header";
 import ProfileHeaderButton from "../components/ProfileHeaderButton";
+import {Header} from "react-native-elements";
 
 class BookingScreen extends React.Component {
     static navigationOptions = ({ navigation }) => {
@@ -18,8 +19,26 @@ class BookingScreen extends React.Component {
     }
     render() {
         return (
-            <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
-                <Text>Bookig Screen</Text>
+            <View>
+                <Header style={{borderBottomWidth: 0}}
+                        barStyle="light-content"
+                        centerComponent={<Text style={styles.heading}>waffle </Text>}
+                        containerStyle={{
+                            width: '100%',
+                            backgroundColor: 'transparent',
+                            shadowRadius: 0,
+                            shadowOffset: {
+                                height: 0,
+                            },
+                            shadowColor: 'transparent',
+                            borderBottomWidth: 0
+                        }}
+                />
+
+                <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
+                    <Text>Booking Screen</Text>
+                </View>
+
             </View>
         );
     }

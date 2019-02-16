@@ -31,7 +31,7 @@ class LoginScreen extends React.Component {
      */
     componentDidMount() {
         this.authSubscription = firebase.auth().onAuthStateChanged((user) => {
-            // this.props.navigation.navigate("App");
+            this.props.navigation.navigate("App");
         });
     }
     /**

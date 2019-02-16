@@ -31,16 +31,14 @@ class LoginScreen extends React.Component {
      */
     componentDidMount() {
         this.authSubscription = firebase.auth().onAuthStateChanged((user) => {
-            this.props.navigation.navigate("App");
+            if (user) {
+                this.props.navigation.navigate("App");
+            }
+            else {
+                this.props.navigation.navigate("Auth");
+            }
         });
     }
-    /**
-     * Don't forget to stop listening for authentication state changes
-     * when the component unmounts.
-     */
-    componentWillUnmount() {
-        this.authSubscription();
-    };
 
     checkInformation() {
         const { firstName, surname, email, password, date } = this.state;
@@ -57,7 +55,6 @@ class LoginScreen extends React.Component {
         firebase.auth().signInWithEmailAndPassword(email.trim(), password)
             .then((user) => {
                 Alert.alert('Logged in');
-                this.props.navigation.navigate("App");
             })
             .catch((error) => {
                 const { code, message } = error;
@@ -98,7 +95,6 @@ class LoginScreen extends React.Component {
                     body: formData
                 }).then(response => {
                     Alert.alert('Logged in');
-                    this.props.navigation.navigate("App");
                 }).catch(error => {
                     const { code, message } = error;
                     Alert.alert(error);

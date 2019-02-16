@@ -85,11 +85,10 @@ class LoginScreen extends React.Component {
         firebase.auth().createUserWithEmailAndPassword(email.trim(), password)
             .then((user) => {
                 let formData = new FormData();
-                formData.append('user_id', user.uid);
+                formData.append('user_id', user.user.uid);
                 formData.append('first_name', firstName);
                 formData.append('last_name', surname);
                 formData.append('dob', date);
-                Alert.alert(user.uid);
 
                 fetch('http://18.188.105.214/signup', {
                     method: 'post',
@@ -102,7 +101,7 @@ class LoginScreen extends React.Component {
                     this.props.navigation.navigate("App");
                 }).catch(error => {
                     const { code, message } = error;
-                    Alert.alert(message);
+                    Alert.alert(error);
                 })
             })
             .catch((error) => {

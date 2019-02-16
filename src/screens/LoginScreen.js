@@ -75,24 +75,39 @@ class LoginScreen extends React.Component {
     };
 
     closeSignUpModal = () => {
-        Alert.alert('hi');
         this.setState({
             showSignUp: false
         })
     };
 
     onRegister = () => {
-        const { email, password } = this.state;
-        firebase.auth().createUserWithEmailAndPassword(email, password)
+        const { firstName, surname, email, password, date } = this.state;
+        firebase.auth().createUserWithEmailAndPassword(email.trim(), password)
             .then((user) => {
+                let formData = new FormData();
+                formData.append('user_id', user.uid);
+                formData.append('first_name', firstName);
+                formData.append('last_name', surname);
+                formData.append('dob', date);
+                Alert.alert(user.uid);
+
+                fetch('http://18.188.105.214/signup', {
+                    method: 'post',
+                    headers: {
+                        'Content-Type': 'multipart/form-data',
+                    },
+                    body: formData
+                }).then(response => {
                     Alert.alert('Logged in');
                     this.props.navigation.navigate("App");
+                }).catch(error => {
+                    const { code, message } = error;
+                    Alert.alert(message);
+                })
             })
             .catch((error) => {
                 const { code, message } = error;
-                // For details of error codes, see the docs
-                // The message contains the default Firebase string
-                // representation of the error
+                Alert.alert(message);
             });
     };
 
@@ -109,17 +124,18 @@ class LoginScreen extends React.Component {
                             windowBackgroundColor="white"
                             overlayBackgroundColor="white"
                             fullScreen={true}>
+
+                            <Text style={styles.signUpHeading}>Sign Up</Text>
+
                             <TouchableHighlight style={styles.closeView} onPress={this.closeSignUpModal}>
                                 <View>
                                     <Icon
                                         name="close"
-                                        size={20}
+                                        size={30}
                                         color="tomato"
                                     />
                                 </View>
                             </TouchableHighlight>
-
-                            <Text style={styles.signUpHeading}>Sign Up</Text>
 
                             <View style={styles.signUpContainer}>
 
@@ -219,22 +235,22 @@ class LoginScreen extends React.Component {
                 <View style={styles.inputs}>
 
                     {/*<Button*/}
-                        {/*containerStyle={styles.signUpContainer}*/}
-                        {/*buttonStyle={styles.signUpButton}*/}
-                        {/*iconContainerStyle={styles.icon}*/}
-                        {/*raised*/}
-                        {/*icon={*/}
-                            {/*<Icon*/}
-                                {/*style={styles.icon}*/}
-                                {/*name="user-plus"*/}
-                                {/*size={15}*/}
-                                {/*color="white"*/}
-                            {/*/>*/}
-                        {/*}*/}
-                        {/*title='Create account' />*/}
+                    {/*containerStyle={styles.signUpContainer}*/}
+                    {/*buttonStyle={styles.signUpButton}*/}
+                    {/*iconContainerStyle={styles.icon}*/}
+                    {/*raised*/}
+                    {/*icon={*/}
+                    {/*<Icon*/}
+                    {/*style={styles.icon}*/}
+                    {/*name="user-plus"*/}
+                    {/*size={15}*/}
+                    {/*color="white"*/}
+                    {/*/>*/}
+                    {/*}*/}
+                    {/*title='Create account' />*/}
                     <Text style={styles.slogen}>A smarter way to live</Text>
 
-                   <Input
+                    <Input
                         leftIcon={{ type: 'font-awesome', name: 'user' }}
                         inputStyle={styles.inputStyle}
                         inputContainerStyle={styles.inputContainer}
@@ -364,14 +380,12 @@ const styles = StyleSheet.create({
         letterSpacing: 1.2,
         fontWeight: "bold",
         padding: 10,
-        marginBottom: 20
     },
     closeView : {
-        position: 'absolute',
-        right: 0,
-        margin: 20,
         backgroundColor: 'white',
-        alignItems: 'center',
+        marginLeft:'90%',
+        marginTop: -33,
+        marginBottom: 33
     },
     signUpModalButtonContainer : {
         marginTop: '10%',

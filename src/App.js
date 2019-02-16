@@ -7,6 +7,7 @@ import headerStyling from "./styles/ui/Header";
 import Tools from "./utils/Tools";
 
 import BookingScreen from "./screens/BookingScreen";
+import AccountScreen from "./screens/AccountScreen";
 import AddressScreen from "./screens/AddressScreen";
 import ConfirmationScreen from "./screens/ConfirmationScreen";
 import OffersScreen from "./screens/OffersScreen";
@@ -45,18 +46,21 @@ const AppStack = createBottomTabNavigator(
                 Booking: AddressScreen,
                 GetSpace: BookingScreen,
                 Confirm: ConfirmationScreen,
+                Account: AccountScreen
             },
             tabBarScreenOptions("Booking")
         ),
         Offers: createStackNavigator(
             {
                 Offers: OffersScreen,
+                // Account: AccountScreen
             },
             tabBarScreenOptions("Offers")
         ),
         Settings: createStackNavigator(
             {
                 Settings: SettingsScreen,
+                // Account: AccountScreen
             },
             tabBarScreenOptions("Settings")
         ),
@@ -110,7 +114,8 @@ const RootStack = createSwitchNavigator({
         Auth: AuthStack,
         App: AppStack,
     },
-    mainStackOptions("Auth"));
+    mainStackOptions("Auth"),
+    mainStackOptions("App"));
 
 export default class App extends React.Component {
     render() {

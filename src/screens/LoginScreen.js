@@ -31,16 +31,14 @@ class LoginScreen extends React.Component {
      */
     componentDidMount() {
         this.authSubscription = firebase.auth().onAuthStateChanged((user) => {
-            // this.props.navigation.navigate("App");
+            if (user) {
+                this.props.navigation.navigate("App");
+            }
+            else {
+                this.props.navigation.navigate("Auth");
+            }
         });
     }
-    /**
-     * Don't forget to stop listening for authentication state changes
-     * when the component unmounts.
-     */
-    componentWillUnmount() {
-        this.authSubscription();
-    };
 
     checkInformation() {
         const { firstName, surname, email, password, date } = this.state;
@@ -57,7 +55,6 @@ class LoginScreen extends React.Component {
         firebase.auth().signInWithEmailAndPassword(email.trim(), password)
             .then((user) => {
                 Alert.alert('Logged in');
-                this.props.navigation.navigate("App");
             })
             .catch((error) => {
                 const { code, message } = error;
@@ -85,11 +82,10 @@ class LoginScreen extends React.Component {
         firebase.auth().createUserWithEmailAndPassword(email.trim(), password)
             .then((user) => {
                 let formData = new FormData();
-                formData.append('user_id', user.uid);
+                formData.append('user_id', user.user.uid);
                 formData.append('first_name', firstName);
                 formData.append('last_name', surname);
                 formData.append('dob', date);
-                Alert.alert(user.uid);
 
                 fetch('http://18.188.105.214/signup', {
                     method: 'post',
@@ -99,10 +95,9 @@ class LoginScreen extends React.Component {
                     body: formData
                 }).then(response => {
                     Alert.alert('Logged in');
-                    this.props.navigation.navigate("App");
                 }).catch(error => {
                     const { code, message } = error;
-                    Alert.alert(message);
+                    Alert.alert(error);
                 })
             })
             .catch((error) => {

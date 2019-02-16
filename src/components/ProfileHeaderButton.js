@@ -6,7 +6,7 @@ class ProfileHeaderButton extends Component {
     render() {
         return (
             <TouchableOpacity style={this.props.buttonStyle} onPress={() => {
-                this.props.navigation.navigate("MyAccount");
+                this.props.navigation.navigate("Account");
             }}>
                 <Ionicons name='ios-contact' size={28} color={'tomato'} style={styles.icon}  />
             </TouchableOpacity>

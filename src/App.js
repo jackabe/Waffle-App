@@ -42,8 +42,10 @@ const AppStack = createBottomTabNavigator(
     {
         Booking: createStackNavigator(
             {
-                Booking: AddressScreen,
-                GetSpace: BookingScreen,
+                // Have Swapped Booking: AddressScreen to BookingScreen so that dev on the UI is visible in dev mode
+                // Will need to be swapped back
+                Booking: BookingScreen,
+                GetSpace: AddressScreen,
                 Confirm: ConfirmationScreen,
             },
             tabBarScreenOptions("Booking")

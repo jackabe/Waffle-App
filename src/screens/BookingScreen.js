@@ -1,5 +1,5 @@
 import React from 'react';
-import {View, Text, StyleSheet} from 'react-native';
+import {View, Text, StyleSheet, Alert} from 'react-native';
 import {Header, Overlay, Input, Button} from "react-native-elements";
 import headerStyling from "../styles/ui/Header";
 import ProfileHeaderButton from "../components/ProfileHeaderButton";
@@ -27,6 +27,17 @@ class BookingScreen extends React.Component {
             endTime: '',
         };
     }
+
+
+    //
+    validateBooking() {
+        const { regNumber, date, startTime, endTime } = this.state;
+        Alert.alert('Booking valid');
+
+
+    };
+
+
     render() {
         return (
             <View style={styles.container}>
@@ -71,6 +82,69 @@ class BookingScreen extends React.Component {
                         onDateChange={(date) => {this.setState({date: date})}}
                     />
 
+                    <DatePicker
+                        style={styles.inputOuterContainer}
+                        date={this.state.startTime}
+                        mode="time"
+                        placeholder="Enter start time"
+                        // May need to be updated so that the users can't book in past.
+
+                        confirmBtnText="Confirm"
+                        cancelBtnText="Cancel"
+                        customStyles={{
+                            dateIcon: {
+                                position: 'absolute',
+                                right: 0,
+                                top: 4,
+                                marginLeft: 35
+                            },
+                            dateInput: {
+                                marginLeft: 0
+                            }
+                            // ... You can check the source to find the other keys.
+                        }}
+                        onDateChange={(date) => {this.setState({startTime: date})}}
+                    />
+
+                    <DatePicker
+                        style={styles.inputOuterContainer}
+                        date={this.state.endTime}
+                        mode="time"
+                        placeholder="Enter end time"
+                        // May need to be updated so that the users can't book in past.
+
+                        confirmBtnText="Confirm"
+                        cancelBtnText="Cancel"
+                        customStyles={{
+                            dateIcon: {
+                                position: 'absolute',
+                                right: 0,
+                                top: 4,
+                                marginLeft: 35
+                            },
+                            dateInput: {
+                                marginLeft: 0
+                            }
+
+                        }}
+                        onDateChange={(date) => {this.setState({endTime: date})}}
+                    />
+
+                    <Button containerStyle={styles.bookingButtonContainer}
+                            buttonStyle={styles.bookingModalButton}
+                            title={"Check Availability"}
+                            onPress={()=>{
+                                this.validateBooking();
+                            }}
+                    />
+
+                    <Button containerStyle={styles.bookingButtonContainer}
+                            buttonStyle={styles.bookingModalButton}
+                            title={"Make Booking"}
+                            onPress={()=>{
+                                this.validateBooking();
+                            }}
+                    />
 
                 </View>
 
@@ -150,7 +224,7 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         textAlign: 'center',
     },
-    signUpButton : {
+    bookingButton : {
         padding: 10,
         backgroundColor: 'tomato'
     },
@@ -176,12 +250,12 @@ const styles = StyleSheet.create({
         marginTop: -33,
         marginBottom: 33
     },
-    signUpModalButtonContainer : {
+    bookingButtonContainer : {
         marginTop: '10%',
         backgroundColor: 'tomato',
         alignItems: 'center',
     },
-    signUpModalButton : {
+    bookingModalButton : {
         padding: 20,
         backgroundColor: 'tomato'
     }

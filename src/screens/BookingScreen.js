@@ -29,10 +29,24 @@ class BookingScreen extends React.Component {
     }
 
 
-    //
+    //Checks if reg number entered is valid and start time doesn't exceed end time
     validateBooking() {
         const { regNumber, date, startTime, endTime } = this.state;
-        Alert.alert('Booking valid');
+        if(regNumber.length !== 7){
+            Alert.alert("Registration Number must be 7 characters");
+            return false;
+            // 24 hr clock
+        }else if(startTime > endTime){
+            Alert.alert("End time cannot be before start time");
+            return false;
+        }else {
+            // Functionality related to parking space in parking lot here , currently mocked---
+
+            Alert.alert("Booking Valid");
+            return true;
+        }
+
+        // Alert.alert('Booking valid');
 
 
     };
@@ -77,7 +91,7 @@ class BookingScreen extends React.Component {
                             dateInput: {
                                 marginLeft: 0
                             }
-                            // ... You can check the source to find the other keys.
+
                         }}
                         onDateChange={(date) => {this.setState({date: date})}}
                     />

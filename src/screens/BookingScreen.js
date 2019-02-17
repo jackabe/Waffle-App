@@ -1,9 +1,9 @@
 import React from 'react';
 import {View, Text, StyleSheet, Alert} from 'react-native';
-import {Header, Overlay, Input, Button} from "react-native-elements";
+import {Input, Button} from "react-native-elements";
 import headerStyling from "../styles/ui/Header";
 import ProfileHeaderButton from "../components/ProfileHeaderButton";
-import Icon from 'react-native-vector-icons/FontAwesome';
+import firebase from 'react-native-firebase';
 import DatePicker from "react-native-datepicker";
 
 class BookingScreen extends React.Component {
@@ -48,6 +48,36 @@ class BookingScreen extends React.Component {
         }
 
     };
+
+
+    makeBooking() {
+        const { regNumber, startTime, endTime, date, parkingLotId } = this.state;
+
+        // Firebase for user id?
+        let formData = new FormData();
+
+        // formData.append('username', user.uid);
+        formData.append('location', parkingLotId);
+        formData.append('number_plate', regNumber);
+        formData.append('booking_date', date);
+        formData.append('start_time', startTime);
+        formData.append('end_time', endTime);
+
+
+        // POST request
+        fetch('http://18.188.105.214/makeBooking', {
+            method: 'post',
+            headers: {
+                'Content-Type': 'multipart/form-data',
+            },
+            body: formData
+        }).then(response => {
+            Alert.alert('Booking Successful');
+        }).catch(error => {
+            const { code, message } = error;
+            Alert.alert('Booking failed' + message);
+        })
+    }
 
 
     render() {
@@ -155,7 +185,8 @@ class BookingScreen extends React.Component {
                             title={"Make Booking"}
                             disabled={this.state.disableBooking}
                             onPress={()=>{
-                                Alert.alert("Pressed");
+                                this.makeBooking();
+
                             }}
                     />
 
@@ -164,6 +195,7 @@ class BookingScreen extends React.Component {
             </View>
         );
     }
+
 }
 
 // Styles

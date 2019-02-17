@@ -25,29 +25,27 @@ class BookingScreen extends React.Component {
             regNumber: '',
             startTime: '',
             endTime: '',
+            disableBooking: true,
         };
     }
 
 
     //Checks if reg number entered is valid and start time doesn't exceed end time
     validateBooking() {
-        const { regNumber, date, startTime, endTime } = this.state;
+        const { regNumber, startTime, endTime } = this.state;
         if(regNumber.length !== 7){
             Alert.alert("Registration Number must be 7 characters");
-            return false;
+            this.setState({disableBooking : true});
             // 24 hr clock
         }else if(startTime > endTime){
             Alert.alert("End time cannot be before start time");
-            return false;
+            this.setState({disableBooking : true});
         }else {
             // Functionality related to parking space in parking lot here , currently mocked---
 
             Alert.alert("Booking Valid");
-            return true;
+            this.setState({disableBooking : false});
         }
-
-        // Alert.alert('Booking valid');
-
 
     };
 
@@ -155,8 +153,9 @@ class BookingScreen extends React.Component {
                     <Button containerStyle={styles.bookingButtonContainer}
                             buttonStyle={styles.bookingModalButton}
                             title={"Make Booking"}
+                            disabled={this.state.disableBooking}
                             onPress={()=>{
-                                this.validateBooking();
+                                Alert.alert("Pressed");
                             }}
                     />
 

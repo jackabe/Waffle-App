@@ -1,7 +1,5 @@
 import React from 'react';
-import {View, Text, ImageBackground} from 'react-native';
 import ProfileHeaderButton from "../components/ProfileHeaderButton";
-import {Header} from "react-native-elements";
 import {View, Text, StyleSheet, Alert} from 'react-native';
 import {Input, Button} from "react-native-elements";
 import headerStyling from "../styles/ui/Header";
@@ -52,14 +50,20 @@ class BookingScreen extends React.Component {
 
 
     makeBooking() {
+        const { navigation } = this.props;
+        const userId = navigation.getParam('userId');
+
+        Alert.alert(userId);
+
         const { regNumber, startTime, endTime, date, parkingLotId } = this.state;
 
         // Firebase for user id?
         let formData = new FormData();
 
         // formData.append('username', user.uid);
+        formData.append('user_id', userId);
         formData.append('location', parkingLotId);
-        formData.append('number_plate', regNumber);
+        formData.append('number_plate', regNumber.toUpperCase());
         formData.append('booking_date', date);
         formData.append('start_time', startTime);
         formData.append('end_time', endTime);
@@ -76,7 +80,6 @@ class BookingScreen extends React.Component {
             Alert.alert('Booking Successful');
         }).catch(error => {
             const { code, message } = error;
-            Alert.alert('Booking failed' + message);
         })
     }
 

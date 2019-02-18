@@ -21,7 +21,14 @@ class AddressScreen extends React.Component {
         this.state = {
             userId: null,
             postcode: '',
-            parkingList: []
+            parkingList: [
+                {
+                    name: 'Cardiff Queen Street Parking',
+                    price: '£3.20',
+                    spaces: 120,
+                    favourite: true
+                },
+            ]
         };
     }
 
@@ -33,7 +40,8 @@ class AddressScreen extends React.Component {
                 {
                     name: 'Cardiff Queen Street Parking',
                     price: '£3.20',
-                    spaces: 120
+                    spaces: 120,
+                    favourite: true
                 },
                 {
                     name: 'Capitol Center Parking',
@@ -41,7 +49,6 @@ class AddressScreen extends React.Component {
                     spaces: 23
                 }
             ]
-
         }
         this.setState({parkingList : parkingList});
     };
@@ -74,6 +81,7 @@ class AddressScreen extends React.Component {
         return (
             <View style={styles.content}>
                 <Input
+                    underlineColorAndroid='transparent'
                     leftIcon={{ type: 'font-awesome', name: 'search' }}
                     inputStyle={styles.inputStyle}
                     inputContainerStyle={styles.inputContainer}
@@ -96,12 +104,13 @@ class AddressScreen extends React.Component {
                             title={l.name}
                             subtitle={
                                 <View style={styles.subtitleView}>
+                                    {l.favourite ?
                                     <Icon
                                         style={styles.icon}
                                         name="star"
                                         size={25}
                                         color="white"
-                                    />
+                                    /> : null }
                                     <Text style={styles.available}>{l.spaces + ' spaces available TODAY!'}</Text>
                                     <Text style={styles.price}>{'Average price of ' + l.price +' / hour!'}</Text>
                                 </View>
@@ -166,7 +175,8 @@ const styles = StyleSheet.create({
     inputContainer: {
         backgroundColor: '#ffffff',
         color: '#000000',
-        textAlign: 'center'
+        textAlign: 'center',
+        borderBottomWidth: 0
     },
     inputStyle: {
         textAlign: 'center',

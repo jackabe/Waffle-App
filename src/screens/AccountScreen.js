@@ -11,7 +11,8 @@ class AddressScreen extends React.Component {
         return {
             headerStyle: headerStyling.headerStyle,
             headerTitleStyle: headerStyling.headerTitleStyle,
-            headerTitle: "Account",
+            headerTitle: "waffle    ",
+            headerRight: <Text style={styles.account}>Your Account</Text>,
         };
     };
 
@@ -23,21 +24,24 @@ class AddressScreen extends React.Component {
     render() {
         return (
             <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
-                <Text>Account</Text>
 
                 <Button
+                    title='Sign out'
+                    buttonStyle={styles.signOut}
                     onPress={() => {
                         this.signOut();
                     }}
-                >
-                    Sign out
-                </Button>
+                />
             </View>
         );
     }
 }
 
 const styles = StyleSheet.create({
+    signOut: {
+        width: 100,
+        height: 50
+    },
     heading: {
         color: 'tomato',
         fontSize: 35,
@@ -45,6 +49,13 @@ const styles = StyleSheet.create({
         fontWeight: "bold",
         padding: 10,
     },
+    account: {
+        color: 'tomato',
+        fontSize: 20,
+        letterSpacing: 1.2,
+        marginTop: 10,
+        marginRight: 25
+    }
 });
 
 export default AddressScreen;

@@ -19,7 +19,6 @@ class BookingScreen extends React.Component {
         super(props);
         this.state = {
             // parkingLotId initialized at 1 until address finder feature completed
-            parkingLotId: '1',
             date: '',
             regNumber: '',
             startTime: '',
@@ -52,8 +51,7 @@ class BookingScreen extends React.Component {
     makeBooking() {
         const { navigation } = this.props;
         const userId = navigation.getParam('userId');
-
-        Alert.alert(userId);
+        const parkingLotName = navigation.getParam('parkingLotName');
 
         const { regNumber, startTime, endTime, date, parkingLotId } = this.state;
 
@@ -62,7 +60,7 @@ class BookingScreen extends React.Component {
 
         // formData.append('username', user.uid);
         formData.append('user_id', userId);
-        formData.append('location', parkingLotId);
+        formData.append('location', parkingLotName);
         formData.append('number_plate', regNumber.toUpperCase());
         formData.append('booking_date', date);
         formData.append('start_time', startTime);
@@ -85,13 +83,15 @@ class BookingScreen extends React.Component {
 
 
     render() {
+        const { navigation } = this.props;
+        const parkingLotName = navigation.getParam('parkingLotName');
         return (
             <View style={styles.container}>
                 <Text style={styles.bookingHeading}>Make a Booking</Text>
 
                 <View style={styles.bookingContainer}>
 
-                    <Text style={styles.parkingLotText}>Parking Lot Id: {this.state.parkingLotId}</Text>
+                    <Text style={styles.parkingLotText}>{parkingLotName}</Text>
 
                     <Input
                         leftIcon={{ type: 'font-awesome', name: 'car' }}

@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { StyleSheet, TouchableOpacity } from 'react-native';
-import Ionicons from "react-native-vector-icons/Ionicons";
+import Ionicons from "react-native-vector-icons/FontAwesome";
 
 class ProfileHeaderButton extends Component {
     render() {
@@ -8,7 +8,7 @@ class ProfileHeaderButton extends Component {
             <TouchableOpacity style={this.props.buttonStyle} onPress={() => {
                 this.props.navigation.navigate("Account");
             }}>
-                <Ionicons name='ios-contact' size={28} color={'tomato'} style={styles.icon}  />
+                <Ionicons name='user-circle' size={35} color={'tomato'} style={styles.icon}  />
             </TouchableOpacity>
         );
     }
@@ -16,9 +16,10 @@ class ProfileHeaderButton extends Component {
 
 const styles = StyleSheet.create({
     icon:{
-        width: 26,
-        height: 26,
-        marginRight: 20
+        width: 35,
+        height: 35,
+        marginTop: 10,
+        marginRight: 25
     }
 });
 

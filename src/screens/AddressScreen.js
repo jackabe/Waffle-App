@@ -151,11 +151,9 @@ const styles = StyleSheet.create({
     },
     listContainer: {
         width: '100%',
-        color: 'white'
     },
     listContentContainer: {
         backgroundColor: 'tomato',
-        color: 'white',
         padding: 20,
         paddingBottom: 35
     },
@@ -174,8 +172,6 @@ const styles = StyleSheet.create({
     },
     inputContainer: {
         backgroundColor: '#ffffff',
-        color: '#000000',
-        textAlign: 'center',
         borderBottomWidth: 0
     },
     inputStyle: {
@@ -188,7 +184,6 @@ const styles = StyleSheet.create({
         borderWidth: 1,
         width: '80%',
         margin: 20,
-        textAlign: 'center'
     },
     buttonContainer : {
         marginTop: '20%',

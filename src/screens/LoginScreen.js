@@ -333,8 +333,6 @@ const styles = StyleSheet.create({
     },
     inputContainer: {
         backgroundColor: '#ffffff',
-        color: '#000000',
-        textAlign: 'center'
     },
     inputStyle: {
         textAlign: 'center'
@@ -344,7 +342,6 @@ const styles = StyleSheet.create({
         borderRadius: 50,
         width: '80%',
         margin: 20,
-        textAlign: 'center'
     },
     buttonContainer : {
         marginTop: '20%',

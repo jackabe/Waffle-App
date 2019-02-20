@@ -12,6 +12,22 @@ class OffersScreen extends React.Component {
             headerRight: <ProfileHeaderButton navigation={navigation}/>,
         };
     };
+
+    constructor(props) {
+        super(props);
+        this.state = {
+            userId:null,
+            offerId:null,
+            offerList: [
+                {
+                    company:,
+                    offer:,
+                    expiry:
+                },
+            ]
+
+        }
+    }
     render() {
         return (
             <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>

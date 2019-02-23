@@ -34,23 +34,61 @@ class AddressScreen extends React.Component {
 
     getAddresses(postcode) {
         this.setState({postcode});
-        let parkingList = [];
-        if (postcode.length > 3) {
-            parkingList = [
-                {
-                    name: 'Cardiff Queen Street Parking',
-                    price: '£3.20',
-                    spaces: 120,
-                    favourite: true
-                },
-                {
-                    name: 'Capitol Center Parking',
-                    price: '£1.20',
-                    spaces: 23
-                }
-            ]
-        }
-        this.setState({parkingList : parkingList});
+        // Fetch google api and get lat, long, city and address from postcode
+        fetch('https://maps.googleapis.com/maps/api/geocode/json?address='+postcode+'+&key=AIzaSyAblfAuUNvSw0MyuoUlGFAbzAmRlCW2B1M', {
+            method: 'get',
+        }).then(response => {
+            let data = JSON.parse(response['_bodyInit'])['results'][0];
+            if (data) {
+                let address = data['formatted_address'];
+                let city = data['address_components'][2]['long_name'];
+                let location = data['geometry']['location'];
+                let lat = location['lat'];
+                let long = location['lng'];
+
+                // Form data to send to Flask
+                let formData = new FormData();
+                formData.append('city', city);
+                formData.append('address', address);
+                formData.append('latitude', lat);
+                formData.append('longitude', long);
+
+                // Post to flask and get parking lot response
+                fetch('http://100.120.89.16:5000/getCarParks', {
+                    method: 'post',
+                    headers: {
+                        'Content-Type': 'multipart/form-data',
+                    },
+                    body: formData
+                }).then(response => {
+                    let parkingList = [];
+                    let data = JSON.parse(response['_bodyText']);
+                    let i = 0;
+                    // Get each lot and form JSON
+                    for (i; i < data.length; i++) {
+                        let carPark = {
+                            name: data[i]['name'],
+                            price: '£'+data[i]['avg_price'],
+                            spaces: data[i]['spaces_available'],
+                            favourite: false
+                        };
+                        parkingList.push(carPark); // Add to list
+
+                        // As not async, check all done before updating state
+                        if (i === data.length-1) {
+                            this.setState({parkingList : parkingList});
+                        }
+                    }
+
+                }).catch(error => {
+                    const { code, message } = error;
+                    Alert.alert(message);
+                });
+            }
+        }).catch(error => {
+            const { code, message } = error;
+            Alert.alert(message);
+        });
     };
 
     /**

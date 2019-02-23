@@ -34,6 +34,36 @@ class AddressScreen extends React.Component {
 
     getAddresses(postcode) {
         this.setState({postcode});
+        fetch('https://maps.googleapis.com/maps/api/geocode/json?address='+postcode+'+CA&key=AIzaSyAblfAuUNvSw0MyuoUlGFAbzAmRlCW2B1M', {
+            method: 'get',
+        }).then(response => {
+            let data = JSON.parse(response['_bodyInit'])['results'][0];
+            let address = data['formatted_address'];
+            let location = data['geometry']['location'];
+            let lat = location['lat'];
+            let long = location['lng'];
+            console.log('Lat: '+lat + ' Long: ' +long);
+
+            fetch('https://maps.googleapis.com/maps/api/geocode/json?address='+postcode+'+CA&key=AIzaSyAblfAuUNvSw0MyuoUlGFAbzAmRlCW2B1M', {
+                method: 'get',
+            }).then(response => {
+                let data = JSON.parse(response['_bodyInit'])['results'][0];
+                let address = data['formatted_address'];
+                let location = data['geometry']['location'];
+                let lat = location['lat'];
+                let long = location['lng'];
+                console.log('Lat: '+lat + ' Long: ' +long);
+
+            }).catch(error => {
+                const { code, message } = error;
+                Alert.alert(message);
+            });
+
+        }).catch(error => {
+            const { code, message } = error;
+            Alert.alert(message);
+        });
+
         let parkingList = [];
         if (postcode.length > 3) {
             parkingList = [

@@ -1,9 +1,10 @@
 import React from 'react';
 import ProfileHeaderButton from "../components/ProfileHeaderButton";
 import {View, Text, StyleSheet, Alert} from 'react-native';
-import {Input, Button} from "react-native-elements";
+import {Input, Button, Divider, CheckBox} from "react-native-elements";
 import headerStyling from "../styles/ui/Header";
 import DatePicker from "react-native-datepicker";
+import Ionicons from "react-native-vector-icons/Entypo";
 
 class BookingScreen extends React.Component {
     static navigationOptions = ({ navigation }) => {
@@ -21,64 +22,91 @@ class BookingScreen extends React.Component {
             // parkingLotId initialized at 1 until address finder feature completed
             date: '',
             regNumber: '',
-            startTime: '',
-            endTime: '',
             disableBooking: true,
+            departureDate: '',
+            departureTime: '',
+            arrivalDate: '',
+            arrivalTime: '',
+            disabledChecked: false,
+            childChecked: false
         };
     }
 
-
-    //Checks if reg number entered is valid and start time doesn't exceed end time
-    validateBooking() {
-        const { regNumber, startTime, endTime } = this.state;
-        if(regNumber.length !== 7){
-            Alert.alert("Registration Number must be 7 characters");
-            this.setState({disableBooking : true});
-            // 24 hr clock
-        }else if(startTime > endTime){
-            Alert.alert("End time cannot be before start time");
-            this.setState({disableBooking : true});
-        }else {
-            // Functionality related to parking space in parking lot here , currently mocked---
-
-            Alert.alert("Booking Valid");
-            this.setState({disableBooking : false});
+    child = () => {
+        if (this.state.childChecked) {
+            this.setState({childChecked : false});
         }
-
+        else {
+            this.setState({childChecked : true});
+        }
     };
 
+    disabled = () => {
+        if (this.state.disabledChecked) {
+            this.setState({disabledChecked : false});
+        }
+        else {
+            this.setState({disabledChecked : true});
+        }
+    };
+
+    //Checks if reg number entered is valid and start time doesn't exceed end time
+    checkDetails() {
+        const { arrivalDate, arrivalTime, departureDate, departureTime } = this.state;
+        if (arrivalDate.length > 1 && arrivalTime.length > 1 && departureDate.length > 1 && departureTime.length > 1) {
+            if (arrivalDate === departureDate && departureTime < arrivalTime) {
+                Alert.alert("You cannot depart before you arrive!");
+                return true;
+            }
+            else {
+                return false;
+            }
+        }
+        else {
+            // Functionality related to parking space in parking lot here , currently mocked---
+            return true;
+        }
+    };
 
     makeBooking() {
-        const { navigation } = this.props;
-        const userId = navigation.getParam('userId');
-        const parkingLotName = navigation.getParam('parkingLotName');
+        if (this.state.regNumber.length !== 7) {
+            Alert.alert("Registration Number must be 7 characters");
+        }
+        else {
+            const { navigation } = this.props;
+            const userId = navigation.getParam('userId');
+            const parkingLotName = navigation.getParam('parkingLotName');
 
-        const { regNumber, startTime, endTime, date, parkingLotId } = this.state;
+            const { regNumber, parkingLotId, arrivalDate, arrivalTime, departureDate, departureTime, disabledChecked, childChecked} = this.state;
 
-        // Firebase for user id?
-        let formData = new FormData();
+            // Firebase for user id?
+            let formData = new FormData();
 
-        // formData.append('username', user.uid);
-        formData.append('user_id', userId);
-        formData.append('location', parkingLotName);
-        formData.append('number_plate', regNumber.toUpperCase());
-        formData.append('booking_date', date);
-        formData.append('start_time', startTime);
-        formData.append('end_time', endTime);
+            // formData.append('username', user.uid);
+            formData.append('user_id', userId);
+            formData.append('location', parkingLotName);
+            formData.append('number_plate', regNumber.toUpperCase());
+            formData.append('arrival_date', arrivalDate);
+            formData.append('arrival_time', arrivalTime);
+            formData.append('departure_date', departureDate);
+            formData.append('departure_time', departureTime);
+            formData.append('child_required', childChecked);
+            formData.append('disabled_required', disabledChecked);
 
 
-        // POST request
-        fetch('http://18.188.105.214/makeBooking', {
-            method: 'post',
-            headers: {
-                'Content-Type': 'multipart/form-data',
-            },
-            body: formData
-        }).then(response => {
-            Alert.alert('Booking Successful');
-        }).catch(error => {
-            const { code, message } = error;
-        })
+            // POST request
+            fetch('http://18.188.105.214/makeBooking', {
+                method: 'post',
+                headers: {
+                    'Content-Type': 'multipart/form-data',
+                },
+                body: formData
+            }).then(response => {
+                Alert.alert('Booking Successful');
+            }).catch(error => {
+                const { code, message } = error;
+            })
+        }
     }
 
 
@@ -87,117 +115,202 @@ class BookingScreen extends React.Component {
         const parkingLotName = navigation.getParam('parkingLotName');
         return (
             <View style={styles.container}>
-                <Text style={styles.bookingHeading}>Make a Booking</Text>
 
-                <View style={styles.bookingContainer}>
-
+                <View style={styles.lotName}>
+                    <Ionicons name='location-pin' size={25} color={'tomato'} style={styles.icon}  />
                     <Text style={styles.parkingLotText}>{parkingLotName}</Text>
+                </View>
 
-                    <Input
-                        leftIcon={{ type: 'font-awesome', name: 'car' }}
-                        inputStyle={styles.inputStyle}
-                        inputContainerStyle={styles.inputContainer}
-                        placeholder='Registration Number'
-                        containerStyle={styles.inputOuterContainer}
-                        onChangeText={(text) => this.setState({regNumber: text})}
-                    />
+                <Input
+                    leftIcon={{ type: 'font-awesome', name: 'car' , size: 18, color: 'gray'}}
+                    inputStyle={styles.inputStyle}
+                    inputContainerStyle={styles.inputContainer}
+                    placeholder='Enter Registration Number'
+                    containerStyle={styles.inputOuterContainer}
+                    onChangeText={(text) => this.setState({regNumber: text})}
+                />
 
-                    <DatePicker
-                        style={styles.inputOuterContainer}
-                        date={this.state.date}
-                        mode="date"
-                        placeholder="Enter date of booking"
-                        format="DD-MM-YYYY"
-                        // May need to be updated so that the users can't book in past.
-                        minDate="01-01-1900"
-                        maxDate="01-01-2050"
-                        confirmBtnText="Confirm"
-                        cancelBtnText="Cancel"
-                        customStyles={{
-                            dateIcon: {
-                                position: 'absolute',
-                                right: 0,
-                                top: 4,
-                                marginLeft: 35
-                            },
-                            dateInput: {
-                                marginLeft: 0
-                            }
-
-                        }}
-                        onDateChange={(date) => {this.setState({date: date})}}
-                    />
-
-                    <DatePicker
-                        style={styles.inputOuterContainer}
-                        date={this.state.startTime}
-                        mode="time"
-                        placeholder="Enter start time"
-                        // May need to be updated so that the users can't book in past.
-
-                        confirmBtnText="Confirm"
-                        cancelBtnText="Cancel"
-                        customStyles={{
-                            dateIcon: {
-                                position: 'absolute',
-                                right: 0,
-                                top: 4,
-                                marginLeft: 35
-                            },
-                            dateInput: {
-                                marginLeft: 0
-                            }
-                            // ... You can check the source to find the other keys.
-                        }}
-                        onDateChange={(date) => {this.setState({startTime: date})}}
-                    />
-
-                    <DatePicker
-                        style={styles.inputOuterContainer}
-                        date={this.state.endTime}
-                        mode="time"
-                        placeholder="Enter end time"
-                        // May need to be updated so that the users can't book in past.
-
-                        confirmBtnText="Confirm"
-                        cancelBtnText="Cancel"
-                        customStyles={{
-                            dateIcon: {
-                                position: 'absolute',
-                                right: 0,
-                                top: 4,
-                                marginLeft: 35
-                            },
-                            dateInput: {
-                                marginLeft: 0
-                            }
-
-                        }}
-                        onDateChange={(date) => {this.setState({endTime: date})}}
-                    />
-
-                    <Button containerStyle={styles.bookingButtonContainer}
-                            buttonStyle={styles.bookingModalButton}
-                            title={"Check Availability"}
-                            onPress={()=>{
-                                this.validateBooking();
-                            }}
-                    />
-
-                    <Button containerStyle={styles.bookingButtonContainer}
-                            buttonStyle={styles.bookingModalButton}
-                            title={"Make Booking"}
-                            disabled={this.state.disableBooking}
-                            onPress={()=>{
-                                this.makeBooking();
+                <View style={styles.dates}>
+                    <Text style={styles.dateText}>Arrival:</Text>
+                    <View style={styles.dateTimePicker}>
+                        <DatePicker
+                            style={styles.pickerStyle}
+                            date=''
+                            hideText={true}
+                            mode="date"
+                            iconComponent={<Ionicons name='calendar' size={25} color={'tomato'}/>}
+                            format="DD-MM-YY"
+                            // May need to be updated so that the users can't book in past.
+                            minDate="01-01-1900"
+                            maxDate="01-01-2050"
+                            confirmBtnText="Confirm"
+                            cancelBtnText="Cancel"
+                            customStyles={{
+                                dateIcon: {
+                                    position: 'absolute',
+                                    right: 0,
+                                    top: 4,
+                                    marginLeft: 35
+                                },
+                                dateInput: {
+                                    marginLeft: 0
+                                }
 
                             }}
+                            onDateChange={(date) => {this.setState({arrivalDate: date})}}
+                        />
+                    </View>
+                    <View style={styles.dateTimePicker}>
+                        <DatePicker
+                            style={styles.pickerStyle}
+                            date=''
+                            hideText={true}
+                            mode="time"
+                            // May need to be updated so that the users can't book in past.
+                            iconComponent={<Ionicons name='time-slot' size={25} color={'tomato'}/>}
+                            confirmBtnText="Confirm"
+                            cancelBtnText="Cancel"
+                            customStyles={{
+                                dateIcon: {
+                                    position: 'absolute',
+                                    right: 0,
+                                    top: 4,
+                                    marginLeft: 35
+                                },
+                                dateInput: {
+                                    marginLeft: 0
+                                }
+
+                            }}
+                            onDateChange={(date) => {this.setState({arrivalTime: date})}}
+                        />
+                    </View>
+                </View>
+
+                <View style={styles.dates}>
+                    <Text style={styles.dateText}>Departure:</Text>
+                    <View style={styles.dateTimePicker}>
+                        <DatePicker
+                            style={styles.pickerStyle}
+                            date=''
+                            hideText={true}
+                            mode="date"
+                            format="DD-MM-YY"
+                            // May need to be updated so that the users can't book in past.
+                            iconComponent={<Ionicons name='calendar' size={25} color={'tomato'}/>}
+                            minDate="01-01-1900"
+                            maxDate="01-01-2050"
+                            confirmBtnText="Confirm"
+                            cancelBtnText="Cancel"
+                            customStyles={{
+                                dateIcon: {
+                                    position: 'absolute',
+                                    right: 0,
+                                    top: 4,
+                                    marginLeft: 35
+                                },
+                                dateInput: {
+                                    marginLeft: 0
+                                }
+
+                            }}
+                            onDateChange={(date) => {this.setState({departureDate: date})}}
+                        />
+                    </View>
+                    <View style={styles.dateTimePicker}>
+                        <DatePicker
+                            style={styles.pickerStyle}
+                            date=''
+                            hideText={true}
+                            mode="time"
+                            // May need to be updated so that the users can't book in past.
+                            iconComponent={<Ionicons name='time-slot' size={25} color={'tomato'}/>}
+                            confirmBtnText="Confirm"
+                            cancelBtnText="Cancel"
+                            customStyles={{
+                                dateIcon: {
+                                    position: 'absolute',
+                                    right: 0,
+                                    top: 4,
+                                    marginLeft: 35
+                                },
+                                dateInput: {
+                                    marginLeft: 0
+                                }
+
+                            }}
+                            onDateChange={(date) => {this.setState({departureTime: date})}}
+                        />
+                    </View>
+                </View>
+
+                <View style={styles.dateOverview}>
+                    <Text style={styles.arrive}>
+                        <Text style={styles.label}>Arrive: </Text>
+                        {this.state.arrivalDate}  {this.state.arrivalTime}
+                    </Text>
+                    <Text style={styles.depart}>
+                        <Text style={styles.label}>Depart: </Text>
+                        {this.state.departureDate} {this.state.departureTime}
+                    </Text>
+                </View>
+
+                <Divider style={styles.divider}/>
+
+                <View style={styles.requirements}>
+                    <Text style={styles.requirementsText}>Special Requirements</Text>
+
+                    <CheckBox
+                        onPress={() => {
+                            this.disabled();
+                        }}
+                        containerStyle={styles.checkBackground}
+                        textStyle={styles.checkText}
+                        checkedColor='tomato'
+                        uncheckedColor='silver'
+                        wrapperStyle={styles.checkText}
+                        center
+                        title='Disabled Bay'
+                        checkedIcon='dot-circle-o'
+                        uncheckedIcon='circle-o'
+                        checked={this.state.disabledChecked}
+                    />
+
+                    <CheckBox
+                        onPress={() => {
+                            this.child();
+                        }}
+                        containerStyle={styles.checkBackground}
+                        textStyle={styles.checkText}
+                        checkedColor='tomato'
+                        uncheckedColor='silver'
+                        wrapperStyle={styles.checkText}
+                        center
+                        title='Parent and Child'
+                        checkedIcon='dot-circle-o'
+                        uncheckedIcon='circle-o'
+                        checked={this.state.childChecked}
                     />
                 </View>
+
+                <View style={styles.priceContainer}>
+                    <Text style={styles.priceLabel}>Price:</Text>
+                    <Text style={styles.price}>£12.34</Text>
+                </View>
+
+                <Button
+                    disabled={this.checkDetails()}
+                    style={styles.bookingButton}
+                    containerStyle={styles.bookingButtonContainer}
+                        buttonStyle={styles.bookingModalButton}
+                        title={"Book"}
+                        onPress={()=>{
+                            this.makeBooking();
+                        }}
+                />
             </View>
         );
     }
-
 }
 
 // Styles
@@ -205,16 +318,15 @@ const styles = StyleSheet.create({
     container: {
         width: '100%',
         height: '100%',
-    },
-    content: {
-        width: '100%',
-        height: '100%',
-        display: 'flex',
-        flexDirection: 'column',
-        justifyContent: 'center',
         alignItems: 'center',
         textAlign: 'center',
-        marginTop: -100
+    },
+    lotName: {
+        marginTop: 15,
+        width: '100%',
+        flexDirection: 'row',
+        alignItems: 'center',
+        justifyContent: 'center'
     },
     heading: {
         color: 'tomato',
@@ -223,87 +335,116 @@ const styles = StyleSheet.create({
         fontWeight: "bold",
         padding: 10,
     },
-    slogen: {
-        color: 'tomato',
-        fontSize: 20,
-        letterSpacing: 1.2,
-        fontWeight: "normal",
-        padding: 10,
-        marginTop: -80,
-        marginBottom: 80,
-    },
-    inputs: {
-        width: '100%',
-        marginTop: '50%',
-        alignItems: 'center',
-        textAlign: 'center',
-    },
     inputContainer: {
         backgroundColor: '#ffffff',
+        borderBottomWidth: 0
     },
     inputStyle: {
-        textAlign: 'center'
-
+        textAlign: 'center',
+        paddingLeft: 10,
+        fontSize: 15
     },
     inputOuterContainer : {
-        borderRadius: 50,
+        borderColor: 'grey',
+        borderWidth: 1,
         width: '80%',
         margin: 20,
     },
-    buttonContainer : {
-        marginTop: '20%',
-        backgroundColor: 'tomato',
-        alignItems: 'center',
-    },
-    button : {
-        padding: 20,
-        backgroundColor: 'tomato'
+    pickerStyle: {
+        borderWidth: 0,
+        borderColor: 'white',
+        width: 50,
+        margin: 0,
     },
     createAccount: {
         paddingTop: 20,
         color: 'tomato'
     },
-    bookingContainer : {
-        width: '100%',
-        alignItems: 'center',
-        textAlign: 'center',
-    },
     bookingButton : {
         padding: 10,
-        backgroundColor: 'tomato'
     },
     icon: {
         paddingRight: 5
     },
-    bookingHeading: {
-        color: 'tomato',
-        fontSize: 28,
-        letterSpacing: 1.2,
-        fontWeight: "bold",
-        padding: 10,
-    },
     parkingLotText: {
         color: 'tomato',
         fontSize: 20,
-        letterSpacing: 1.2,
         padding: 10,
     },
-    closeView : {
-        backgroundColor: 'white',
-        marginLeft:'90%',
-        marginTop: -33,
-        marginBottom: 33
-    },
     bookingButtonContainer : {
-        marginTop: '10%',
-        backgroundColor: 'tomato',
+        position: 'absolute',
+        bottom: 10,
         alignItems: 'center',
     },
     bookingModalButton : {
+        width: '120%',
+        backgroundColor: 'tomato',
         padding: 20,
-        backgroundColor: 'tomato'
+    },
+    dates : {
+        flexDirection: 'row',
+        alignItems: 'center',
+    },
+    dateTimePicker : {
+        padding: 10,
+    },
+    dateText : {
+        width: 80
+    },
+    requirements: {
+        alignSelf: 'flex-start',
+        marginLeft: 20,
+    },
+    requirementsText : {
+        color: 'tomato',
+        fontSize: 17,
+        padding: 10,
+    },
+    divider : {
+        margin: 10,
+        width: '90%',
+        backgroundColor: 'tomato',
+        height: 1,
+    },
+    checkBackground: {
+        backgroundColor: 'white',
+        width: 200
+    },
+    checkText: {
+        marginLeft: 30,
+        color: 'silver',
+        width: 150
+    },
+    priceContainer: {
+        marginTop: 25,
+        flexDirection: 'row',
+    },
+    priceLabel : {
+        fontSize: 23,
+        color: 'tomato'
+    },
+    price : {
+        fontSize: 23,
+        marginLeft: '50%'
+    },
+    dateOverview: {
+        marginTop: 25,
+        flexDirection: 'row',
+    },
+    arrive: {
+        padding: 10,
+        color: 'gray',
+        fontSize: 17
+    },
+    depart: {
+        padding: 10,
+        color: 'gray',
+        fontSize: 17
+    },
+    label: {
+        color: 'tomato',
+        fontSize: 19
     }
 });
-
 
 export default BookingScreen;

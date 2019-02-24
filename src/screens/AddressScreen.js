@@ -54,7 +54,7 @@ class AddressScreen extends React.Component {
                 formData.append('longitude', long);
 
                 // Post to flask and get parking lot response
-                fetch('http://100.120.89.16:5000/getCarParks', {
+                fetch('http://18.188.105.214/getCarParks', {
                     method: 'post',
                     headers: {
                         'Content-Type': 'multipart/form-data',

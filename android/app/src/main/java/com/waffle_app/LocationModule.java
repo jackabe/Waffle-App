@@ -2,7 +2,6 @@ package com.waffle_app;
 
 import android.app.PendingIntent;
 import android.content.Intent;
-import android.widget.Toast;
 
 import com.facebook.react.bridge.ReactApplicationContext;
 import com.facebook.react.bridge.ReactContextBaseJavaModule;
@@ -13,8 +12,6 @@ import com.google.android.gms.location.GeofencingClient;
 import com.google.android.gms.location.GeofencingRequest;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.maps.model.LatLng;
-import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
 import com.waffle_app.Location.GeofenceBroadcastReceiver;
 
 import java.util.ArrayList;
@@ -25,7 +22,6 @@ public class LocationModule extends ReactContextBaseJavaModule {
     private GeofencingClient mGeofencingClient;  // Provides access to the Geofencing API.
     private ArrayList<Geofence> mGeofenceList; // The list of geofences used in this sample.
     private PendingIntent mGeofencePendingIntent; // Used when requesting to add or remove geofences.
-    private FirebaseAuth mAuth;
 
     public LocationModule(ReactApplicationContext reactContext) {
         super(reactContext);
@@ -38,13 +34,6 @@ public class LocationModule extends ReactContextBaseJavaModule {
 
     @ReactMethod
     public void startScanning(Promise promise) {
-
-        mAuth = FirebaseAuth.getInstance();
-        FirebaseUser currentUser = mAuth.getCurrentUser();
-//        currentUser.getUid()
-
-        FirebaseService firebaseService = new FirebaseService();
-        firebaseService.addCollection();
 
         // Initialise array list
         mGeofenceList = new ArrayList<>();

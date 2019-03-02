@@ -34,10 +34,15 @@ import android.util.Log;
 
 import com.google.android.gms.location.Geofence;
 import com.google.android.gms.location.GeofencingEvent;
+import com.google.firebase.Timestamp;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.waffle_app.FirebaseService;
 import com.waffle_app.MainActivity;
 import com.waffle_app.R;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -53,6 +58,7 @@ public class GeofenceTransitionsJobIntentService extends JobIntentService {
     private static final int JOB_ID = 573;
     private static final String TAG = "GeofenceTransitionsIS";
     private static final String CHANNEL_ID = "channel_01";
+    private FirebaseAuth mAuth;
 
     /**
      * Convenience method for enqueuing work in to this service.
@@ -179,6 +185,12 @@ public class GeofenceTransitionsJobIntentService extends JobIntentService {
 
         // Issue the notification
         mNotificationManager.notify(0, builder.build());
+
+        mAuth = FirebaseAuth.getInstance();
+        FirebaseUser currentUser = mAuth.getCurrentUser();
+        FirebaseService firebaseService = new FirebaseService();
+
+        firebaseService.addCollection(currentUser.getUid(), notificationDetails, new Timestamp(new Date()).toString());
     }
 
     /**

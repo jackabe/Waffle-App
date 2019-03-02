@@ -109,7 +109,6 @@ class BookingScreen extends React.Component {
         }
     }
 
-
     render() {
         const { navigation } = this.props;
         const parkingLotName = navigation.getParam('parkingLotName');

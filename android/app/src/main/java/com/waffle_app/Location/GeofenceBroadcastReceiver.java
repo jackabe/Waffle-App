@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.google.android.gms.location.sample.geofencing;
+package com.waffle_app.Location;
 
 import android.content.BroadcastReceiver;
 import android.content.Context;

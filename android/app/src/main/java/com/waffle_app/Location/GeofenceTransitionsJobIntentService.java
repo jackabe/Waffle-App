@@ -14,25 +14,28 @@
  * limitations under the License.
  */
 
-package com.google.android.gms.location.sample.geofencing;
+package com.waffle_app.Location;
 
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
+import android.app.TaskStackBuilder;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.location.Location;
 import android.os.Build;
-import androidx.core.app.JobIntentService;
-import androidx.core.app.NotificationCompat;
-import androidx.core.app.TaskStackBuilder;
+
+import android.support.v4.app.JobIntentService;
+import android.support.v4.app.NotificationCompat;
 import android.text.TextUtils;
 import android.util.Log;
 
 import com.google.android.gms.location.Geofence;
 import com.google.android.gms.location.GeofencingEvent;
+import com.waffle_app.MainActivity;
+import com.waffle_app.R;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -44,12 +47,11 @@ import java.util.List;
  * the transition type and geofence id(s) that triggered the transition. Creates a notification
  * as the output.
  */
+
 public class GeofenceTransitionsJobIntentService extends JobIntentService {
 
     private static final int JOB_ID = 573;
-
     private static final String TAG = "GeofenceTransitionsIS";
-
     private static final String CHANNEL_ID = "channel_01";
 
     /**
@@ -75,29 +77,22 @@ public class GeofenceTransitionsJobIntentService extends JobIntentService {
         }
 
         Location location = geofencingEvent.getTriggeringLocation();
-
         // Get the transition type.
         int geofenceTransition = geofencingEvent.getGeofenceTransition();
 
-        // Test that the reported transition was of interest.
-        if (geofenceTransition == Geofence.GEOFENCE_TRANSITION_ENTER ||
-                geofenceTransition == Geofence.GEOFENCE_TRANSITION_EXIT) {
 
-            // Get the geofences that were triggered. A single event can trigger multiple geofences.
-            List<Geofence> triggeringGeofences = geofencingEvent.getTriggeringGeofences();
+        // Get the geofences that were triggered. A single event can trigger multiple geofences.
+        List<Geofence> triggeringGeofences = geofencingEvent.getTriggeringGeofences();
 
-            // Get the transition details as a String.
-            String geofenceTransitionDetails = getGeofenceTransitionDetails(geofenceTransition,
-                    triggeringGeofences, location);
+        // Get the transition details as a String.
+        String geofenceTransitionDetails = getGeofenceTransitionDetails(geofenceTransition,
+                triggeringGeofences, location);
 
-            // Send notification and log the transition details.
-            sendNotification(geofenceTransitionDetails);
-            Log.i(TAG, geofenceTransitionDetails);
-            Log.i("Accuracy", Float.toString(location.getAccuracy()));
-        } else {
-            // Log the error.
-            Log.e(TAG, getString(R.string.geofence_transition_invalid_type, geofenceTransition));
-        }
+        // Send notification and log the transition details.
+        sendNotification(geofenceTransitionDetails);
+        Log.i(TAG, geofenceTransitionDetails);
+        Log.i("Accuracy", Float.toString(location.getAccuracy()));
+
     }
 
     /**
@@ -164,14 +159,14 @@ public class GeofenceTransitionsJobIntentService extends JobIntentService {
         NotificationCompat.Builder builder = new NotificationCompat.Builder(this);
 
         // Define the notification settings.
-        builder.setSmallIcon(R.drawable.ic_launcher)
+        builder.setSmallIcon(R.drawable.common_google_signin_btn_icon_dark)
                 // In a real app, you may want to use adrr library like Volley
                 // to decode the Bitmap.
                 .setLargeIcon(BitmapFactory.decodeResource(getResources(),
-                        R.drawable.ic_launcher))
+                        R.drawable.common_full_open_on_phone))
                 .setColor(Color.RED)
                 .setContentTitle(notificationDetails)
-                .setContentText(getString(R.string.geofence_transition_notification_text))
+                .setContentText("Hello")
                 .setContentIntent(notificationPendingIntent);
 
         // Set the Channel ID for Android O.
@@ -195,11 +190,13 @@ public class GeofenceTransitionsJobIntentService extends JobIntentService {
     private String getTransitionString(int transitionType) {
         switch (transitionType) {
             case Geofence.GEOFENCE_TRANSITION_ENTER:
-                return getString(R.string.geofence_transition_entered);
+                return "Entered";
             case Geofence.GEOFENCE_TRANSITION_EXIT:
-                return getString(R.string.geofence_transition_exited);
+                return "Exit";
+            case Geofence.GEOFENCE_TRANSITION_DWELL:
+                return "DWELL";
             default:
-                return getString(R.string.unknown_geofence_transition);
+                return "Unknown";
         }
     }
 }

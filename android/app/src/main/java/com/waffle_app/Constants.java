@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.google.android.gms.location.sample.geofencing;
+package com.waffle_app;
 
 import com.google.android.gms.maps.model.LatLng;
 
@@ -50,7 +50,8 @@ final class Constants {
     static {
         // CloseComms
         FENCES.put("CloseComms1", new LatLng(51.587566,-3.003584));
-//        FENCES.put("Tesco", new LatLng(51.587176, -3.002795));
+        FENCES.put("Home", new LatLng(51.487337, -3.172598));
+        FENCES.put("Tesco", new LatLng(51.487962, -3.173471));
         FENCES.put("Train Station", new LatLng(51.588643,-3.001578));
     }
 }

@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.google.android.gms.location.sample.geofencing;
+package com.waffle_app.Location;
 
 import android.content.Context;
 import android.content.res.Resources;
@@ -38,7 +38,7 @@ class GeofenceErrorMessages {
         if (e instanceof ApiException) {
             return getErrorString(context, ((ApiException) e).getStatusCode());
         } else {
-            return context.getResources().getString(R.string.unknown_geofence_error);
+            return "Error";
         }
     }
 
@@ -49,13 +49,13 @@ class GeofenceErrorMessages {
         Resources mResources = context.getResources();
         switch (errorCode) {
             case GeofenceStatusCodes.GEOFENCE_NOT_AVAILABLE:
-                return mResources.getString(R.string.geofence_not_available);
+                return "Not available";
             case GeofenceStatusCodes.GEOFENCE_TOO_MANY_GEOFENCES:
-                return mResources.getString(R.string.geofence_too_many_geofences);
+                return "Too many";
             case GeofenceStatusCodes.GEOFENCE_TOO_MANY_PENDING_INTENTS:
-                return mResources.getString(R.string.geofence_too_many_pending_intents);
+                return "Too many availabe";
             default:
-                return mResources.getString(R.string.unknown_geofence_error);
+                return "Unknown error";
         }
     }
 }

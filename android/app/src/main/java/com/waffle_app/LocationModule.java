@@ -12,7 +12,7 @@ import com.google.android.gms.location.GeofencingClient;
 import com.google.android.gms.location.GeofencingRequest;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.maps.model.LatLng;
-import com.waffle_app.Location.GeofenceBroadcastReceiver;
+import com.waffle_app.location.GeofenceBroadcastReceiver;
 
 import java.util.ArrayList;
 import java.util.Map;

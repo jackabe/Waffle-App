@@ -68,7 +68,7 @@ class AddressScreen extends React.Component {
                 LocationModule.startScanning();
             }
             else {
-                alert("Location permission denied");
+                alert("You will not receive the full benefits of the app without location permissions turned on!");
             }
         })
         .catch(error => {

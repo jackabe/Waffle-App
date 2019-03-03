@@ -9,7 +9,7 @@ import com.facebook.react.ReactNativeHost;
 import com.facebook.react.ReactPackage;
 import com.facebook.react.shell.MainReactPackage;
 import com.facebook.soloader.SoLoader;
-import com.waffle_app.Location.LocationModulePackage;
+import com.waffle_app.location.LocationModulePackage;
 
 import io.invertase.firebase.auth.RNFirebaseAuthPackage; // <-- Add this line
 

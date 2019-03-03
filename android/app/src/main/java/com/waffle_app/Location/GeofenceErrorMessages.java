@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.waffle_app.Location;
+package com.waffle_app.location;
 
 import android.content.Context;
 import android.content.res.Resources;

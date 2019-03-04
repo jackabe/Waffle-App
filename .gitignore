@@ -57,3 +57,4 @@ buck-out/
 android/local.properties
 android/app/src/main/assets/index.android.bundle
 android/app/src/main/assets/index.android.bundle
+android/local.properties

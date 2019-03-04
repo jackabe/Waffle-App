@@ -1,10 +1,12 @@
 import React from 'react';
-import {View, Text, Alert, StyleSheet } from 'react-native';
+import {View, Text, Alert, StyleSheet, PermissionsAndroid } from 'react-native';
 import headerStyling from "../styles/ui/Header";
 import ProfileHeaderButton from "../components/ProfileHeaderButton";
 import {Button, Header, Input, ListItem} from "react-native-elements";
 import firebase from "react-native-firebase";
 import Icon from "react-native-vector-icons/FontAwesome";
+
+import LocationModule from '../packages/LocationModule';
 
 class AddressScreen extends React.Component {
     static navigationOptions = ({ navigation }) => {
@@ -15,6 +17,21 @@ class AddressScreen extends React.Component {
             headerRight: <ProfileHeaderButton navigation={navigation}/>,
         };
     };
+
+    async requestLocationPermission() {
+        try {
+            const granted = await PermissionsAndroid.request(
+                PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION,
+                {
+                    'title': 'Waffle',
+                    'message': 'Waffle wants access to your location '
+                }
+            );
+            return granted;
+        } catch (err) {
+            console.warn(err)
+        }
+    }
 
     constructor(props) {
         super(props);
@@ -30,6 +47,33 @@ class AddressScreen extends React.Component {
                 },
             ]
         };
+    }
+
+    /**
+     * When the App component mounts, we listen for any authentication
+     * state changes in Firebase.
+     * Once subscribed, the 'user' parameter will either be null
+     * (logged out) or an Object (logged in)
+     */
+    componentDidMount() {
+        this.authSubscription = firebase.auth().onAuthStateChanged((user) => {
+            if (user) {
+                this.setState({
+                    userId: user.uid
+                })
+            }
+        });
+        this.requestLocationPermission().then(granted => {
+            if (granted === PermissionsAndroid.RESULTS.GRANTED) {
+                LocationModule.startScanning();
+            }
+            else {
+                alert("You will not receive the full benefits of the app without location permissions turned on!");
+            }
+        })
+        .catch(error => {
+            Alert.alert(error)
+        });
     }
 
     getAddresses(postcode) {
@@ -91,22 +135,6 @@ class AddressScreen extends React.Component {
         });
     };
 
-    /**
-     * When the App component mounts, we listen for any authentication
-     * state changes in Firebase.
-     * Once subscribed, the 'user' parameter will either be null
-     * (logged out) or an Object (logged in)
-     */
-    componentDidMount() {
-        this.authSubscription = firebase.auth().onAuthStateChanged((user) => {
-            if (user) {
-                this.setState({
-                    userId: user.uid
-                })
-            }
-        });
-    }
-
     goToBookingScreen(name) {
         this.props.navigation.navigate("GetSpace", {
             userId: this.state.userId,
@@ -115,7 +143,6 @@ class AddressScreen extends React.Component {
     }
 
     render() {
-
         return (
             <View style={styles.content}>
                 <Input

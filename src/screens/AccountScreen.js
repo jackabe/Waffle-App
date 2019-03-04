@@ -6,7 +6,7 @@ import { Input, Button, ListItem} from 'react-native-elements';
 import Icon from "react-native-vector-icons/FontAwesome";
 import firebase from 'react-native-firebase';
 
-class AddressScreen extends React.Component {
+class AccountScreen extends React.Component {
     static navigationOptions = ({ navigation }) => {
         return {
             headerStyle: headerStyling.headerStyle,
@@ -44,13 +44,15 @@ class AddressScreen extends React.Component {
                 this.setState({
                     userId: user.uid
                 })
+                Alert.alert(this.state.userId)
             }
-
         });
+
+
     }
 
     getBookings(){
-        const { userId} = this.state;
+        const { userId} = this.state.userId;
 
         let formData = FormData();
         formData.append('user_id', userId);
@@ -89,6 +91,7 @@ class AddressScreen extends React.Component {
         })
 
     }
+
     render() {
         return (
             <View style={{ flex: 1, alignItems: 'center' }}>
@@ -101,7 +104,6 @@ class AddressScreen extends React.Component {
                     }}
                 />
 
-                <Text style={styles.bookingsHeading}>My Bookings </Text>
 
                 {
                     this.state.bookingList.map((l, i) => (
@@ -181,4 +183,4 @@ const styles = StyleSheet.create({
 
 });
 
-export default AddressScreen;
+export default AccountScreen;

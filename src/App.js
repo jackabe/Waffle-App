@@ -2,6 +2,7 @@ import React from "react";
 import { Platform } from "react-native";
 import { createStackNavigator, createSwitchNavigator, createBottomTabNavigator } from "react-navigation";
 import Ionicons from 'react-native-vector-icons/Ionicons';
+import IoniconsProfile from "react-native-vector-icons/FontAwesome";
 
 import headerStyling from "./styles/ui/Header";
 import Tools from "./utils/Tools";
@@ -46,7 +47,7 @@ const AppStack = createBottomTabNavigator(
                 Booking: AddressScreen,
                 GetSpace: BookingScreen,
                 Confirm: ConfirmationScreen,
-                Account: AccountScreen
+                Settings: SettingsScreen,
             },
             tabBarScreenOptions("Booking")
         ),
@@ -57,12 +58,12 @@ const AppStack = createBottomTabNavigator(
             },
             tabBarScreenOptions("Offers")
         ),
-        Settings: createStackNavigator(
+        Account: createStackNavigator(
             {
-                Settings: SettingsScreen,
+                Account: AccountScreen
                 // Account: AccountScreen
             },
-            tabBarScreenOptions("Settings")
+            tabBarScreenOptions("Account")
         ),
     },
     {
@@ -90,16 +91,16 @@ const AppStack = createBottomTabNavigator(
                 let iconName;
                 if (routeName === 'Booking') {
                     iconName = `ios-car`;
+                    return <Ionicons name={iconName} size={horizontal ? 20 : 25} color={tintColor} />;
                 } else if (routeName === 'Offers') {
                     iconName = `ios-bookmark`;
+                    return <Ionicons name={iconName} size={horizontal ? 20 : 25} color={tintColor} />;
                 }
                 else {
-                    iconName = `ios-settings`;
+                    iconName = `user-circle`;
+                    return <IoniconsProfile name={iconName} size={horizontal ? 20 : 25} color={tintColor} />;
                 }
 
-                // You can return any component that you like here! We usually use an
-                // icon component from react-native-vector-icons
-                return <Ionicons name={iconName} size={horizontal ? 20 : 25} color={tintColor} />;
             },
         }),
     }

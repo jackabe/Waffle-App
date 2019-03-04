@@ -6,7 +6,7 @@ import { Input, Button} from 'react-native-elements';
 import Icon from "react-native-vector-icons/FontAwesome";
 import firebase from 'react-native-firebase';
 
-class AddressScreen extends React.Component {
+class AccountScreen extends React.Component {
     static navigationOptions = ({ navigation }) => {
         return {
             headerStyle: headerStyling.headerStyle,
@@ -58,4 +58,4 @@ const styles = StyleSheet.create({
     }
 });
 
-export default AddressScreen;
+export default AccountScreen;

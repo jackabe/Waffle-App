@@ -9,8 +9,8 @@ import com.facebook.react.ReactNativeHost;
 import com.facebook.react.ReactPackage;
 import com.facebook.react.shell.MainReactPackage;
 import com.facebook.soloader.SoLoader;
+import com.waffle_app.location.LocationModulePackage;
 
-import io.invertase.firebase.RNFirebasePackage;
 import io.invertase.firebase.auth.RNFirebaseAuthPackage; // <-- Add this line
 
 import java.util.Arrays;
@@ -27,10 +27,11 @@ public class MainApplication extends Application implements ReactApplication {
     @Override
     protected List<ReactPackage> getPackages() {
       return Arrays.<ReactPackage>asList(
-          new MainReactPackage(),
-            new RNFirebasePackage(),
-            new RNFirebaseAuthPackage(), // <-- Add this line
-            new VectorIconsPackage()
+              new MainReactPackage(),
+              new RNFirebasePackage(),
+              new RNFirebaseAuthPackage(),
+              new VectorIconsPackage(),
+              new LocationModulePackage()
       );
     }
 

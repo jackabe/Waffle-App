@@ -1,10 +1,12 @@
 import React from 'react';
-import {View, Text, Alert, StyleSheet } from 'react-native';
+import {View, Text, Alert, StyleSheet, PermissionsAndroid } from 'react-native';
 import headerStyling from "../styles/ui/Header";
 import ProfileHeaderButton from "../components/ProfileHeaderButton";
 import {Button, Header, Input, ListItem} from "react-native-elements";
 import firebase from "react-native-firebase";
 import Icon from "react-native-vector-icons/FontAwesome";
+
+import LocationModule from '../packages/LocationModule';
 
 class AddressScreen extends React.Component {
     static navigationOptions = ({ navigation }) => {
@@ -15,6 +17,21 @@ class AddressScreen extends React.Component {
             headerRight: <ProfileHeaderButton navigation={navigation}/>,
         };
     };
+
+    async requestLocationPermission() {
+        try {
+            const granted = await PermissionsAndroid.request(
+                PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION,
+                {
+                    'title': 'Waffle',
+                    'message': 'Waffle wants access to your location '
+                }
+            );
+            return granted;
+        } catch (err) {
+            console.warn(err)
+        }
+    }
 
     constructor(props) {
         super(props);
@@ -32,27 +49,6 @@ class AddressScreen extends React.Component {
         };
     }
 
-    getAddresses(postcode) {
-        this.setState({postcode});
-        let parkingList = [];
-        if (postcode.length > 3) {
-            parkingList = [
-                {
-                    name: 'Cardiff Queen Street Parking',
-                    price: '£3.20',
-                    spaces: 120,
-                    favourite: true
-                },
-                {
-                    name: 'Capitol Center Parking',
-                    price: '£1.20',
-                    spaces: 23
-                }
-            ]
-        }
-        this.setState({parkingList : parkingList});
-    };
-
     /**
      * When the App component mounts, we listen for any authentication
      * state changes in Firebase.
@@ -67,7 +63,77 @@ class AddressScreen extends React.Component {
                 })
             }
         });
+        this.requestLocationPermission().then(granted => {
+            if (granted === PermissionsAndroid.RESULTS.GRANTED) {
+                LocationModule.startScanning();
+            }
+            else {
+                alert("You will not receive the full benefits of the app without location permissions turned on!");
+            }
+        })
+        .catch(error => {
+            Alert.alert(error)
+        });
     }
+
+    getAddresses(postcode) {
+        this.setState({postcode});
+        // Fetch google api and get lat, long, city and address from postcode
+        fetch('https://maps.googleapis.com/maps/api/geocode/json?address='+postcode+'+&key=AIzaSyAblfAuUNvSw0MyuoUlGFAbzAmRlCW2B1M', {
+            method: 'get',
+        }).then(response => {
+            let data = JSON.parse(response['_bodyInit'])['results'][0];
+            if (data) {
+                let address = data['formatted_address'];
+                let city = data['address_components'][2]['long_name'];
+                let location = data['geometry']['location'];
+                let lat = location['lat'];
+                let long = location['lng'];
+
+                // Form data to send to Flask
+                let formData = new FormData();
+                formData.append('city', city);
+                formData.append('address', address);
+                formData.append('latitude', lat);
+                formData.append('longitude', long);
+
+                // Post to flask and get parking lot response
+                fetch('http://18.188.105.214/getCarParks', {
+                    method: 'post',
+                    headers: {
+                        'Content-Type': 'multipart/form-data',
+                    },
+                    body: formData
+                }).then(response => {
+                    let parkingList = [];
+                    let data = JSON.parse(response['_bodyText']);
+                    let i = 0;
+                    // Get each lot and form JSON
+                    for (i; i < data.length; i++) {
+                        let carPark = {
+                            name: data[i]['name'],
+                            price: '£'+data[i]['avg_price'],
+                            spaces: data[i]['spaces_available'],
+                            favourite: false
+                        };
+                        parkingList.push(carPark); // Add to list
+
+                        // As not async, check all done before updating state
+                        if (i === data.length-1) {
+                            this.setState({parkingList : parkingList});
+                        }
+                    }
+
+                }).catch(error => {
+                    const { code, message } = error;
+                    Alert.alert(message);
+                });
+            }
+        }).catch(error => {
+            const { code, message } = error;
+            Alert.alert(message);
+        });
+    };
 
     goToBookingScreen(name) {
         this.props.navigation.navigate("GetSpace", {
@@ -77,7 +143,6 @@ class AddressScreen extends React.Component {
     }
 
     render() {
-
         return (
             <View style={styles.content}>
                 <Input

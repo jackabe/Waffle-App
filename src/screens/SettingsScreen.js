@@ -1,7 +1,6 @@
 import React from 'react';
-import { View, Text } from 'react-native';
+import {View, Text, StyleSheet} from 'react-native';
 import headerStyling from "../styles/ui/Header";
-import ProfileHeaderButton from "../components/ProfileHeaderButton";
 
 class SettingsScreen extends React.Component {
     static navigationOptions = ({ navigation }) => {
@@ -9,7 +8,7 @@ class SettingsScreen extends React.Component {
             headerStyle: headerStyling.headerStyle,
             headerTitleStyle: headerStyling.headerTitleStyle,
             headerTitle: "waffle    ",
-            headerRight: <ProfileHeaderButton navigation={navigation}/>,
+            headerRight: <Text style={styles.account}>Settings</Text>,
         };
     };
     render() {
@@ -20,5 +19,15 @@ class SettingsScreen extends React.Component {
         );
     }
 }
+
+const styles = StyleSheet.create({
+    account: {
+        color: 'tomato',
+        fontSize: 20,
+        letterSpacing: 1.2,
+        marginTop: 10,
+        marginRight: 25
+    },
+});
 
 export default SettingsScreen;

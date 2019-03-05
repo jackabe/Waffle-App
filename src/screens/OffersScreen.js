@@ -3,6 +3,8 @@ import {View, Text, StyleSheet} from 'react-native';
 import headerStyling from "../styles/ui/Header";
 import ProfileHeaderButton from "../components/ProfileHeaderButton";
 import firebase from "react-native-firebase";
+import {Input, ListItem} from "react-native-elements";
+import Icon from "react-native-vector-icons/FontAwesome";
 
 class OffersScreen extends React.Component {
     static navigationOptions = ({ navigation }) => {
@@ -53,10 +55,151 @@ class OffersScreen extends React.Component {
     }
 
 
+    getColour(company){
+        const s_styles = StyleSheet.create({
+            available: {
+                paddingTop: 10,
+                fontWeight: 'bold',
+                color: 'white'
+            },
+            price: {
+                paddingTop: 10,
+                fontWeight: 'bold',
+                color: 'white'
+            },
+            carParkTitle: {
+                fontWeight: 'bold',
+                color: 'white',
+                fontSize: 15
+            },
+            subtitleStyle: {
+                color: 'white',
+            },
+            subtitleView: {
+                color: 'white',
+                backgroundColor: 'green'
+            },
+            listContainer: {
+                width: '100%',
+            },
+            listContentContainer: {
+                backgroundColor: 'green',
+                padding: 20,
+                paddingBottom: 35
+            },
+        });
+        const m_styles = StyleSheet.create({
+            available: {
+                paddingTop: 10,
+                fontWeight: 'bold',
+                color: 'white'
+            },
+            price: {
+                paddingTop: 10,
+                fontWeight: 'bold',
+                color: 'white'
+            },
+            carParkTitle: {
+                fontWeight: 'bold',
+                color: 'white',
+                fontSize: 15
+            },
+            subtitleStyle: {
+                color: 'white',
+            },
+            subtitleView: {
+                color: 'white',
+                backgroundColor: '#ffc300'
+            },
+            listContainer: {
+                width: '100%',
+            },
+            listContentContainer: {
+                backgroundColor: '#ffc300',
+                padding: 20,
+                paddingBottom: 35
+            },
+        });
+        const b_styles = StyleSheet.create({
+            available: {
+                paddingTop: 10,
+                fontWeight: 'bold',
+                color: 'white'
+            },
+            price: {
+                paddingTop: 10,
+                fontWeight: 'bold',
+                color: 'white'
+            },
+            carParkTitle: {
+                fontWeight: 'bold',
+                color: 'white',
+                fontSize: 15
+            },
+            subtitleStyle: {
+                color: 'white',
+            },
+            subtitleView: {
+                color: 'white',
+                backgroundColor: 'red'
+            },
+            listContainer: {
+                width: '100%',
+            },
+            listContentContainer: {
+                backgroundColor: 'red',
+                padding: 20,
+                paddingBottom: 35
+            },
+        });
+
+        var colours = {
+            'McDonalds': m_styles,
+            'Subway': s_styles,
+            'Burger King': b_styles
+        };
+
+        try {
+            return colours[company]
+        } catch (e) {
+            return "Company Doesn\'t Exist"
+        }
+    }
+
     render() {
         return (
-            <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
-                <Text>Offers Screen</Text>
+            <View style={styles.content}>
+                {
+                    this.state.offerList.map((l, i) => (
+                        <ListItem
+                            containerStyle={this.getColour(l.company).listContainer}
+                            contentContainerStyle={this.getColour(l.company).listContentContainer}
+                            titleStyle={this.getColour(l.company).carParkTitle}
+                            subtitleStyle={this.getColour(l.company).subtitleStyle}
+                            key={i}
+
+                            //on press commented out until offers are created dynamically
+                            // onPress={() => {
+                            //     do this on press
+                            // }}
+                            title={l.company}
+                            subtitle={
+                                <View style={this.getColour(l.company).subtitleView}>
+                                    {l.favourite ?
+                                        <Icon
+                                            style={styles.icon}
+                                            name="star"
+                                            size={25}
+                                            color="white"
+                                        /> : null }
+                                    <Text style={this.getColour(l.company).available}>{'Offer: ' + l.offer }</Text>
+                                    <Text style={this.getColour(l.company).price}>{'This offer will expire on: ' + l.expiry}</Text>
+                                </View>
+                            }
+                            // leftAvatar={{ source: require('../images/avatar1.jpg') }}
+                        />
+                    ))
+                }
             </View>
         );
     }
@@ -93,6 +236,11 @@ const styles = StyleSheet.create({
     },
     listContentContainer: {
         backgroundColor: 'tomato',
+        padding: 20,
+        paddingBottom: 35
+    },
+    listContentContainerMcDonalds: {
+        backgroundColor: 'red',
         padding: 20,
         paddingBottom: 35
     },

@@ -172,7 +172,15 @@ class OfferDetailsScreen extends React.Component {
         const expiry = navigation.getParam('expiryDate');
         return (
             <View style = {this.getColour(company).container}>
-
+                <Text style={styles.constHeadings}>
+                    {company}
+                </Text>
+                <Text style={styles.constHeadings}>
+                    {'Offer: ' + offer}
+                </Text>
+                <Text style={styles.constHeadings}>
+                    {'Expires: ' + expiry}
+                </Text>
             </View>
         );
     }
@@ -186,9 +194,14 @@ const styles = StyleSheet.create({
         marginTop: 10,
         marginRight: 25
     },
-    container: {
+    constHeadings: {
+        color: 'white',
+        fontSize: 24,
+        padding: 20,
 
-    },
+    }
+
+    ,
 });
 
 export default OfferDetailsScreen;

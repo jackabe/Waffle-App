@@ -109,13 +109,13 @@ class OffersScreen extends React.Component {
             },
             subtitleView: {
                 color: 'white',
-                backgroundColor: 'red'
+                backgroundColor: '#ffc300'
             },
             listContainer: {
                 width: '100%',
             },
             listContentContainer: {
-                backgroundColor: 'red',
+                backgroundColor: '#ffc300',
                 padding: 20,
                 paddingBottom: 35
             },
@@ -184,7 +184,7 @@ class OffersScreen extends React.Component {
                             // }}
                             title={l.company}
                             subtitle={
-                                <View style={styles.subtitleView}>
+                                <View style={this.getColour(l.company).subtitleView}>
                                     {l.favourite ?
                                         <Icon
                                             style={styles.icon}
@@ -192,8 +192,8 @@ class OffersScreen extends React.Component {
                                             size={25}
                                             color="white"
                                         /> : null }
-                                    <Text style={styles.available}>{'Offer: ' + l.offer }</Text>
-                                    <Text style={styles.price}>{'This offer will expire on: ' + l.expiry}</Text>
+                                    <Text style={this.getColour(l.company).available}>{'Offer: ' + l.offer }</Text>
+                                    <Text style={this.getColour(l.company).price}>{'This offer will expire on: ' + l.expiry}</Text>
                                 </View>
                             }
                             // leftAvatar={{ source: require('../images/avatar1.jpg') }}

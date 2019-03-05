@@ -55,6 +55,15 @@ class OffersScreen extends React.Component {
     }
 
 
+    goToOfferDetailsScreen(company, offer, expiry){
+        this.props.navigation.navigate("OfferDetails", {
+            userId: this.state.userId,
+            companyName: company,
+            offerName: offer,
+            expiryDate: expiry,
+        })
+    }
+
     getColour(company){
         const s_styles = StyleSheet.create({
             available: {
@@ -177,11 +186,9 @@ class OffersScreen extends React.Component {
                             titleStyle={this.getColour(l.company).carParkTitle}
                             subtitleStyle={this.getColour(l.company).subtitleStyle}
                             key={i}
-
-                            //on press commented out until offers are created dynamically
-                            // onPress={() => {
-                            //     do this on press
-                            // }}
+                            onPress={() => {
+                                this.goToOfferDetailsScreen(l.company, l.offer, l.expiry)
+                            }}
                             title={l.company}
                             subtitle={
                                 <View style={this.getColour(l.company).subtitleView}>

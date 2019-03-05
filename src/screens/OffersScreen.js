@@ -64,6 +64,42 @@ class OffersScreen extends React.Component {
         })
     }
 
+    render() {
+        return (
+            <View style={styles.content}>
+                {
+                    this.state.offerList.map((l, i) => (
+                        <ListItem
+                            containerStyle={this.getColour(l.company).listContainer}
+                            contentContainerStyle={this.getColour(l.company).listContentContainer}
+                            titleStyle={this.getColour(l.company).carParkTitle}
+                            subtitleStyle={this.getColour(l.company).subtitleStyle}
+                            key={i}
+                            onPress={() => {
+                                this.goToOfferDetailsScreen(l.company, l.offer, l.expiry)
+                            }}
+                            title={l.company}
+                            subtitle={
+                                <View style={this.getColour(l.company).subtitleView}>
+                                    {l.favourite ?
+                                        <Icon
+                                            style={styles.icon}
+                                            name="star"
+                                            size={25}
+                                            color="white"
+                                        /> : null }
+                                    <Text style={this.getColour(l.company).available}>{'Offer: ' + l.offer }</Text>
+                                    <Text style={this.getColour(l.company).price}>{'This offer will expire on: ' + l.expiry}</Text>
+                                </View>
+                            }
+                            // leftAvatar={{ source: require('../images/avatar1.jpg') }}
+                        />
+                    ))
+                }
+            </View>
+        );
+    }
+
     getColour(company){
         const s_styles = StyleSheet.create({
             available: {
@@ -173,42 +209,6 @@ class OffersScreen extends React.Component {
         } catch (e) {
             return "Company Doesn\'t Exist"
         }
-    }
-
-    render() {
-        return (
-            <View style={styles.content}>
-                {
-                    this.state.offerList.map((l, i) => (
-                        <ListItem
-                            containerStyle={this.getColour(l.company).listContainer}
-                            contentContainerStyle={this.getColour(l.company).listContentContainer}
-                            titleStyle={this.getColour(l.company).carParkTitle}
-                            subtitleStyle={this.getColour(l.company).subtitleStyle}
-                            key={i}
-                            onPress={() => {
-                                this.goToOfferDetailsScreen(l.company, l.offer, l.expiry)
-                            }}
-                            title={l.company}
-                            subtitle={
-                                <View style={this.getColour(l.company).subtitleView}>
-                                    {l.favourite ?
-                                        <Icon
-                                            style={styles.icon}
-                                            name="star"
-                                            size={25}
-                                            color="white"
-                                        /> : null }
-                                    <Text style={this.getColour(l.company).available}>{'Offer: ' + l.offer }</Text>
-                                    <Text style={this.getColour(l.company).price}>{'This offer will expire on: ' + l.expiry}</Text>
-                                </View>
-                            }
-                            // leftAvatar={{ source: require('../images/avatar1.jpg') }}
-                        />
-                    ))
-                }
-            </View>
-        );
     }
 }
 

@@ -25,19 +25,23 @@ class OffersScreen extends React.Component {
                 {
                     company:'McDonalds',
                     offer:'Free Cheeseburger',
-                    expiry:'15 March 2019'
+                    expiry:'15 March 2019',
+                    logo: 'https://pbs.twimg.com/profile_images/754316880010108929/ICET1La3_400x400.jpg'
                 },
 
                 {
                     company:'Subway',
                     offer:'Free Drink',
-                    expiry:'15 April 2019'
+                    expiry:'15 April 2019',
+                    logo: 'http://ems-media-prod.s3.amazonaws.com/styles/clio_aotw_ems_image_details_retina/s3/entry_attachments/image/44/1103/26170/44588/BUeW-_VWEzFwNhLYgiqxtk20YNn1f-Trg8KJ1cJUsos.jpg'
                 },
 
                 {
                     company:'Burger King',
                     offer:'Free Side',
-                    expiry:'28 March 2019'
+                    expiry:'28 March 2019',
+                    logo: 'https://wl3-cdn.landsec.com/sites/default/files/images/shops/logos/burger-king_0.png'
+
                 },
             ]
 
@@ -55,12 +59,13 @@ class OffersScreen extends React.Component {
     }
 
 
-    goToOfferDetailsScreen(company, offer, expiry){
+    goToOfferDetailsScreen(company, offer, expiry, logo){
         this.props.navigation.navigate("OfferDetails", {
             userId: this.state.userId,
             companyName: company,
             offerName: offer,
             expiryDate: expiry,
+            companyLogo: logo
         })
     }
 
@@ -74,6 +79,7 @@ class OffersScreen extends React.Component {
                             contentContainerStyle={this.getColour(l.company).listContentContainer}
                             titleStyle={this.getColour(l.company).carParkTitle}
                             subtitleStyle={this.getColour(l.company).subtitleStyle}
+                            leftAvatar={{ source: { uri: l.logo } }}
                             key={i}
                             onPress={() => {
                                 this.goToOfferDetailsScreen(l.company, l.offer, l.expiry)

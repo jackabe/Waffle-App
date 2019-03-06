@@ -1,5 +1,5 @@
 import React from 'react';
-import {View, Text, StyleSheet} from 'react-native';
+import {View, Text, StyleSheet, Image} from 'react-native';
 import headerStyling from "../styles/ui/Header";
 import firebase from "react-native-firebase";
 
@@ -170,11 +170,11 @@ class OfferDetailsScreen extends React.Component {
         const company = navigation.getParam('companyName');
         const offer = navigation.getParam('offerName');
         const expiry = navigation.getParam('expiryDate');
+        const logo = navigation.getParam('logo');
         return (
             <View style = {this.getColour(company).container}>
-                <Text style={styles.constHeadings}>
-                    {company}
-                </Text>
+                {/*<Image style={styles.imageLogo}*/}
+                       {/*source={{ uri: logo}}/>*/}
                 <Text style={styles.constHeadings}>
                     {'Offer: ' + offer}
                 </Text>
@@ -199,9 +199,11 @@ const styles = StyleSheet.create({
         fontSize: 24,
         padding: 20,
 
-    }
-
-    ,
+    },
+    // imageLogo:{
+    //     width: '100%',
+    //     height:'100%'
+    // }
 });
 
 export default OfferDetailsScreen;

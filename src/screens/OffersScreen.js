@@ -1,5 +1,5 @@
 import React from 'react';
-import {View, Text, StyleSheet} from 'react-native';
+import {View, Text, StyleSheet, ScrollView} from 'react-native';
 import headerStyling from "../styles/ui/Header";
 import ProfileHeaderButton from "../components/ProfileHeaderButton";
 import firebase from "react-native-firebase";
@@ -65,7 +65,7 @@ class OffersScreen extends React.Component {
             companyName: company,
             offerName: offer,
             expiryDate: expiry,
-            companyLogo: logo
+            logo: logo
         })
     }
 

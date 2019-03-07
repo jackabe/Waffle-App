@@ -74,7 +74,7 @@ class OfferDetailsScreen extends React.Component {
                 paddingBottom: 35
             },
         });
-        const m_styles = StyleSheet.create({
+        const b_styles = StyleSheet.create({
             available: {
                 paddingTop: 10,
                 fontWeight: 'bold',
@@ -113,7 +113,7 @@ class OfferDetailsScreen extends React.Component {
                 paddingBottom: 35
             },
         });
-        const b_styles = StyleSheet.create({
+        const m_styles = StyleSheet.create({
             available: {
                 paddingTop: 10,
                 fontWeight: 'bold',

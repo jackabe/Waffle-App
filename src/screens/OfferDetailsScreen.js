@@ -40,7 +40,7 @@ class OfferDetailsScreen extends React.Component {
                 height: '100%',
                 alignItems: 'center',
                 textAlign: 'center',
-                backgroundColor: 'green',
+                backgroundColor: '#009743',
             },
 
             available: {
@@ -63,13 +63,13 @@ class OfferDetailsScreen extends React.Component {
             },
             subtitleView: {
                 color: 'white',
-                backgroundColor: 'green'
+                backgroundColor: '#009743'
             },
             listContainer: {
                 width: '100%',
             },
             listContentContainer: {
-                backgroundColor: 'green',
+                backgroundColor: '#009743',
                 padding: 20,
                 paddingBottom: 35
             },
@@ -124,7 +124,7 @@ class OfferDetailsScreen extends React.Component {
                 height: '100%',
                 alignItems: 'center',
                 textAlign: 'center',
-                backgroundColor: 'red',
+                backgroundColor: '#dd1021',
             },
             price: {
                 paddingTop: 10,
@@ -141,13 +141,13 @@ class OfferDetailsScreen extends React.Component {
             },
             subtitleView: {
                 color: 'white',
-                backgroundColor: 'red'
+                backgroundColor: '#dd1021'
             },
             listContainer: {
                 width: '100%',
             },
             listContentContainer: {
-                backgroundColor: 'red',
+                backgroundColor: '#dd1021',
                 padding: 20,
                 paddingBottom: 35
             },
@@ -205,8 +205,9 @@ const styles = StyleSheet.create({
 
     },
     imageLogo:{
-        width: '50%',
-        height:'50%'
+        padding:'20px',
+        width: '100%',
+        height:'45%'
     }
 });
 

@@ -172,9 +172,8 @@ class OfferDetailsScreen extends React.Component {
         const offer = navigation.getParam('offerName');
         const expiry = navigation.getParam('expiryDate');
         const logo = navigation.getParam('logo');
-        Alert.alert(this.props.logo)
         return (
-            <View >
+            <View style = {this.getColour(company).container}>
                 <Image style={styles.imageLogo}
                        source={{uri: logo}} />
                 <Text style={styles.constHeadings}>

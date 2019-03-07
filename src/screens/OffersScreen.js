@@ -82,7 +82,7 @@ class OffersScreen extends React.Component {
                             leftAvatar={{ source: { uri: l.logo } }}
                             key={i}
                             onPress={() => {
-                                this.goToOfferDetailsScreen(l.company, l.offer, l.expiry)
+                                this.goToOfferDetailsScreen(l.company, l.offer, l.expiry, l.logo)
                             }}
                             title={l.company}
                             subtitle={

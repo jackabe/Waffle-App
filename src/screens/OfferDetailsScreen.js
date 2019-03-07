@@ -1,5 +1,5 @@
 import React from 'react';
-import {View, Text, StyleSheet, Image} from 'react-native';
+import {View, Text, StyleSheet, Image, Alert} from 'react-native';
 import headerStyling from "../styles/ui/Header";
 import firebase from "react-native-firebase";
 
@@ -23,14 +23,15 @@ class OfferDetailsScreen extends React.Component {
 
     // componentDidMount() {
     //     this.authSubscription = firebase.auth().onAuthStateChanged((user) => {
-    //         if (user) {
-    //             this.setState({
-    //                 userId: user.uid
-    //             })
-    //         }
+    //         // if (user) {
+    //         //     this.setState({
+    //         //         userId: user.uid
+    //         //     })
+    //         // }
+    //
     //     });
     // }
-    //
+
     //
     getColour(company){
         const s_styles = StyleSheet.create({
@@ -171,10 +172,11 @@ class OfferDetailsScreen extends React.Component {
         const offer = navigation.getParam('offerName');
         const expiry = navigation.getParam('expiryDate');
         const logo = navigation.getParam('logo');
+        Alert.alert(this.props.logo)
         return (
-            <View style = {this.getColour(company).container}>
-                {/*<Image style={styles.imageLogo}*/}
-                       {/*source={{ uri: logo}}/>*/}
+            <View >
+                <Image style={styles.imageLogo}
+                       source={{uri: logo}} />
                 <Text style={styles.constHeadings}>
                     {'Offer: ' + offer}
                 </Text>
@@ -185,6 +187,9 @@ class OfferDetailsScreen extends React.Component {
         );
     }
 }
+
+
+// style = {this.getColour(company).container}
 
 const styles = StyleSheet.create({
     account: {
@@ -200,10 +205,10 @@ const styles = StyleSheet.create({
         padding: 20,
 
     },
-    // imageLogo:{
-    //     width: '100%',
-    //     height:'100%'
-    // }
+    imageLogo:{
+        width: '50%',
+        height:'50%'
+    }
 });
 
 export default OfferDetailsScreen;

@@ -2,6 +2,7 @@ import React from 'react';
 import {View, Text, StyleSheet, Image, Alert} from 'react-native';
 import headerStyling from "../styles/ui/Header";
 import firebase from "react-native-firebase";
+import QRCode from 'react-native-qrcode';
 
 class OfferDetailsScreen extends React.Component {
     static navigationOptions = ({ navigation }) => {
@@ -176,6 +177,15 @@ class OfferDetailsScreen extends React.Component {
             <View style = {this.getColour(company).container}>
                 <Image style={styles.imageLogo}
                        source={{uri: logo}} />
+
+
+                <QRCode
+                    value={'https://www.bbc.co.uk/'}
+                    size={200}
+                    bgColor='purple'
+                    fgColor='white'/>
+
+
                 <Text style={styles.constHeadings}>
                     {'Offer: ' + offer}
                 </Text>
@@ -205,7 +215,7 @@ const styles = StyleSheet.create({
 
     },
     imageLogo:{
-        padding:'20px',
+        // padding:'20px',
         width: '100%',
         height:'45%'
     }

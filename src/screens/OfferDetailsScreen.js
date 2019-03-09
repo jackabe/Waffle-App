@@ -3,6 +3,8 @@ import {View, Text, StyleSheet, Image, Alert} from 'react-native';
 import headerStyling from "../styles/ui/Header";
 import firebase from "react-native-firebase";
 import QRCode from 'react-native-qrcode';
+import Ionicons from "react-native-vector-icons/Ionicons";
+import {Button} from "react-native-elements";
 
 class OfferDetailsScreen extends React.Component {
     static navigationOptions = ({ navigation }) => {
@@ -167,6 +169,33 @@ class OfferDetailsScreen extends React.Component {
         }
     }
 
+    redeemOffer() {
+        const {navigation} = this.props;
+        const offerId = navigation.getParam('offerId');
+        const userId = navigation.getParam('userId')
+
+        let formData = new FormData();
+        formData.append('offer_id', offerId);
+        formData.append('user_id', userId);
+
+        fetch('http://18.188.105.214/redeemOffer', {
+            method: 'post',
+            headers: {
+                'Content-Type': 'multipart/form-data',
+            },
+            body: formData
+
+
+        }).then(response => {
+            Alert.alert('Offer Redeemed')
+        }).catch(error => {
+            const {code, message} = error;
+        })
+
+    }
+
+
+
     render() {
         const {navigation} = this.props;
         const company = navigation.getParam('companyName');
@@ -185,6 +214,16 @@ class OfferDetailsScreen extends React.Component {
                     bgColor='purple'
                     fgColor='white'/>
 
+                <Button
+                    style={styles.bookingButton}
+                    containerStyle={styles.bookingButtonContainer}
+                    buttonStyle={styles.bookingModalButton}
+                    icon={<Ionicons name='md-checkmark' size={25} color={'white'} style={styles.icon}/>}
+                    title='Redeem'
+                    onPress={() => {
+                        this.redeemOffer();
+                    }}
+                />
 
                 <Text style={styles.constHeadings}>
                     {'Offer: ' + offer}
@@ -218,6 +257,19 @@ const styles = StyleSheet.create({
         // padding:'20px',
         width: '100%',
         height:'45%'
+    },
+    bookingButton : {
+        padding: 10,
+    },
+    bookingButtonContainer : {
+        position: 'absolute',
+        bottom: 10,
+        alignItems: 'center',
+    },
+    bookingModalButton : {
+        width: '120%',
+        backgroundColor: 'tomato',
+        padding: 20,
     }
 });
 

@@ -20,7 +20,6 @@ class OffersScreen extends React.Component {
         super(props);
         this.state = {
             userId:null,
-            offerId:null,
             offerList: [
                 {
                     company:'McDonalds',
@@ -62,13 +61,14 @@ class OffersScreen extends React.Component {
     }
 
 
-    goToOfferDetailsScreen(company, offer, expiry, logo){
+    goToOfferDetailsScreen(company, offer, expiry, logo, offerId){
         this.props.navigation.navigate("OfferDetails", {
             userId: this.state.userId,
             companyName: company,
             offerName: offer,
             expiryDate: expiry,
-            logo: logo
+            logo: logo,
+            offerId: offerId
         })
     }
 
@@ -124,7 +124,7 @@ class OffersScreen extends React.Component {
                             leftAvatar={{ source: { uri: l.logo } }}
                             key={i}
                             onPress={() => {
-                                this.goToOfferDetailsScreen(l.company, l.offer, l.expiry, l.logo)
+                                this.goToOfferDetailsScreen(l.company, l.offer, l.expiry, l.logo, l.offerId)
                             }}
                             title={l.company}
                             subtitle={

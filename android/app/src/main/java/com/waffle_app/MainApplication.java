@@ -10,6 +10,7 @@ import com.facebook.react.ReactPackage;
 import com.facebook.react.shell.MainReactPackage;
 import com.facebook.soloader.SoLoader;
 import com.waffle_app.location.LocationModulePackage;
+import com.airbnb.android.react.maps.MapsPackage;
 
 import io.invertase.firebase.auth.RNFirebaseAuthPackage; // <-- Add this line
 
@@ -31,7 +32,8 @@ public class MainApplication extends Application implements ReactApplication {
               new RNFirebasePackage(),
               new RNFirebaseAuthPackage(),
               new VectorIconsPackage(),
-              new LocationModulePackage()
+              new LocationModulePackage(),
+              new MapsPackage()
       );
     }
 

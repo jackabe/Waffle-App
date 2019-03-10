@@ -1,12 +1,18 @@
 import React from 'react';
-import {View, Text, Alert, StyleSheet, PermissionsAndroid } from 'react-native';
+import {View, Text, Alert, StyleSheet, PermissionsAndroid, Dimensions } from 'react-native';
 import headerStyling from "../styles/ui/Header";
 import ProfileHeaderButton from "../components/ProfileHeaderButton";
-import {Button, Header, Input, ListItem} from "react-native-elements";
+import {Input} from "react-native-elements";
 import firebase from "react-native-firebase";
 import Icon from "react-native-vector-icons/FontAwesome";
+import LotHandler from "../utils/LotHandler";
+import MapView from 'react-native-maps';
+import { Marker } from 'react-native-maps';
+import { Callout } from 'react-native-maps';
 
 import LocationModule from '../packages/LocationModule';
+import CustomMarker from "../components/CustomMarker";
+import Loading from "../components/Loading";
 
 class AddressScreen extends React.Component {
     static navigationOptions = ({ navigation }) => {
@@ -38,9 +44,24 @@ class AddressScreen extends React.Component {
         this.state = {
             userId: null,
             postcode: '',
+            lat: 51.482171,
+            long: -3.171731,
+            region: {
+                latitude: 51.482171,
+                longitude: -3.171731,
+                latitudeDelta: 0.1,
+                longitudeDelta: 0.1,
+            },
+            loading: true,
+            markers: [],
             parkingList: [
                 {
-                    name: 'Cardiff Queen Street Parking',
+                    details: {
+                        id: 'ABQToXLPhJCk15dJrbYT',
+                        name: 'Cardiff Queen Street Parking',
+                        lat: 51.482171,
+                        long: -3.171731,
+                    },
                     price: '£3.20',
                     spaces: 120,
                     favourite: true
@@ -66,6 +87,7 @@ class AddressScreen extends React.Component {
         this.requestLocationPermission().then(granted => {
             if (granted === PermissionsAndroid.RESULTS.GRANTED) {
                 LocationModule.startScanning();
+                this.findLocation();
             }
             else {
                 alert("You will not receive the full benefits of the app without location permissions turned on!");
@@ -76,54 +98,70 @@ class AddressScreen extends React.Component {
         });
     }
 
-    getAddresses(postcode) {
-        this.setState({postcode});
-        // Fetch google api and get lat, long, city and address from postcode
-        fetch('https://maps.googleapis.com/maps/api/geocode/json?address='+postcode+'+&key=AIzaSyAblfAuUNvSw0MyuoUlGFAbzAmRlCW2B1M', {
+    getLotsByLocation = (position) => {
+
+        let latutude = position.coords.latitude;
+        let longitude = position.coords.longitude;
+
+        let region = {
+            latitude: latutude,
+            longitude: longitude,
+            latitudeDelta: 0.1,
+            longitudeDelta: 0.1,
+        };
+
+        this.onRegionChange(region);
+
+        fetch('https://maps.googleapis.com/maps/api/geocode/json?latlng='+latutude+','+longitude+'&key=AIzaSyAblfAuUNvSw0MyuoUlGFAbzAmRlCW2B1M', {
             method: 'get',
         }).then(response => {
             let data = JSON.parse(response['_bodyInit'])['results'][0];
             if (data) {
+                console.log(data);
                 let address = data['formatted_address'];
                 let city = data['address_components'][2]['long_name'];
-                let location = data['geometry']['location'];
-                let lat = location['lat'];
-                let long = location['lng'];
 
                 // Form data to send to Flask
                 let formData = new FormData();
                 formData.append('city', city);
                 formData.append('address', address);
-                formData.append('latitude', lat);
-                formData.append('longitude', long);
+                formData.append('latitude', position.coords.latitude);
+                formData.append('longitude', position.coords.longitude);
 
                 // Post to flask and get parking lot response
-                fetch('http://18.188.105.214/getCarParks', {
+                fetch('http://192.168.0.36:8000/getCarParks', {
                     method: 'post',
                     headers: {
                         'Content-Type': 'multipart/form-data',
                     },
                     body: formData
                 }).then(response => {
-                    let parkingList = [];
+                    let markers = [];
                     let data = JSON.parse(response['_bodyText']);
                     let i = 0;
-                    // Get each lot and form JSON
                     for (i; i < data.length; i++) {
-                        let carPark = {
-                            name: data[i]['name'],
-                            price: '£'+data[i]['avg_price'],
-                            spaces: data[i]['spaces_available'],
-                            favourite: false
+                        let details = LotHandler.getLotDetails(data[i]);
+                        let prices = LotHandler.getLotPrices(data[i]);
+                        let spaces = LotHandler.getLotSpaces(data[i], details);
+
+                        let marker = {
+                            details: details,
+                            price: prices['base_hour'].toFixed(2),
+                            spaces: spaces,
+                            coords: {
+                                latitude: details.lat,
+                                longitude: details.long
+                            }
                         };
-                        parkingList.push(carPark); // Add to list
+
+                        markers.push(marker);
 
                         // As not async, check all done before updating state
                         if (i === data.length-1) {
-                            this.setState({parkingList : parkingList});
+                            this.setState({markers : markers});
+                            this.setState({loading : false});
                         }
                     }
-
                 }).catch(error => {
                     const { code, message } = error;
                     Alert.alert(message);
@@ -133,14 +171,108 @@ class AddressScreen extends React.Component {
             const { code, message } = error;
             Alert.alert(message);
         });
+
     };
 
-    goToBookingScreen(name) {
+    findLocation = () => {
+        navigator.geolocation.getCurrentPosition(
+            position => this.getLotsByLocation(position),
+            error => console.log(error),
+            {enableHighAccuracy: true, timeout: 5000}
+        );
+    };
+
+
+    getAddresses(postcode) {
+        this.setState({postcode});
+        if (postcode.length > 5) {
+            // Fetch google api and get lat, long, city and address from postcode
+            fetch('https://maps.googleapis.com/maps/api/geocode/json?address='+postcode+'+&key=AIzaSyAblfAuUNvSw0MyuoUlGFAbzAmRlCW2B1M', {
+                method: 'get',
+            }).then(response => {
+                let data = JSON.parse(response['_bodyInit'])['results'][0];
+                if (data) {
+                    let address = data['formatted_address'];
+                    let city = data['address_components'][2]['long_name'];
+                    let location = data['geometry']['location'];
+                    let lat = location['lat'];
+                    let long = location['lng'];
+
+                    let region = {
+                        latitude: lat,
+                        longitude: long,
+                        latitudeDelta: 0.1,
+                        longitudeDelta: 0.1,
+                    };
+
+                    this.onRegionChange(region);
+
+                    // Form data to send to Flask
+                    let formData = new FormData();
+                    formData.append('city', city);
+                    formData.append('address', address);
+                    formData.append('latitude', lat);
+                    formData.append('longitude', long);
+
+                    this.setState({loading : true});
+
+                    // Post to flask and get parking lot response
+                    fetch('http://192.168.0.36:8000/getCarParks', {
+                        method: 'post',
+                        headers: {
+                            'Content-Type': 'multipart/form-data',
+                        },
+                        body: formData
+                    }).then(response => {
+                        let markers = [];
+                        let data = JSON.parse(response['_bodyText']);
+                        let i = 0;
+                        for (i; i < data.length; i++) {
+                            let details = LotHandler.getLotDetails(data[i]);
+                            let prices = LotHandler.getLotPrices(data[i]);
+                            let spaces = LotHandler.getLotSpaces(data[i], details);
+
+                            let marker = {
+                                details: details,
+                                price: prices['base_hour'].toFixed(2),
+                                spaces: spaces,
+                                coords: {
+                                    latitude: details.lat,
+                                    longitude: details.long
+                                }
+                            };
+
+                            markers.push(marker);
+
+                            // As not async, check all done before updating state
+                            if (i === data.length-1) {
+                                this.setState({markers : markers});
+                                this.setState({loading : false});
+                            }
+                        }
+                    }).catch(error => {
+                        const { code, message } = error;
+                        Alert.alert(message);
+                    });
+                }
+            }).catch(error => {
+                const { code, message } = error;
+                Alert.alert(message);
+            });
+        }
+    };
+
+    goToBookingScreen(name, id) {
         this.props.navigation.navigate("GetSpace", {
             userId: this.state.userId,
-            parkingLotName: name
+            parkingLotName: name,
+            parkingLotId: id,
         })
     }
+
+    onRegionChange = (region) => {
+        this.setState({ region });
+    };
 
     render() {
         return (
@@ -155,35 +287,72 @@ class AddressScreen extends React.Component {
                     onChangeText={(text) => this.getAddresses(text)}
                 />
 
-                {
-                    this.state.parkingList.map((l, i) => (
-                        <ListItem
-                            containerStyle={styles.listContainer}
-                            contentContainerStyle={styles.listContentContainer}
-                            titleStyle={styles.carParkTitle}
-                            subtitleStyle={styles.subtitleStyle}
-                            key={i}
-                            onPress={() => {
-                                this.goToBookingScreen(l.name)
-                            }}
-                            title={l.name}
-                            subtitle={
-                                <View style={styles.subtitleView}>
-                                    {l.favourite ?
-                                    <Icon
-                                        style={styles.icon}
-                                        name="star"
-                                        size={25}
-                                        color="white"
-                                    /> : null }
-                                    <Text style={styles.available}>{l.spaces + ' spaces available TODAY!'}</Text>
-                                    <Text style={styles.price}>{'Average price of ' + l.price +' / hour!'}</Text>
-                                </View>
-                            }
-                            // leftAvatar={{ source: require('../images/avatar1.jpg') }}
-                        />
-                    ))
-                }
+                <Loading
+                    loading={this.state.loading} />
+
+                <View style={styles.mapView}>
+                    <MapView
+                        style={styles.map}
+                        region={this.state.region}
+                        customMapStyle={mapStyle}>
+                        {this.state.markers.map(marker => (
+                            <Marker
+                                coordinate={marker.coords}>
+                                <Callout onPress={() => {
+                                    this.goToBookingScreen(marker.details.name, marker.details.lot_id)
+                                }}>
+                                    <CustomMarker data={marker} {...marker} />
+                                </Callout>
+                            </Marker>
+                        ))}
+                    </MapView>
+                </View>
+
+                {/*{*/}
+                    {/*this.state.parkingList.map((l, i) => (*/}
+                        {/*<ListItem*/}
+                            {/*containerStyle={styles.listContainer}*/}
+                            {/*contentContainerStyle={styles.listContentContainer}*/}
+                            {/*titleStyle={styles.carParkTitle}*/}
+                            {/*subtitleStyle={styles.subtitleStyle}*/}
+                            {/*key={i}*/}
+                            {/*title={l.details.name}*/}
+                            {/*subtitle={*/}
+                                {/*<View style={styles.subtitleView}>*/}
+                                    {/*/!*{l.favourite ?*!/*/}
+                                    {/*/!*<Icon*!/*/}
+                                        {/*/!*style={styles.icon}*!/*/}
+                                        {/*/!*name="star"*!/*/}
+                                        {/*/!*size={25}*!/*/}
+                                        {/*/!*color="white"*!/*/}
+                                    {/*/> : null }*/}
+                                    {/*<Text style={styles.available}>{l.spaces + ' spaces available TODAY!'}</Text>*/}
+                                    {/*<Text style={styles.price}>{'Prices start from £' + l.price +' / hour!'}</Text>*/}
+
+                                    {/*<View style={styles.map}>*/}
+                                        {/*<MapView*/}
+                                            {/*style={{width: 100, height: 100}}*/}
+                                            {/*initialRegion={{*/}
+                                                {/*latitude: l.details.lat,*/}
+                                                {/*longitude: l.details.long,*/}
+                                                {/*latitudeDelta: 0.010,*/}
+                                                {/*longitudeDelta: 0.010,*/}
+                                            {/*}}*/}
+                                            {/*customMapStyle={mapStyle}>*/}
+                                            {/*<Marker*/}
+                                                {/*coordinate={{*/}
+                                                    {/*latitude: l.details.lat,*/}
+                                                    {/*longitude: l.details.long*/}
+                                                {/*}}*/}
+                                            {/*/>*/}
+                                        {/*</MapView>*/}
+                                    {/*</View>*/}
+                                {/*</View>*/}
+                            {/*}*/}
+                            {/*// leftAvatar={{ source: require('../images/avatar1.jpg') }}*/}
+                        {/*/>*/}
+                    {/*))*/}
+                {/*}*/}
             </View>
         );
     }
@@ -222,12 +391,20 @@ const styles = StyleSheet.create({
         padding: 20,
         paddingBottom: 35
     },
+    map: {
+        ...StyleSheet.absoluteFillObject,
+    },
+    mapView: {
+        width: '100%',
+        height: '100%',
+        alignItems: 'center',
+    },
     content: {
         width: '100%',
         height: '100%',
         alignItems: 'center',
         textAlign: 'center',
-        paddingTop: 30,
+        paddingTop: 0,
     },
     inputs: {
         width: '100%',
@@ -278,3 +455,287 @@ const styles = StyleSheet.create({
         position: 'absolute'
     },
 });
+
+const mapStyle = [
+    {
+        "elementType": "geometry",
+        "stylers": [
+            {
+                "color": "#ebe3cd"
+            }
+        ]
+    },
+    {
+        "elementType": "labels.text.fill",
+        "stylers": [
+            {
+                "color": "#523735"
+            }
+        ]
+    },
+    {
+        "elementType": "labels.text.stroke",
+        "stylers": [
+            {
+                "color": "#f5f1e6"
+            }
+        ]
+    },
+    {
+        "featureType": "administrative",
+        "elementType": "geometry.stroke",
+        "stylers": [
+            {
+                "color": "#c9b2a6"
+            }
+        ]
+    },
+    {
+        "featureType": "administrative.land_parcel",
+        "stylers": [
+            {
+                "visibility": "off"
+            }
+        ]
+    },
+    {
+        "featureType": "administrative.land_parcel",
+        "elementType": "geometry.stroke",
+        "stylers": [
+            {
+                "color": "#dcd2be"
+            }
+        ]
+    },
+    {
+        "featureType": "administrative.land_parcel",
+        "elementType": "labels.text.fill",
+        "stylers": [
+            {
+                "color": "#ae9e90"
+            }
+        ]
+    },
+    {
+        "featureType": "administrative.neighborhood",
+        "stylers": [
+            {
+                "visibility": "off"
+            }
+        ]
+    },
+    {
+        "featureType": "landscape.natural",
+        "elementType": "geometry",
+        "stylers": [
+            {
+                "color": "#dfd2ae"
+            }
+        ]
+    },
+    {
+        "featureType": "poi",
+        "elementType": "geometry",
+        "stylers": [
+            {
+                "color": "#dfd2ae"
+            }
+        ]
+    },
+    {
+        "featureType": "poi",
+        "elementType": "labels.text",
+        "stylers": [
+            {
+                "visibility": "off"
+            }
+        ]
+    },
+    {
+        "featureType": "poi",
+        "elementType": "labels.text.fill",
+        "stylers": [
+            {
+                "color": "#93817c"
+            }
+        ]
+    },
+    {
+        "featureType": "poi.business",
+        "stylers": [
+            {
+                "visibility": "off"
+            }
+        ]
+    },
+    {
+        "featureType": "poi.park",
+        "elementType": "geometry.fill",
+        "stylers": [
+            {
+                "color": "#a5b076"
+            }
+        ]
+    },
+    {
+        "featureType": "poi.park",
+        "elementType": "labels.text.fill",
+        "stylers": [
+            {
+                "color": "#447530"
+            }
+        ]
+    },
+    {
+        "featureType": "road",
+        "elementType": "geometry",
+        "stylers": [
+            {
+                "color": "#f5f1e6"
+            }
+        ]
+    },
+    {
+        "featureType": "road",
+        "elementType": "labels",
+        "stylers": [
+            {
+                "visibility": "off"
+            }
+        ]
+    },
+    {
+        "featureType": "road",
+        "elementType": "labels.icon",
+        "stylers": [
+            {
+                "visibility": "off"
+            }
+        ]
+    },
+    {
+        "featureType": "road.arterial",
+        "elementType": "geometry",
+        "stylers": [
+            {
+                "color": "#fdfcf8"
+            }
+        ]
+    },
+    {
+        "featureType": "road.highway",
+        "elementType": "geometry",
+        "stylers": [
+            {
+                "color": "#f8c967"
+            }
+        ]
+    },
+    {
+        "featureType": "road.highway",
+        "elementType": "geometry.stroke",
+        "stylers": [
+            {
+                "color": "#e9bc62"
+            }
+        ]
+    },
+    {
+        "featureType": "road.highway.controlled_access",
+        "elementType": "geometry",
+        "stylers": [
+            {
+                "color": "#e98d58"
+            }
+        ]
+    },
+    {
+        "featureType": "road.highway.controlled_access",
+        "elementType": "geometry.stroke",
+        "stylers": [
+            {
+                "color": "#db8555"
+            }
+        ]
+    },
+    {
+        "featureType": "road.local",
+        "elementType": "labels.text.fill",
+        "stylers": [
+            {
+                "color": "#806b63"
+            }
+        ]
+    },
+    {
+        "featureType": "transit",
+        "stylers": [
+            {
+                "visibility": "off"
+            }
+        ]
+    },
+    {
+        "featureType": "transit.line",
+        "elementType": "geometry",
+        "stylers": [
+            {
+                "color": "#dfd2ae"
+            }
+        ]
+    },
+    {
+        "featureType": "transit.line",
+        "elementType": "labels.text.fill",
+        "stylers": [
+            {
+                "color": "#8f7d77"
+            }
+        ]
+    },
+    {
+        "featureType": "transit.line",
+        "elementType": "labels.text.stroke",
+        "stylers": [
+            {
+                "color": "#ebe3cd"
+            }
+        ]
+    },
+    {
+        "featureType": "transit.station",
+        "elementType": "geometry",
+        "stylers": [
+            {
+                "color": "#dfd2ae"
+            }
+        ]
+    },
+    {
+        "featureType": "water",
+        "elementType": "geometry.fill",
+        "stylers": [
+            {
+                "color": "#b9d3c2"
+            }
+        ]
+    },
+    {
+        "featureType": "water",
+        "elementType": "labels.text",
+        "stylers": [
+            {
+                "visibility": "off"
+            }
+        ]
+    },
+    {
+        "featureType": "water",
+        "elementType": "labels.text.fill",
+        "stylers": [
+            {
+                "color": "#92998d"
+            }
+        ]
+    }
+];

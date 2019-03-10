@@ -1,7 +1,8 @@
 import React from 'react';
-import {View, Text, StyleSheet} from 'react-native';
+import {View, Text, StyleSheet, Linking, TouchableOpacity} from 'react-native';
 import headerStyling from "../styles/ui/Header";
 import { Input, Button} from 'react-native-elements';
+import QRCodeScanner from 'react-native-qrcode-scanner'
 
 class ScannerScreen extends React.Component {
     static navigationOptions = ({ navigation }) => {
@@ -20,6 +21,12 @@ class ScannerScreen extends React.Component {
         }
     }
 
+    onSuccess(e) {
+        Linking
+            .openURL(e.data)
+            .catch(err => console.error('An error occurred', err));
+    }
+
 
 
     render() {
@@ -27,6 +34,20 @@ class ScannerScreen extends React.Component {
             <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
 
                 <Text style={styles.bookingsHeading}>QR Scanner</Text>
+
+                <QRCodeScanner
+                    onRead={this.onSuccess.bind(this)}
+                    topContent={
+                        <Text style={styles.centerText}>
+                            Go to <Text style={styles.textBold}>wikipedia.org/wiki/QR_code</Text> on your computer and scan the QR code.
+                        </Text>
+                    }
+                    bottomContent={
+                        <TouchableOpacity style={styles.buttonTouchable}>
+                            <Text style={styles.buttonText}>OK. Got it!</Text>
+                        </TouchableOpacity>
+                    }
+                />
 
             </View>
         );

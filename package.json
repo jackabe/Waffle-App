@@ -7,12 +7,14 @@
     "test": "jest",
     "build-ios": "react-native bundle --entry-file index.js --platform ios --dev false --bundle-output ios/main.jsbundle --assets-dest ios && react-native run-ios",
     "build-android": "react-native bundle --platform android --dev false --entry-file index.js --bundle-output android/app/src/main/assets/index.android.bundle --assets-dest android/app/src/main/res && react-native run-android",
-    "log-android": "react-native log-android"
+    "log-android": "react-native log-android",
+    "camera-setup": "npm install react-native-camera --save"
   },
   "dependencies": {
     "react": "16.6.3",
     "react-native": "0.58.4",
     "react-native-awesome-alerts": "^1.2.0",
+    "react-native-camera": "^1.13.1",
     "react-native-datepicker": "^1.7.2",
     "react-native-elements": "^1.0.0",
     "react-native-firebase": "^5.1.1",

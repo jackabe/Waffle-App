@@ -44,7 +44,11 @@ class SettingsScreen extends React.Component {
         });
     }
 
+    goToScanner(){
+        this.props.navigation.navigate("QRScanner", {
 
+        })
+    }
 
         render() {
             return (
@@ -80,6 +84,17 @@ class SettingsScreen extends React.Component {
 
                         onPress={() => {
                             this.changeUserPassword();
+                        }}
+                    />
+
+                    <Button
+                        title='Scan a code'
+                        style={styles.bookingButton}
+                        containerStyle={styles.bookingButtonContainer}
+                        buttonStyle={styles.bookingModalButton}
+
+                        onPress={() => {
+                            this.goToScanner();
                         }}
                     />
 

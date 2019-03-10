@@ -194,8 +194,6 @@ class OfferDetailsScreen extends React.Component {
 
     }
 
-
-
     render() {
         const {navigation} = this.props;
         const company = navigation.getParam('companyName');
@@ -203,15 +201,15 @@ class OfferDetailsScreen extends React.Component {
         const expiry = navigation.getParam('expiryDate');
         const logo = navigation.getParam('logo');
         return (
-            <View style = {this.getColour(company).container}>
-                <Image style={styles.imageLogo}
-                       source={{uri: logo}} />
+            <View style = {styles.container}>
+                {/*<Image style={styles.imageLogo}*/}
+                       {/*source={{uri: logo}} />*/}
 
 
                 <QRCode
                     value={'https://www.bbc.co.uk/'}
-                    size={200}
-                    bgColor='purple'
+                    size={250}
+                    bgColor='black'
                     fgColor='white'/>
 
                 <Button
@@ -248,7 +246,7 @@ const styles = StyleSheet.create({
         marginRight: 25
     },
     constHeadings: {
-        color: 'white',
+        color: 'tomato',
         fontSize: 24,
         padding: 20,
 
@@ -270,7 +268,13 @@ const styles = StyleSheet.create({
         width: '120%',
         backgroundColor: 'tomato',
         padding: 20,
-    }
+    },
+    container: {
+        width: '100%',
+        height: '100%',
+        alignItems: 'center',
+        textAlign: 'center',
+    },
 });
 
 export default OfferDetailsScreen;

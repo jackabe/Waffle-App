@@ -16,6 +16,16 @@ class BookingScreen extends React.Component {
         };
     };
 
+    /**
+     * When the App component mounts, we listen for any authentication
+     * state changes in Firebase.
+     * Once subscribed, the 'user' parameter will either be null
+     * (logged out) or an Object (logged in)
+     */
+    componentDidMount() {
+        // this.getLatestPrices()
+    }
+
     constructor(props) {
         super(props);
         this.state = {
@@ -31,6 +41,26 @@ class BookingScreen extends React.Component {
             childChecked: false
         };
     }
+
+    getLatestPrices = () => {
+        const { navigation } = this.props;
+        const parkingLotId = navigation.getParam('parkingLotId');
+        let formData = new FormData();
+        formData.append('id', parkingLotId);
+        fetch('http://192.168.0.36:8000/getCarParkById', {
+            method: 'post',
+            headers: {
+                'Content-Type': 'multipart/form-data',
+            },
+            body: formData
+        }).then(response => {
+            let data = JSON.parse(response['_bodyText']);
+            console.log(data)
+        }).catch(error => {
+            const { code, message } = error;
+            Alert.alert(message);
+        });
+    };
 
     child = () => {
         if (this.state.childChecked) {
@@ -411,7 +441,6 @@ const styles = StyleSheet.create({
     },
     checkText: {
         marginLeft: 30,
-        color: 'silver',
         width: 150
     },
     priceContainer: {

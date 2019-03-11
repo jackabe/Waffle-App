@@ -5,7 +5,6 @@ import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.util.Date;
 
-
 public class FirebaseService {
 
     private FirebaseFirestore mFirestore;

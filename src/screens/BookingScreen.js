@@ -7,6 +7,7 @@ import DatePicker from "react-native-datepicker";
 import Ionicons from "react-native-vector-icons/Entypo";
 import Service from "../utils/Service";
 import LotHandler from "../utils/LotHandler";
+import moment from "moment";
 
 class BookingScreen extends React.Component {
     static navigationOptions = ({ navigation }) => {
@@ -126,7 +127,6 @@ class BookingScreen extends React.Component {
             formData.append('child_required', childChecked);
             formData.append('disabled_required', disabledChecked);
 
-
             // POST request
             fetch('http://18.188.105.214/makeBooking', {
                 method: 'post',
@@ -148,10 +148,29 @@ class BookingScreen extends React.Component {
             return '£0.00'
         }
         else if (departureTime.length > 1 && departureDate.length > 1 && arrivalDate.length > 1 && arrivalTime.length > 1) {
-            let days = departureDate.toDateString() - arrivalDate.toDateString();
-            console.log(days);
-            let hours = departureTime - arrivalTime;
-            console.log(hours)
+            let departureDateFormatted = departureDate.split('-');
+            let departureTimeFormatted = new Date("01/01/2007 " + departureTime).getHours();
+            let arrivalDateFormatted = arrivalDate.split('-');
+            let arrivalTimeFormatted = new Date("01/01/2007 " + arrivalTime).getHours();
+            let dateDifference = departureDateFormatted[0] - arrivalDateFormatted[0];
+            let timeDifference = departureTimeFormatted - arrivalTimeFormatted;
+
+            let price = 0;
+            if (dateDifference === 0) {
+                if (timeDifference === 0) {
+                    price = prices['1'];
+                }
+                else {
+                    price = prices[timeDifference];
+                }
+            }
+            else {
+                price = prices['24']*dateDifference;
+            }
+            return '£ ' +price.toFixed(2);
+        }
+        else {
+            return '£0.00'
         }
     }
 

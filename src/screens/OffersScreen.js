@@ -1,5 +1,5 @@
 import React from 'react';
-import {View, Text, StyleSheet, ScrollView} from 'react-native';
+import {View, Text, StyleSheet, ScrollView, Alert} from 'react-native';
 import headerStyling from "../styles/ui/Header";
 import ProfileHeaderButton from "../components/ProfileHeaderButton";
 import firebase from "react-native-firebase";
@@ -76,7 +76,6 @@ class OffersScreen extends React.Component {
     getOffers(userId){
         let formData = new FormData();
         formData.append('user_id', userId);
-
         // GET request
         fetch('http://18.188.105.214/getOffers', {
             method: 'get',
@@ -112,6 +111,9 @@ class OffersScreen extends React.Component {
     }
 
     render() {
+
+        this.getOffers(this.state.userId);
+
         return (
             <View style={styles.content}>
                 {

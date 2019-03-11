@@ -26,7 +26,7 @@ class BookingScreen extends React.Component {
      */
     componentDidMount() {
         this.getLatestPrices();
-        this.pricesInterval = setInterval(() => this.getLatestPrices(), 30000)
+        this.pricesInterval = setInterval(() => this.getLatestPrices(), 50000)
     }
 
     componentWillUnmount() {
@@ -143,10 +143,7 @@ class BookingScreen extends React.Component {
 
     getPrice() {
         const {prices, departureDate, departureTime,  arrivalDate, arrivalTime} = this.state;
-        if (departureTime.length < 1 && departureDate.length < 1 && arrivalDate.length < 1 && arrivalTime.length < 1) {
-            return '£0.00'
-        }
-        else if (departureTime.length > 1 && departureDate.length > 1 && arrivalDate.length > 1 && arrivalTime.length > 1) {
+        if (departureTime.length > 1 && departureDate.length > 1 && arrivalDate.length > 1 && arrivalTime.length > 1) {
             let departureDateFormatted = departureDate.split('-');
             let departureTimeFormatted = new Date("01/01/2007 " + departureTime).getHours();
             let arrivalDateFormatted = arrivalDate.split('-');

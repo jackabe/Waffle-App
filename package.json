@@ -13,7 +13,6 @@
     "permission-setup": "react-native link react-native-permissions"
   },
   "dependencies": {
-    "moment": "^2.24.0",
     "react": "16.6.3",
     "react-native": "0.58.4",
     "react-native-awesome-alerts": "^1.2.0",

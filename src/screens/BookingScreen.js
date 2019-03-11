@@ -7,7 +7,6 @@ import DatePicker from "react-native-datepicker";
 import Ionicons from "react-native-vector-icons/Entypo";
 import Service from "../utils/Service";
 import LotHandler from "../utils/LotHandler";
-import moment from "moment";
 
 class BookingScreen extends React.Component {
     static navigationOptions = ({ navigation }) => {

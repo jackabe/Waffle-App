@@ -117,7 +117,6 @@ class AddressScreen extends React.Component {
         }).then(response => {
             let data = JSON.parse(response['_bodyInit'])['results'][0];
             if (data) {
-                console.log(data);
                 let address = data['formatted_address'];
                 let city = data['address_components'][2]['long_name'];
 
@@ -146,7 +145,7 @@ class AddressScreen extends React.Component {
 
                         let marker = {
                             details: details,
-                            price: prices['base_hour'].toFixed(2),
+                            price: prices['1'].toFixed(2),
                             spaces: spaces,
                             coords: {
                                 latitude: details.lat,

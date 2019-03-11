@@ -5,6 +5,8 @@ import {Input, Button, Divider, CheckBox} from "react-native-elements";
 import headerStyling from "../styles/ui/Header";
 import DatePicker from "react-native-datepicker";
 import Ionicons from "react-native-vector-icons/Entypo";
+import Service from "../utils/Service";
+import LotHandler from "../utils/LotHandler";
 
 class BookingScreen extends React.Component {
     static navigationOptions = ({ navigation }) => {
@@ -23,7 +25,12 @@ class BookingScreen extends React.Component {
      * (logged out) or an Object (logged in)
      */
     componentDidMount() {
-        // this.getLatestPrices()
+        this.getLatestPrices();
+        this.pricesInterval = setInterval(() => this.getLatestPrices(), 50000)
+    }
+
+    componentWillUnmount() {
+        clearInterval(this.pricesInterval);
     }
 
     constructor(props) {
@@ -38,28 +45,24 @@ class BookingScreen extends React.Component {
             arrivalDate: '',
             arrivalTime: '',
             disabledChecked: false,
-            childChecked: false
+            childChecked: false,
+            prices: {}
         };
     }
 
-    getLatestPrices = () => {
+    getLatestPrices() {
         const { navigation } = this.props;
         const parkingLotId = navigation.getParam('parkingLotId');
-        let formData = new FormData();
-        formData.append('id', parkingLotId);
-        fetch('http://192.168.0.36:8000/getCarParkById', {
-            method: 'post',
-            headers: {
-                'Content-Type': 'multipart/form-data',
-            },
-            body: formData
-        }).then(response => {
-            let data = JSON.parse(response['_bodyText']);
-            console.log(data)
-        }).catch(error => {
-            const { code, message } = error;
-            Alert.alert(message);
-        });
+        Service.getLatestPrices(parkingLotId)
+            .then(response => {
+                let prices = LotHandler.getLotPrices(response);
+                this.setState({
+                    prices: prices
+                });
+            }).catch(error => {
+                console.log(error.message);
+                Alert.alert(error.message);
+            })
     };
 
     child = () => {
@@ -123,7 +126,6 @@ class BookingScreen extends React.Component {
             formData.append('child_required', childChecked);
             formData.append('disabled_required', disabledChecked);
 
-
             // POST request
             fetch('http://18.188.105.214/makeBooking', {
                 method: 'post',
@@ -136,6 +138,35 @@ class BookingScreen extends React.Component {
             }).catch(error => {
                 const { code, message } = error;
             })
+        }
+    }
+
+    getPrice() {
+        const {prices, departureDate, departureTime,  arrivalDate, arrivalTime} = this.state;
+        if (departureTime.length > 1 && departureDate.length > 1 && arrivalDate.length > 1 && arrivalTime.length > 1) {
+            let departureDateFormatted = departureDate.split('-');
+            let departureTimeFormatted = new Date("01/01/2007 " + departureTime).getHours();
+            let arrivalDateFormatted = arrivalDate.split('-');
+            let arrivalTimeFormatted = new Date("01/01/2007 " + arrivalTime).getHours();
+            let dateDifference = departureDateFormatted[0] - arrivalDateFormatted[0];
+            let timeDifference = departureTimeFormatted - arrivalTimeFormatted;
+
+            let price = 0;
+            if (dateDifference === 0) {
+                if (timeDifference === 0) {
+                    price = prices['1'];
+                }
+                else {
+                    price = prices[timeDifference];
+                }
+            }
+            else {
+                price = prices['24']*dateDifference;
+            }
+            return '£ ' +price.toFixed(2);
+        }
+        else {
+            return '£0.00'
         }
     }
 
@@ -324,7 +355,7 @@ class BookingScreen extends React.Component {
 
                 <View style={styles.priceContainer}>
                     <Text style={styles.priceLabel}>Price:</Text>
-                    <Text style={styles.price}>£12.34</Text>
+                    <Text style={styles.price}>{this.getPrice()}</Text>
                 </View>
 
                 <Button

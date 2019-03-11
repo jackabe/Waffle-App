@@ -441,7 +441,6 @@ const styles = StyleSheet.create({
     },
     checkText: {
         marginLeft: 30,
-        color: 'silver',
         width: 150
     },
     priceContainer: {

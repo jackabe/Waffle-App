@@ -129,7 +129,7 @@ class AddressScreen extends React.Component {
                 formData.append('longitude', position.coords.longitude);
 
                 // Post to flask and get parking lot response
-                fetch('http://192.168.0.36:8000/getCarParks', {
+                fetch('http://18.188.105.214/getCarParks', {
                     method: 'post',
                     headers: {
                         'Content-Type': 'multipart/form-data',
@@ -161,6 +161,17 @@ class AddressScreen extends React.Component {
                             this.setState({markers : markers});
                             this.setState({loading : false});
                         }
+                    }
+                    if (markers.length === 0) {
+                        this.setState({loading : false});
+                        Alert.alert(
+                            'No Parking Lots',
+                            'Sorry, but we currently do not support this area! Check our website to see when we are coming to you!',
+                            [
+                                {text: 'OK', onPress: () => console.log('OK Pressed')},
+                            ],
+                            {cancelable: false},
+                        );
                     }
                 }).catch(error => {
                     const { code, message } = error;
@@ -217,7 +228,7 @@ class AddressScreen extends React.Component {
                     this.setState({loading : true});
 
                     // Post to flask and get parking lot response
-                    fetch('http://192.168.0.36:8000/getCarParks', {
+                    fetch('http://18.188.105.214/getCarParks', {
                         method: 'post',
                         headers: {
                             'Content-Type': 'multipart/form-data',
@@ -249,6 +260,17 @@ class AddressScreen extends React.Component {
                                 this.setState({markers : markers});
                                 this.setState({loading : false});
                             }
+                        }
+                        if (markers.length === 0) {
+                            this.setState({loading : false});
+                            Alert.alert(
+                                'No Parking Lots',
+                                'Sorry, but we currently do not support this area! Check our website to see when we are coming to you!',
+                                [
+                                    {text: 'OK', onPress: () => console.log('OK Pressed')},
+                                ],
+                                {cancelable: false},
+                            );
                         }
                     }).catch(error => {
                         const { code, message } = error;
@@ -297,6 +319,7 @@ class AddressScreen extends React.Component {
                         customMapStyle={mapStyle}>
                         {this.state.markers.map(marker => (
                             <Marker
+                                key={marker.details.lot_id}
                                 coordinate={marker.coords}>
                                 <Callout onPress={() => {
                                     this.goToBookingScreen(marker.details.name, marker.details.lot_id)

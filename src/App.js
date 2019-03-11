@@ -14,6 +14,7 @@ import ConfirmationScreen from "./screens/ConfirmationScreen";
 import OffersScreen from "./screens/OffersScreen";
 import SettingsScreen from "./screens/SettingsScreen";
 import LoginScreen from "./screens/LoginScreen";
+import ScannerScreen from "./screens/QRScannerScreen";
 
 const strings = Tools.getStrings();
 
@@ -48,6 +49,7 @@ const AppStack = createBottomTabNavigator(
                 GetSpace: BookingScreen,
                 Confirm: ConfirmationScreen,
                 Settings: SettingsScreen,
+                QRScanner: ScannerScreen
             },
             tabBarScreenOptions("Booking")
         ),

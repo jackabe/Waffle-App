@@ -517,7 +517,7 @@ const mapStyle = [
         "featureType": "administrative.land_parcel",
         "stylers": [
             {
-                "visibility": "off"
+                "visibility": "on"
             }
         ]
     },
@@ -543,7 +543,7 @@ const mapStyle = [
         "featureType": "administrative.neighborhood",
         "stylers": [
             {
-                "visibility": "off"
+                "visibility": "on"
             }
         ]
     },
@@ -570,7 +570,7 @@ const mapStyle = [
         "elementType": "labels.text",
         "stylers": [
             {
-                "visibility": "off"
+                "visibility": "on"
             }
         ]
     },
@@ -587,7 +587,7 @@ const mapStyle = [
         "featureType": "poi.business",
         "stylers": [
             {
-                "visibility": "off"
+                "visibility": "on"
             }
         ]
     },
@@ -623,7 +623,7 @@ const mapStyle = [
         "elementType": "labels",
         "stylers": [
             {
-                "visibility": "off"
+                "visibility": "on"
             }
         ]
     },
@@ -632,7 +632,7 @@ const mapStyle = [
         "elementType": "labels.icon",
         "stylers": [
             {
-                "visibility": "off"
+                "visibility": "on"
             }
         ]
     },
@@ -694,7 +694,7 @@ const mapStyle = [
         "featureType": "transit",
         "stylers": [
             {
-                "visibility": "off"
+                "visibility": "on"
             }
         ]
     },
@@ -748,7 +748,7 @@ const mapStyle = [
         "elementType": "labels.text",
         "stylers": [
             {
-                "visibility": "off"
+                "visibility": "on"
             }
         ]
     },

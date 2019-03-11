@@ -86,7 +86,7 @@ class AddressScreen extends React.Component {
         });
         this.requestLocationPermission().then(granted => {
             if (granted === PermissionsAndroid.RESULTS.GRANTED) {
-                LocationModule.startScanning();
+                // LocationModule.startScanning();
                 this.findLocation();
             }
             else {

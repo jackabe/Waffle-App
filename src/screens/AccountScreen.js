@@ -54,8 +54,6 @@ class AccountScreen extends React.Component {
                 });
             }
         });
-
-
     }
 
     getBookings(userId){

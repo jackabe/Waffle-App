@@ -15,6 +15,8 @@ import OffersScreen from "./screens/OffersScreen";
 import SettingsScreen from "./screens/SettingsScreen";
 import LoginScreen from "./screens/LoginScreen";
 import ScannerScreen from "./screens/QRScannerScreen";
+import OfferDetailsScreen from "./screens/OfferDetailsScreen";
+
 
 const strings = Tools.getStrings();
 
@@ -56,6 +58,7 @@ const AppStack = createBottomTabNavigator(
         Offers: createStackNavigator(
             {
                 Offers: OffersScreen,
+                OfferDetails: OfferDetailsScreen,
                 // Account: AccountScreen
             },
             tabBarScreenOptions("Offers")

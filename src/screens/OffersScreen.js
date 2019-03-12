@@ -1,5 +1,5 @@
 import React from 'react';
-import {View, Text, StyleSheet} from 'react-native';
+import {View, Text, StyleSheet, ScrollView, Alert} from 'react-native';
 import headerStyling from "../styles/ui/Header";
 import ProfileHeaderButton from "../components/ProfileHeaderButton";
 import firebase from "react-native-firebase";
@@ -20,24 +20,30 @@ class OffersScreen extends React.Component {
         super(props);
         this.state = {
             userId:null,
-            offerId:null,
             offerList: [
                 {
                     company:'McDonalds',
                     offer:'Free Cheeseburger',
-                    expiry:'15 March 2019'
+                    expiry:'15 March 2019',
+                    logo: 'https://pbs.twimg.com/profile_images/754316880010108929/ICET1La3_400x400.jpg',
+                    offerId: 'wqdqhdwqdqvdqjvdgjqw1'
                 },
 
                 {
                     company:'Subway',
                     offer:'Free Drink',
-                    expiry:'15 April 2019'
+                    expiry:'15 April 2019',
+                    logo: 'http://ems-media-prod.s3.amazonaws.com/styles/clio_aotw_ems_image_details_retina/s3/entry_attachments/image/44/1103/26170/44588/BUeW-_VWEzFwNhLYgiqxtk20YNn1f-Trg8KJ1cJUsos.jpg',
+                    offerId: 'wqdqhdwqdqvdqjvdgjqw2'
                 },
 
                 {
                     company:'Burger King',
                     offer:'Free Side',
-                    expiry:'28 March 2019'
+                    expiry:'28 March 2019',
+                    logo: 'https://wl3-cdn.landsec.com/sites/default/files/images/shops/logos/burger-king_0.png',
+                    offerId: 'wqdqhdwqdqvdqjvdgjqw3'
+
                 },
             ]
 
@@ -54,6 +60,95 @@ class OffersScreen extends React.Component {
         });
     }
 
+
+    goToOfferDetailsScreen(company, offer, expiry, logo, offerId){
+        this.props.navigation.navigate("OfferDetails", {
+            userId: this.state.userId,
+            companyName: company,
+            offerName: offer,
+            expiryDate: expiry,
+            logo: logo,
+            offerId: offerId
+        })
+    }
+
+
+    getOffers(userId){
+        let formData = new FormData();
+        formData.append('user_id', userId);
+        // GET request
+        fetch('http://18.188.105.214/getOffers', {
+            method: 'get',
+            headers: {
+                'Content-Type': 'multipart/form-data',
+            },
+            body: formData
+        }).then(response => {
+            console.log(response);
+            let offersList = [];
+            let data = JSON.parse(response['_bodyText']);
+            let i = 0;
+            // Get each booking and form JSON
+            for (i; i < data.length; i++) {
+                let offer = {
+                    logo: data[i]['logo'],
+                    company: data[i]['store'],
+                    offer: data[i]['offer'],
+                    expiry: data[i]['expiry_date'],
+                    offerId: data[i]['offer_id'],
+                };
+                offersList.push(offer); // Add to list
+
+                // As not async, check all done before updating state
+                if (i === data.length-1) {
+                    this.setState({offerList : offersList});
+                }
+            }
+
+        }).catch(error => {
+            const { code, message } = error;
+        })
+    }
+
+    render() {
+
+        this.getOffers(this.state.userId);
+
+        return (
+            <View style={styles.content}>
+                {
+                    this.state.offerList.map((l, i) => (
+                        <ListItem
+                            containerStyle={this.getColour(l.company).listContainer}
+                            contentContainerStyle={this.getColour(l.company).listContentContainer}
+                            titleStyle={this.getColour(l.company).carParkTitle}
+                            subtitleStyle={this.getColour(l.company).subtitleStyle}
+                            leftAvatar={{ source: { uri: l.logo } }}
+                            key={i}
+                            onPress={() => {
+                                this.goToOfferDetailsScreen(l.company, l.offer, l.expiry, l.logo, l.offerId)
+                            }}
+                            title={l.company}
+                            subtitle={
+                                <View style={this.getColour(l.company).subtitleView}>
+                                    {l.favourite ?
+                                        <Icon
+                                            style={styles.icon}
+                                            name="star"
+                                            size={25}
+                                            color="white"
+                                        /> : null }
+                                    <Text style={this.getColour(l.company).available}>{'Offer: ' + l.offer }</Text>
+                                    <Text style={this.getColour(l.company).price}>{'This offer will expire on: ' + l.expiry}</Text>
+                                </View>
+                            }
+                            // leftAvatar={{ source: require('../images/avatar1.jpg') }}
+                        />
+                    ))
+                }
+            </View>
+        );
+    }
 
     getColour(company){
         const s_styles = StyleSheet.create({
@@ -88,7 +183,7 @@ class OffersScreen extends React.Component {
                 paddingBottom: 35
             },
         });
-        const m_styles = StyleSheet.create({
+        const b_styles = StyleSheet.create({
             available: {
                 paddingTop: 10,
                 fontWeight: 'bold',
@@ -120,7 +215,7 @@ class OffersScreen extends React.Component {
                 paddingBottom: 35
             },
         });
-        const b_styles = StyleSheet.create({
+        const m_styles = StyleSheet.create({
             available: {
                 paddingTop: 10,
                 fontWeight: 'bold',
@@ -164,44 +259,6 @@ class OffersScreen extends React.Component {
         } catch (e) {
             return "Company Doesn\'t Exist"
         }
-    }
-
-    render() {
-        return (
-            <View style={styles.content}>
-                {
-                    this.state.offerList.map((l, i) => (
-                        <ListItem
-                            containerStyle={this.getColour(l.company).listContainer}
-                            contentContainerStyle={this.getColour(l.company).listContentContainer}
-                            titleStyle={this.getColour(l.company).carParkTitle}
-                            subtitleStyle={this.getColour(l.company).subtitleStyle}
-                            key={i}
-
-                            //on press commented out until offers are created dynamically
-                            // onPress={() => {
-                            //     do this on press
-                            // }}
-                            title={l.company}
-                            subtitle={
-                                <View style={this.getColour(l.company).subtitleView}>
-                                    {l.favourite ?
-                                        <Icon
-                                            style={styles.icon}
-                                            name="star"
-                                            size={25}
-                                            color="white"
-                                        /> : null }
-                                    <Text style={this.getColour(l.company).available}>{'Offer: ' + l.offer }</Text>
-                                    <Text style={this.getColour(l.company).price}>{'This offer will expire on: ' + l.expiry}</Text>
-                                </View>
-                            }
-                            // leftAvatar={{ source: require('../images/avatar1.jpg') }}
-                        />
-                    ))
-                }
-            </View>
-        );
     }
 }
 

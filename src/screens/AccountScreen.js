@@ -60,9 +60,9 @@ class AccountScreen extends React.Component {
         let formData = new FormData();
         formData.append('user_id', userId);
 
-        // POST request
+        // GET request
         fetch('http://18.188.105.214/getBookings', {
-            method: 'post',
+            method: 'get',
             headers: {
                 'Content-Type': 'multipart/form-data',
             },

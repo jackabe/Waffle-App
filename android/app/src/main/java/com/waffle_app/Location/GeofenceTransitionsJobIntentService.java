@@ -95,7 +95,7 @@ public class GeofenceTransitionsJobIntentService extends JobIntentService {
         //FirebaseUser currentUser = mAuth.getCurrentUser();
         //FirebaseService firebaseService = new FirebaseService();
 
-        firebaseService.addCollection(1, geofenceName, latitude, longitude, accuracy, Long.toString(time));
+        //firebaseService.addCollection(1, geofenceName, latitude, longitude, accuracy, Long.toString(time));
     }
 
     /**

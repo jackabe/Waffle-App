@@ -244,7 +244,7 @@ class AddressScreen extends React.Component {
 
                             let marker = {
                                 details: details,
-                                price: prices['base_hour'].toFixed(2),
+                                price: prices[1].toFixed(2),
                                 spaces: spaces,
                                 coords: {
                                     latitude: details.lat,

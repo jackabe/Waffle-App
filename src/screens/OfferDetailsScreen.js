@@ -1,5 +1,5 @@
 import React from 'react';
-import {View, Text, StyleSheet, Image, Alert} from 'react-native';
+import {View, Text, StyleSheet, Image, Alert, ImageBackground} from 'react-native';
 import headerStyling from "../styles/ui/Header";
 import firebase from "react-native-firebase";
 import QRCode from 'react-native-qrcode';
@@ -19,7 +19,7 @@ class OfferDetailsScreen extends React.Component {
     constructor(props){
         super(props);
         this.state = {
-
+            showCode: false,
         }
     }
 
@@ -35,7 +35,25 @@ class OfferDetailsScreen extends React.Component {
     //     });
     // }
 
-    //
+    getQR(){
+        const visibleQR = this.state.showCode;
+        const visibleStyle= StyleSheet.create({
+            width: '250px',
+            height:'250px'
+        });
+        const invisibleStyle= StyleSheet.create({
+            display: 'none'
+        });
+
+        if(visibleQR == true){
+            return invisibleStyle
+        }else {
+            return visibleStyle
+        }
+
+    }
+
+
     getColour(company){
         const s_styles = StyleSheet.create({
             container: {
@@ -188,6 +206,7 @@ class OfferDetailsScreen extends React.Component {
 
         }).then(response => {
             Alert.alert('Offer Redeemed')
+            this.setState({showCode: true})
         }).catch(error => {
             const {code, message} = error;
         })
@@ -200,17 +219,35 @@ class OfferDetailsScreen extends React.Component {
         const offer = navigation.getParam('offerName');
         const expiry = navigation.getParam('expiryDate');
         const logo = navigation.getParam('logo');
+
+
+        const isVoucherRedeemed = this.state.showCode;
+        let code;
+
+        if (!isVoucherRedeemed) {
+            code = <Image style={{width: 250, height: 250}} source={{uri: 'https://facebook.github.io/react-native/docs/assets/favicon.png'}}/>;
+        } else {
+            code = <QRCode value={'https://www.bbc.co.uk/'} size={250} bgColor='black' fgColor='white'/>;
+
+        }
+
         return (
             <View style = {styles.container}>
-                {/*<Image style={styles.imageLogo}*/}
-                       {/*source={{uri: logo}} />*/}
+                <View style={styles.qrContainer}>
+                    {code}
+                </View>
 
-
-                <QRCode
-                    value={'https://www.bbc.co.uk/'}
-                    size={250}
-                    bgColor='black'
-                    fgColor='white'/>
+                <View style={styles.offerDetails}>
+                    <Text style={styles.constHeadings}>
+                        {company}
+                    </Text>
+                    <Text style={styles.constHeadings}>
+                        {'Offer: ' + offer}
+                    </Text>
+                    <Text style={styles.constHeadings}>
+                        {'Expires: ' + expiry}
+                    </Text>
+                </View>
 
                 <Button
                     style={styles.bookingButton}
@@ -222,13 +259,6 @@ class OfferDetailsScreen extends React.Component {
                         this.redeemOffer();
                     }}
                 />
-
-                <Text style={styles.constHeadings}>
-                    {'Offer: ' + offer}
-                </Text>
-                <Text style={styles.constHeadings}>
-                    {'Expires: ' + expiry}
-                </Text>
             </View>
         );
     }
@@ -247,14 +277,14 @@ const styles = StyleSheet.create({
     },
     constHeadings: {
         color: 'tomato',
-        fontSize: 24,
-        padding: 20,
+        fontSize: 20,
+        padding: 12,
 
     },
     imageLogo:{
         // padding:'20px',
-        width: '100%',
-        height:'45%'
+        width: 250,
+        height:250
     },
     bookingButton : {
         padding: 10,
@@ -275,6 +305,23 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         textAlign: 'center',
     },
+    qrContainer: {
+        justifyContent: 'center',
+        alignItems: 'center',
+    },
+    offerDetails: {
+        position: 'absolute',
+        bottom: 30,
+        alignItems: 'center',
+        textAlign: 'center',
+    },
+    cover: {
+        zIndex: 0,
+        width: 250,
+        height: 250,
+        backgroundColor: '#000000',
+        opacity: .40
+    }
 });
 
 export default OfferDetailsScreen;

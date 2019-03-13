@@ -209,6 +209,7 @@ class OfferDetailsScreen extends React.Component {
             this.setState({showCode: true})
         }).catch(error => {
             const {code, message} = error;
+            Alert.alert('Offer Not Redeemed')
         })
 
     }
@@ -225,7 +226,8 @@ class OfferDetailsScreen extends React.Component {
         let code;
 
         if (!isVoucherRedeemed) {
-            code = <Image style={{width: 250, height: 250}} source={{uri: 'https://facebook.github.io/react-native/docs/assets/favicon.png'}}/>;
+            // This is an image to a greyed out QR code
+            code = <Image style={{width: 250, height: 250}} source={{uri: 'http://1.bp.blogspot.com/-0qeFglJKO38/UBt-0F5POKI/AAAAAAAAALA/4QT5V8J8wLs/s290/qrcode_grey_hotel_en_gris.png'}}/>;
         } else {
             code = <QRCode value={'https://www.bbc.co.uk/'} size={250} bgColor='black' fgColor='white'/>;
 

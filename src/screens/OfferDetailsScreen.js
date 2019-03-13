@@ -192,9 +192,13 @@ class OfferDetailsScreen extends React.Component {
         const offerId = navigation.getParam('offerId');
         const userId = navigation.getParam('userId')
 
+        var date = new Date()
+        var today = date.getDate();
+
         let formData = new FormData();
         formData.append('offer_id', offerId);
         formData.append('user_id', userId);
+        formData.append('redeem_date', today);
 
         fetch('http://18.188.105.214/redeemOffer', {
             method: 'post',
@@ -314,7 +318,7 @@ const styles = StyleSheet.create({
     },
     offerDetails: {
         position: 'absolute',
-        bottom: 30,
+        bottom: 40,
         alignItems: 'center',
         textAlign: 'center',
     },

@@ -257,6 +257,7 @@ class OfferDetailsScreen extends React.Component {
                     buttonStyle={styles.bookingModalButton}
                     icon={<Ionicons name='md-checkmark' size={25} color={'white'} style={styles.icon}/>}
                     title='Redeem'
+                    disabled={this.state.showCode}
                     onPress={() => {
                         this.redeemOffer();
                     }}

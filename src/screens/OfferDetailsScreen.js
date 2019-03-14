@@ -20,6 +20,8 @@ class OfferDetailsScreen extends React.Component {
         super(props);
         this.state = {
             showCode: false,
+            showButton: true,
+
         }
     }
 
@@ -32,13 +34,6 @@ class OfferDetailsScreen extends React.Component {
             //     })
             // }
         });
-        // If there is a redemption date (i.e the qr code has been redeemed) then show the code.
-        const redemptionDate = navigation.getParam('redemptionDate');
-        if (redemptionDate != ""){
-            this.setState({
-                showCode: true
-            })
-        }
     }
 
     getQR(){
@@ -57,140 +52,6 @@ class OfferDetailsScreen extends React.Component {
             return visibleStyle
         }
 
-    }
-
-
-    getColour(company){
-        const s_styles = StyleSheet.create({
-            container: {
-                width: '100%',
-                height: '100%',
-                alignItems: 'center',
-                textAlign: 'center',
-                backgroundColor: '#009743',
-            },
-
-            available: {
-                paddingTop: 10,
-                fontWeight: 'bold',
-                color: 'white'
-            },
-            price: {
-                paddingTop: 10,
-                fontWeight: 'bold',
-                color: 'white'
-            },
-            carParkTitle: {
-                fontWeight: 'bold',
-                color: 'white',
-                fontSize: 15
-            },
-            subtitleStyle: {
-                color: 'white',
-            },
-            subtitleView: {
-                color: 'white',
-                backgroundColor: '#009743'
-            },
-            listContainer: {
-                width: '100%',
-            },
-            listContentContainer: {
-                backgroundColor: '#009743',
-                padding: 20,
-                paddingBottom: 35
-            },
-        });
-        const b_styles = StyleSheet.create({
-            available: {
-                paddingTop: 10,
-                fontWeight: 'bold',
-                color: 'white'
-            },
-            container: {
-                width: '100%',
-                height: '100%',
-                alignItems: 'center',
-                textAlign: 'center',
-                backgroundColor: '#ffc300',
-            },
-            price: {
-                paddingTop: 10,
-                fontWeight: 'bold',
-                color: 'white'
-            },
-            carParkTitle: {
-                fontWeight: 'bold',
-                color: 'white',
-                fontSize: 15
-            },
-            subtitleStyle: {
-                color: 'white',
-            },
-            subtitleView: {
-                color: 'white',
-                backgroundColor: '#ffc300'
-            },
-            listContainer: {
-                width: '100%',
-            },
-            listContentContainer: {
-                backgroundColor: '#ffc300',
-                padding: 20,
-                paddingBottom: 35
-            },
-        });
-        const m_styles = StyleSheet.create({
-            available: {
-                paddingTop: 10,
-                fontWeight: 'bold',
-                color: 'white'
-            },
-            container: {
-                width: '100%',
-                height: '100%',
-                alignItems: 'center',
-                textAlign: 'center',
-                backgroundColor: '#dd1021',
-            },
-            price: {
-                paddingTop: 10,
-                fontWeight: 'bold',
-                color: 'white'
-            },
-            carParkTitle: {
-                fontWeight: 'bold',
-                color: 'white',
-                fontSize: 15
-            },
-            subtitleStyle: {
-                color: 'white',
-            },
-            subtitleView: {
-                color: 'white',
-                backgroundColor: '#dd1021'
-            },
-            listContainer: {
-                width: '100%',
-            },
-            listContentContainer: {
-                backgroundColor: '#dd1021',
-                padding: 20,
-                paddingBottom: 35
-            },
-        });
-
-        var colours = {
-            'McDonalds': m_styles,
-            'Subway': s_styles,
-            'Burger King': b_styles
-        };
-
-        try {
-            return colours[company]
-        } catch (e) {
-            return "Company Doesn\'t Exist"
-        }
     }
 
     redeemOffer() {
@@ -213,13 +74,12 @@ class OfferDetailsScreen extends React.Component {
             },
             body: formData
 
-
         }).then(response => {
             Alert.alert('Offer Redeemed')
             this.setState({showCode: true})
         }).catch(error => {
             const {code, message} = error;
-            Alert.alert('Offer Not Redeemed')
+            Alert.alert('An error occurred or has been redeemed before ')
         })
 
     }
@@ -232,10 +92,15 @@ class OfferDetailsScreen extends React.Component {
         const logo = navigation.getParam('logo');
 
 
+        const redemptionDate = navigation.getParam('redemptionDate');
         const isVoucherRedeemed = this.state.showCode;
         let code;
 
-        if (!isVoucherRedeemed) {
+
+        if (redemptionDate != ""){
+            code = <QRCode value={'https://www.bbc.co.uk/'} size={250} bgColor='black' fgColor='white'/>;
+
+        }else if (!isVoucherRedeemed) {
             // This is an image to a greyed out QR code
             code = <Image style={{width: 250, height: 250}} source={{uri: 'http://1.bp.blogspot.com/-0qeFglJKO38/UBt-0F5POKI/AAAAAAAAALA/4QT5V8J8wLs/s290/qrcode_grey_hotel_en_gris.png'}}/>;
         } else {
@@ -249,7 +114,7 @@ class OfferDetailsScreen extends React.Component {
                     {code}
                 </View>
 
-                <View style={styles.offerDetails}>
+                <View>
                     <Text style={styles.constHeadings}>
                         {company}
                     </Text>
@@ -259,20 +124,18 @@ class OfferDetailsScreen extends React.Component {
                     <Text style={styles.constHeadings}>
                         {'Expires: ' + expiry}
                     </Text>
-
+                    <Button
+                        style={styles.bookingButton}
+                        containerStyle={styles.bookingButtonContainer}
+                        buttonStyle={styles.bookingModalButton}
+                        icon={<Ionicons name='md-checkmark' size={25} color={'white'} style={styles.icon}/>}
+                        title='Redeem'
+                        onPress={() => {
+                            this.redeemOffer();
+                        }}
+                    />
                 </View>
 
-                <Button
-                    style={styles.bookingButton}
-                    containerStyle={styles.bookingButtonContainer}
-                    buttonStyle={styles.bookingModalButton}
-                    icon={<Ionicons name='md-checkmark' size={25} color={'white'} style={styles.icon}/>}
-                    title='Redeem'
-                    disabled={this.state.showCode}
-                    onPress={() => {
-                        this.redeemOffer();
-                    }}
-                />
             </View>
         );
     }
@@ -305,7 +168,7 @@ const styles = StyleSheet.create({
     },
     bookingButtonContainer : {
         position: 'absolute',
-        bottom: 10,
+        bottom: 1,
         alignItems: 'center',
     },
     bookingModalButton : {
@@ -323,19 +186,7 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
         alignItems: 'center',
     },
-    offerDetails: {
-        position: 'absolute',
-        bottom: 40,
-        alignItems: 'center',
-        textAlign: 'center',
-    },
-    cover: {
-        zIndex: 0,
-        width: 250,
-        height: 250,
-        backgroundColor: '#000000',
-        opacity: .40
-    }
+
 });
 
 export default OfferDetailsScreen;

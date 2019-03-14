@@ -24,16 +24,22 @@ class OfferDetailsScreen extends React.Component {
     }
 
 
-    // componentDidMount() {
-    //     this.authSubscription = firebase.auth().onAuthStateChanged((user) => {
-    //         // if (user) {
-    //         //     this.setState({
-    //         //         userId: user.uid
-    //         //     })
-    //         // }
-    //
-    //     });
-    // }
+    componentDidMount() {
+        this.authSubscription = firebase.auth().onAuthStateChanged((user) => {
+            // if (user) {
+            //     this.setState({
+            //         userId: user.uid
+            //     })
+            // }
+        });
+        // If there is a redemption date (i.e the qr code has been redeemed) then show the code.
+        const redemptionDate = navigation.getParam('redemptionDate');
+        if (redemptionDate != ""){
+            this.setState({
+                showCode: true
+            })
+        }
+    }
 
     getQR(){
         const visibleQR = this.state.showCode;
@@ -253,6 +259,7 @@ class OfferDetailsScreen extends React.Component {
                     <Text style={styles.constHeadings}>
                         {'Expires: ' + expiry}
                     </Text>
+
                 </View>
 
                 <Button

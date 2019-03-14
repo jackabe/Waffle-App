@@ -114,7 +114,7 @@ class OfferDetailsScreen extends React.Component {
                     {code}
                 </View>
 
-                <View>
+                <View styles={styles.detailsContainer}>
                     <Text style={styles.constHeadings}>
                         {company}
                     </Text>
@@ -168,7 +168,7 @@ const styles = StyleSheet.create({
     },
     bookingButtonContainer : {
         position: 'absolute',
-        bottom: 1,
+        bottom: 10,
         alignItems: 'center',
     },
     bookingModalButton : {
@@ -186,6 +186,16 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
         alignItems: 'center',
     },
+    offerDetails: {
+        justifyContent: 'center',
+        alignItems: 'center',
+    },
+    detailsContainer:{
+        padding: 10,
+        alignItems: 'center',
+        textAlign: 'center',
+        justifyContent: 'center'
+    }
 
 });
 

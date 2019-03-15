@@ -54,6 +54,35 @@ class OfferDetailsScreen extends React.Component {
 
     }
 
+    returnVoucher(){
+
+        const {navigation} = this.props;
+        const offerId = navigation.getParam('offerId');
+        const userId = navigation.getParam('userId')
+
+
+        let formData = new FormData();
+        formData.append('offer_id', offerId);
+        formData.append('user_id', userId);
+        formData.append('redeem_date', today);
+
+        fetch('http://18.188.105.214/validateVoucher', {
+            method: 'post',
+            headers: {
+                'Content-Type': 'multipart/form-data',
+            },
+            body: formData
+            // Return either the Success/ Failed link based off the number of scans on the code
+        }).then(response => {
+            let data = JSON.parse(response['_bodyText']);
+            
+            // If there is an error, log it
+        }).catch(error => {
+            const { code, message } = error;
+    })
+    }
+
+
     redeemOffer() {
         const {navigation} = this.props;
         const offerId = navigation.getParam('offerId');

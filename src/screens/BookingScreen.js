@@ -103,7 +103,7 @@ class BookingScreen extends React.Component {
     };
 
     makeBooking() {
-        if (this.state.regNumber.length !== 7) {
+        if (this.state.regNumber.trim().length !== 7) {
             Alert.alert("Registration Number must be 7 characters");
         }
         else {
@@ -135,7 +135,6 @@ class BookingScreen extends React.Component {
                 },
                 body: formData
             }).then(response => {
-                Alert.alert('Booking Successful');
                 this.props.navigation.navigate("Confirm", {
                     parkingLotName: navigation.getParam('parkingLotName'),
                     reg: this.state.regNumber,
@@ -143,9 +142,9 @@ class BookingScreen extends React.Component {
                     arrivalDate: this.state.arrivalDate,
                     departureTime: this.state.departureTime,
                     departureDate: this.state.departureDate,
-                    child: this.state.childChecked,
-                    disabled: this.state.disabledChecked,
-                    price: this.state.price
+                    child: childChecked,
+                    disabled: disabledChecked,
+                    price: this.getPrice()
                 })
             }).catch(error => {
                 const { code, message } = error;
@@ -175,7 +174,6 @@ class BookingScreen extends React.Component {
             else {
                 price = prices['24']*dateDifference;
             }
-            this.setState({price : price.toFixed(2)});
             return '£ ' +price.toFixed(2);
         }
         else {

@@ -46,9 +46,10 @@ class BookingScreen extends React.Component {
             arrivalTime: '',
             disabledChecked: false,
             childChecked: false,
-            prices: {}
-        };
-    }
+            prices: {},
+            price: 0
+        }
+    };
 
     getLatestPrices() {
         const { navigation } = this.props;
@@ -135,6 +136,17 @@ class BookingScreen extends React.Component {
                 body: formData
             }).then(response => {
                 Alert.alert('Booking Successful');
+                this.props.navigation.navigate("Confirm", {
+                    parkingLotName: navigation.getParam('parkingLotName'),
+                    reg: this.state.regNumber,
+                    arrivalTime: this.state.arrivalTime,
+                    arrivalDate: this.state.arrivalDate,
+                    departureTime: this.state.departureTime,
+                    departureDate: this.state.departureDate,
+                    child: this.state.childChecked,
+                    disabled: this.state.disabledChecked,
+                    price: this.state.price
+                })
             }).catch(error => {
                 const { code, message } = error;
             })
@@ -163,6 +175,7 @@ class BookingScreen extends React.Component {
             else {
                 price = prices['24']*dateDifference;
             }
+            this.setState({price : price.toFixed(2)});
             return '£ ' +price.toFixed(2);
         }
         else {

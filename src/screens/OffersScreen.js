@@ -61,7 +61,7 @@ class OffersScreen extends React.Component {
     }
 
 
-    goToOfferDetailsScreen(company, offer, expiry, logo, offerId, redemptionDate){
+    goToOfferDetailsScreen(company, offer, expiry, logo, offerId, redemptionDate, scans){
         this.props.navigation.navigate("OfferDetails", {
             userId: this.state.userId,
             companyName: company,
@@ -70,6 +70,7 @@ class OffersScreen extends React.Component {
             logo: logo,
             offerId: offerId,
             redemptionDate: redemptionDate,
+            scans: scans,
         })
     }
 
@@ -99,6 +100,7 @@ class OffersScreen extends React.Component {
                     expiry: data[i]['expiry_date'],
                     offerId: data[i]['offer_id'],
                     redemptionDate: data[i]['redemption_date'],
+                    scans: data[i]['scans']
                 };
                 offersList.push(offer); // Add to list
 
@@ -129,7 +131,7 @@ class OffersScreen extends React.Component {
                             leftAvatar={{ source: { uri: l.logo } }}
                             key={i}
                             onPress={() => {
-                                this.goToOfferDetailsScreen(l.company, l.offer, l.expiry, l.logo, l.offerId, l.redemptionDate)
+                                this.goToOfferDetailsScreen(l.company, l.offer, l.expiry, l.logo, l.offerId, l.redemptionDate, l.scans)
                             }}
                             title={l.company}
                             subtitle={

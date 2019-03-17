@@ -54,35 +54,6 @@ class OfferDetailsScreen extends React.Component {
 
     }
 
-    returnVoucher(){
-
-        const {navigation} = this.props;
-        const offerId = navigation.getParam('offerId');
-        const userId = navigation.getParam('userId')
-
-
-        let formData = new FormData();
-        formData.append('offer_id', offerId);
-        formData.append('user_id', userId);
-        formData.append('redeem_date', today);
-
-        fetch('http://18.188.105.214/validateVoucher', {
-            method: 'post',
-            headers: {
-                'Content-Type': 'multipart/form-data',
-            },
-            body: formData
-            // Return either the Success/ Failed link based off the number of scans on the code
-        }).then(response => {
-            let data = JSON.parse(response['_bodyText']);
-            
-            // If there is an error, log it
-        }).catch(error => {
-            const { code, message } = error;
-    })
-    }
-
-
     redeemOffer() {
         const {navigation} = this.props;
         const offerId = navigation.getParam('offerId');
@@ -91,10 +62,11 @@ class OfferDetailsScreen extends React.Component {
         var date = new Date()
         var today = date.getDate();
 
+        const stringDate = today.toString();
         let formData = new FormData();
         formData.append('offer_id', offerId);
         formData.append('user_id', userId);
-        formData.append('redeem_date', today);
+        formData.append('redemption_date', stringDate);
 
         fetch('http://18.188.105.214/redeemOffer', {
             method: 'post',
@@ -124,17 +96,19 @@ class OfferDetailsScreen extends React.Component {
         const redemptionDate = navigation.getParam('redemptionDate');
         const isVoucherRedeemed = this.state.showCode;
         let code;
-
+        let buttonAvailable;
+        const offerId = navigation.getParam('offerId')
 
         if (redemptionDate != ""){
-            code = <QRCode value={'https://www.bbc.co.uk/'} size={250} bgColor='black' fgColor='white'/>;
-
+            code = <QRCode value={'http://18.188.105.214/validateVoucher?offerId='+offerId} size={250} bgColor='black' fgColor='white'/>;
+            buttonAvailable = <Text style={styles.constHeadings}>This offer has been redeemed</Text>
         }else if (!isVoucherRedeemed) {
             // This is an image to a greyed out QR code
             code = <Image style={{width: 250, height: 250}} source={{uri: 'http://1.bp.blogspot.com/-0qeFglJKO38/UBt-0F5POKI/AAAAAAAAALA/4QT5V8J8wLs/s290/qrcode_grey_hotel_en_gris.png'}}/>;
+            buttonAvailable = <Button style={styles.bookingButton} containerStyle={styles.bookingButtonContainer} buttonStyle={styles.bookingModalButton} icon={<Ionicons name='md-checkmark' size={25} color={'white'} style={styles.icon}/>} title='Redeem' onPress={() => {this.redeemOffer();}}/>
         } else {
-            code = <QRCode value={'https://www.bbc.co.uk/'} size={250} bgColor='black' fgColor='white'/>;
-
+            code = <QRCode value={'http://18.188.105.214/validateVoucher?offerId='+offerId} size={250} bgColor='black' fgColor='white'/>;
+            buttonAvailable = <Text style={styles.constHeadings}>This offer has been redeemed</Text>
         }
 
         return (
@@ -143,7 +117,7 @@ class OfferDetailsScreen extends React.Component {
                     {code}
                 </View>
 
-                <View styles={styles.detailsContainer}>
+                {/*<View styles={styles.detailsContainer}>*/}
                     <Text style={styles.constHeadings}>
                         {company}
                     </Text>
@@ -153,17 +127,18 @@ class OfferDetailsScreen extends React.Component {
                     <Text style={styles.constHeadings}>
                         {'Expires: ' + expiry}
                     </Text>
-                    <Button
-                        style={styles.bookingButton}
-                        containerStyle={styles.bookingButtonContainer}
-                        buttonStyle={styles.bookingModalButton}
-                        icon={<Ionicons name='md-checkmark' size={25} color={'white'} style={styles.icon}/>}
-                        title='Redeem'
-                        onPress={() => {
-                            this.redeemOffer();
-                        }}
-                    />
-                </View>
+                {buttonAvailable}
+                {/*</View>*/}
+                {/*<Button*/}
+                    {/*style={styles.bookingButton}*/}
+                    {/*containerStyle={styles.bookingButtonContainer}*/}
+                    {/*buttonStyle={styles.bookingModalButton}*/}
+                    {/*icon={<Ionicons name='md-checkmark' size={25} color={'white'} style={styles.icon}/>}*/}
+                    {/*title='Redeem'*/}
+                    {/*onPress={() => {*/}
+                        {/*this.redeemOffer();*/}
+                    {/*}}*/}
+                {/*/>*/}
 
             </View>
         );

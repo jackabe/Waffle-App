@@ -1,5 +1,5 @@
 import React from 'react';
-import {View, Text, StyleSheet, Alert} from 'react-native';
+import {View, Text, StyleSheet, Alert, ScrollView} from 'react-native';
 import headerStyling from "../styles/ui/Header";
 import { Input, Button, ListItem} from 'react-native-elements';
 import firebase from 'react-native-firebase';
@@ -114,6 +114,7 @@ class AccountScreen extends React.Component {
 
                 <Text style={styles.bookingHeading}>Your Bookings</Text>
 
+                <ScrollView style={{ width: '100%', height: '100%'}}>
                 {
                     this.state.bookingList.map((l, i) => (
                         <ListItem
@@ -156,6 +157,7 @@ class AccountScreen extends React.Component {
                         />
                     ))
                 }
+                </ScrollView>
 
                 <Button
                     style={styles.bookingButton}

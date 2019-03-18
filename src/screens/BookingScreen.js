@@ -127,8 +127,6 @@ class BookingScreen extends React.Component {
             formData.append('disabled_required', disabledChecked);
             formData.append('paid', true);
 
-            console.log(this.convertDate(arrivalDate, arrivalTime));
-
             // POST request
             fetch('http://18.188.105.214/makeBooking', {
                 method: 'post',
@@ -152,7 +150,7 @@ class BookingScreen extends React.Component {
             }).catch(error => {
                 const { code, message } = error;
                 console.log(message);
-                console.log(error);
+                Alert.alert('Sorry, there are no spaces at that time!')
             })
         }
     }
@@ -251,6 +249,7 @@ class BookingScreen extends React.Component {
                             date=''
                             hideText={true}
                             mode="time"
+                            is24Hour={true}
                             // May need to be updated so that the users can't book in past.
                             iconComponent={<Ionicons name='time-slot' size={25} color={'tomato'}/>}
                             confirmBtnText="Confirm"
@@ -308,6 +307,7 @@ class BookingScreen extends React.Component {
                             date=''
                             hideText={true}
                             mode="time"
+                            is24Hour={true}
                             // May need to be updated so that the users can't book in past.
                             iconComponent={<Ionicons name='time-slot' size={25} color={'tomato'}/>}
                             confirmBtnText="Confirm"

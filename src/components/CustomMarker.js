@@ -9,7 +9,7 @@ class CustomMarker extends Component {
         return (
             <View style={styles.box}>
                 <Text style={styles.title}>{data.details.name}</Text>
-                <Text style={styles.spaces}>{data.spaces + ' spaces available TODAY!'}</Text>
+                <Text style={styles.spaces}>{data.spaces + ' spaces available right now!'}</Text>
                 <Text style={styles.price}>{'Prices start from £' + data.price +' / hour!'}</Text>
 
                 <Button
@@ -47,6 +47,7 @@ const styles = StyleSheet.create({
     },
     bookingButton : {
         padding: 10,
+        marginBottom: 10
     },
     bookingButtonContainer : {
         alignItems: 'center',

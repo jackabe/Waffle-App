@@ -62,7 +62,7 @@ class AccountScreen extends React.Component {
 
         // GET request
         fetch('http://18.188.105.214/getBookings', {
-            method: 'get',
+            method: 'post',
             headers: {
                 'Content-Type': 'multipart/form-data',
             },

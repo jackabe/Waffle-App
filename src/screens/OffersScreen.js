@@ -21,30 +21,30 @@ class OffersScreen extends React.Component {
         this.state = {
             userId:null,
             offerList: [
-                {
-                    company:'McDonalds',
-                    offer:'Free Cheeseburger',
-                    expiry:'15 March 2019',
-                    logo: 'https://pbs.twimg.com/profile_images/754316880010108929/ICET1La3_400x400.jpg',
-                    offerId: 'wqdqhdwqdqvdqjvdgjqw1'
-                },
-
-                {
-                    company:'Subway',
-                    offer:'Free Drink',
-                    expiry:'15 April 2019',
-                    logo: 'http://ems-media-prod.s3.amazonaws.com/styles/clio_aotw_ems_image_details_retina/s3/entry_attachments/image/44/1103/26170/44588/BUeW-_VWEzFwNhLYgiqxtk20YNn1f-Trg8KJ1cJUsos.jpg',
-                    offerId: 'wqdqhdwqdqvdqjvdgjqw2'
-                },
-
-                {
-                    company:'Burger King',
-                    offer:'Free Side',
-                    expiry:'28 March 2019',
-                    logo: 'https://wl3-cdn.landsec.com/sites/default/files/images/shops/logos/burger-king_0.png',
-                    offerId: 'wqdqhdwqdqvdqjvdgjqw3'
-
-                },
+                // {
+                //     company:'McDonalds',
+                //     offer:'Free Cheeseburger',
+                //     expiry:'15 March 2019',
+                //     logo: 'https://pbs.twimg.com/profile_images/754316880010108929/ICET1La3_400x400.jpg',
+                //     offerId: 'wqdqhdwqdqvdqjvdgjqw1'
+                // },
+                //
+                // {
+                //     company:'Subway',
+                //     offer:'Free Drink',
+                //     expiry:'15 April 2019',
+                //     logo: 'http://ems-media-prod.s3.amazonaws.com/styles/clio_aotw_ems_image_details_retina/s3/entry_attachments/image/44/1103/26170/44588/BUeW-_VWEzFwNhLYgiqxtk20YNn1f-Trg8KJ1cJUsos.jpg',
+                //     offerId: 'wqdqhdwqdqvdqjvdgjqw2'
+                // },
+                //
+                // {
+                //     company:'Burger King',
+                //     offer:'Free Side',
+                //     expiry:'28 March 2019',
+                //     logo: 'https://wl3-cdn.landsec.com/sites/default/files/images/shops/logos/burger-king_0.png',
+                //     offerId: 'wqdqhdwqdqvdqjvdgjqw3'
+                //
+                // },
             ]
 
         }
@@ -61,14 +61,16 @@ class OffersScreen extends React.Component {
     }
 
 
-    goToOfferDetailsScreen(company, offer, expiry, logo, offerId){
+    goToOfferDetailsScreen(company, offer, expiry, logo, offerId, redemptionDate, scans){
         this.props.navigation.navigate("OfferDetails", {
             userId: this.state.userId,
             companyName: company,
             offerName: offer,
             expiryDate: expiry,
             logo: logo,
-            offerId: offerId
+            offerId: offerId,
+            redemptionDate: redemptionDate,
+            scans: scans,
         })
     }
 
@@ -78,16 +80,17 @@ class OffersScreen extends React.Component {
         formData.append('user_id', userId);
         // GET request
         fetch('http://18.188.105.214/getOffers', {
-            method: 'get',
+            method: 'post',
             headers: {
                 'Content-Type': 'multipart/form-data',
             },
             body: formData
         }).then(response => {
-            console.log(response);
+
             let offersList = [];
             let data = JSON.parse(response['_bodyText']);
             let i = 0;
+
             // Get each booking and form JSON
             for (i; i < data.length; i++) {
                 let offer = {
@@ -96,6 +99,8 @@ class OffersScreen extends React.Component {
                     offer: data[i]['offer'],
                     expiry: data[i]['expiry_date'],
                     offerId: data[i]['offer_id'],
+                    redemptionDate: data[i]['redemption_date'],
+                    scans: data[i]['scans']
                 };
                 offersList.push(offer); // Add to list
 
@@ -126,7 +131,7 @@ class OffersScreen extends React.Component {
                             leftAvatar={{ source: { uri: l.logo } }}
                             key={i}
                             onPress={() => {
-                                this.goToOfferDetailsScreen(l.company, l.offer, l.expiry, l.logo, l.offerId)
+                                this.goToOfferDetailsScreen(l.company, l.offer, l.expiry, l.logo, l.offerId, l.redemptionDate, l.scans)
                             }}
                             title={l.company}
                             subtitle={

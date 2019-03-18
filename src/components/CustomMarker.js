@@ -38,8 +38,8 @@ const styles = StyleSheet.create({
     spaces: {
         position: 'absolute',
         color: 'tomato',
-        bottom: 10,
-        fontSize: 20,
+        bottom: 0,
+        fontSize: 18,
     },
     price: {
         marginTop: 10,
@@ -47,7 +47,7 @@ const styles = StyleSheet.create({
     },
     bookingButton : {
         padding: 10,
-        marginBottom: 10
+        marginBottom: 5
     },
     bookingButtonContainer : {
         alignItems: 'center',

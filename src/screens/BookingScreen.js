@@ -111,21 +111,23 @@ class BookingScreen extends React.Component {
             const userId = navigation.getParam('userId');
             const parkingLotName = navigation.getParam('parkingLotName');
 
-            const { regNumber, parkingLotId, arrivalDate, arrivalTime, departureDate, departureTime, disabledChecked, childChecked} = this.state;
+            const { regNumber, arrivalDate, arrivalTime, departureDate, departureTime, disabledChecked, childChecked} = this.state;
 
             // Firebase for user id?
             let formData = new FormData();
 
             // formData.append('username', user.uid);
             formData.append('user_id', userId);
+            formData.append('lot_id', navigation.getParam('parkingLotId'));
             formData.append('location', parkingLotName);
             formData.append('number_plate', regNumber.toUpperCase());
-            formData.append('arrival_date', arrivalDate);
-            formData.append('arrival_time', arrivalTime);
-            formData.append('departure_date', departureDate);
-            formData.append('departure_time', departureTime);
+            formData.append('arrival', this.convertDate(arrivalDate, arrivalTime));
+            formData.append('departure', this.convertDate(departureDate, departureTime));
             formData.append('child_required', childChecked);
             formData.append('disabled_required', disabledChecked);
+            formData.append('paid', true);
+
+            console.log(this.convertDate(arrivalDate, arrivalTime));
 
             // POST request
             fetch('http://18.188.105.214/makeBooking', {
@@ -135,6 +137,7 @@ class BookingScreen extends React.Component {
                 },
                 body: formData
             }).then(response => {
+                console.log(response);
                 this.props.navigation.navigate("Confirm", {
                     parkingLotName: navigation.getParam('parkingLotName'),
                     reg: this.state.regNumber,
@@ -148,9 +151,20 @@ class BookingScreen extends React.Component {
                 })
             }).catch(error => {
                 const { code, message } = error;
+                console.log(message);
+                console.log(error);
             })
         }
     }
+
+    convertDate = (date, time) => {
+        let dateFormatted = date.split('-');
+        let day = dateFormatted[0];
+        let month = dateFormatted[1];
+        let year = dateFormatted[2];
+        date = (new Date(year+'/'+month+'/'+day + ' ' + time).getTime()/1000);
+        return date;
+    };
 
     getPrice() {
         const {prices, departureDate, departureTime,  arrivalDate, arrivalTime} = this.state;
@@ -210,7 +224,7 @@ class BookingScreen extends React.Component {
                             hideText={true}
                             mode="date"
                             iconComponent={<Ionicons name='calendar' size={25} color={'tomato'}/>}
-                            format="DD-MM-YY"
+                            format="DD-MM-YYYY"
                             // May need to be updated so that the users can't book in past.
                             minDate="01-01-1900"
                             maxDate="01-01-2050"
@@ -266,7 +280,7 @@ class BookingScreen extends React.Component {
                             date=''
                             hideText={true}
                             mode="date"
-                            format="DD-MM-YY"
+                            format="DD-MM-YYYY"
                             // May need to be updated so that the users can't book in past.
                             iconComponent={<Ionicons name='calendar' size={25} color={'tomato'}/>}
                             minDate="01-01-1900"

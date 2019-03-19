@@ -57,6 +57,7 @@ class OffersScreen extends React.Component {
                     userId: user.uid
                 })
             }
+            this.getOffers(this.state.userId);
         });
     }
 
@@ -116,8 +117,6 @@ class OffersScreen extends React.Component {
     }
 
     render() {
-
-        this.getOffers(this.state.userId);
 
         return (
             <View style={styles.content}>

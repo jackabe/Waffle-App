@@ -56,7 +56,6 @@ class LoginScreen extends React.Component {
         const { email, password } = this.state;
         firebase.auth().signInWithEmailAndPassword(email.trim(), password)
             .then((user) => {
-                Alert.alert('Logged in');
             })
             .catch((error) => {
                 const { code, message } = error;

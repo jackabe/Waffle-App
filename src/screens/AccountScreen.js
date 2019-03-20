@@ -52,6 +52,7 @@ class AccountScreen extends React.Component {
                     userId: user.uid,
                     name: user.email,
                 });
+                this.getBookings(this.state.userId);
             }
         });
     }
@@ -97,8 +98,6 @@ class AccountScreen extends React.Component {
     }
 
     render() {
-
-        this.getBookings(this.state.userId);
 
         return (
             <View style={{ flex: 1, alignItems: 'center' }}>

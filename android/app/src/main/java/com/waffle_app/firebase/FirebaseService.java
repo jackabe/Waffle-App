@@ -44,7 +44,7 @@ public class FirebaseService {
 
         Log.d(TAG, ">>> forming request " + geofenceName);
         final Request request = new Request.Builder()
-                .url("http://192.168.2.6:8000/postLocation")
+                .url("http://18.188.105.214//postLocation")
                 .post(requestBody)
                 .build();
 

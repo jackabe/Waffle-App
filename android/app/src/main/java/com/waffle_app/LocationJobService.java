@@ -2,6 +2,7 @@ package com.waffle_app;
 
 import android.app.PendingIntent;
 import android.content.Intent;
+import android.util.Log;
 
 import com.firebase.jobdispatcher.JobParameters;
 import com.firebase.jobdispatcher.JobService;
@@ -23,6 +24,8 @@ public class LocationJobService extends JobService {
 
     @Override
     public boolean onStartJob(JobParameters job) {
+
+        Log.i("Geofence Service", "Starting the service");
         // Do some work here
 
         // Initialise array list
@@ -106,6 +109,7 @@ public class LocationJobService extends JobService {
                     // Build the geofence.
                     .build());
         }
+        Log.i("Geofence Service", "Created fences");
     }
 
     /**

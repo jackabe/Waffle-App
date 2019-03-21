@@ -51,7 +51,7 @@ public class LocationModule extends ReactContextBaseJavaModule {
                 .setRecurring(false)
                 // don't persist past a device reboot
                 .setLifetime(Lifetime.FOREVER)
-                // start between 0 and 60 seconds from now
+                // start between 0 and 600 seconds from now
                 .setTrigger(Trigger.executionWindow(0, 60))
                 // don't overwrite an existing job with the same tag
                 .setReplaceCurrent(true)

@@ -71,6 +71,8 @@ public class GeofenceTransitionsJobIntentService extends JobIntentService {
             return;
         }
 
+        Log.i("Geofence Service", "Fence triggered");
+
         Location location = geofencingEvent.getTriggeringLocation();
         // Get the transition type.
         int geofenceTransition = geofencingEvent.getGeofenceTransition();
@@ -91,11 +93,11 @@ public class GeofenceTransitionsJobIntentService extends JobIntentService {
         double longitude = location.getLongitude();
         long time = location.getTime();
 
-        //mAuth = FirebaseAuth.getInstance();
-        //FirebaseUser currentUser = mAuth.getCurrentUser();
-        //FirebaseService firebaseService = new FirebaseService();
+        mAuth = FirebaseAuth.getInstance();
+        FirebaseUser currentUser = mAuth.getCurrentUser();
+        FirebaseService firebaseService = new FirebaseService();
         
-        //firebaseService.addCollection(1, geofenceName, latitude, longitude, accuracy, Long.toString(time));
+        firebaseService.addCollection("111", geofenceName, latitude, longitude, accuracy, Long.toString(time));
     }
 
     /**

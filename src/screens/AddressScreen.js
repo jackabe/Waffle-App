@@ -33,7 +33,16 @@ class AddressScreen extends React.Component {
                     'message': 'Waffle wants access to your location '
                 }
             );
-            return granted;
+            const granted2 = await PermissionsAndroid.request(
+                PermissionsAndroid.PERMISSIONS.ACCESS_COARSE_LOCATION,
+                {
+                    'title': 'Waffle',
+                    'message': 'Waffle wants access to your location '
+                }
+            );
+            if (granted && granted2) {
+                return granted;
+            }
         } catch (err) {
             console.warn(err)
         }
@@ -86,7 +95,7 @@ class AddressScreen extends React.Component {
         });
         this.requestLocationPermission().then(granted => {
             if (granted === PermissionsAndroid.RESULTS.GRANTED) {
-                // LocationModule.startScanning();
+                LocationModule.startScanning();
                 this.findLocation();
             }
             else {
@@ -188,10 +197,10 @@ class AddressScreen extends React.Component {
         navigator.geolocation.getCurrentPosition(
             position => this.getLotsByLocation(position),
             error => console.log(error),
-            {enableHighAccuracy: true, timeout: 5000}
+            {enableHighAccuracy: true, timeout: 5000,
+                maximumAge: 10000}
         );
     };
-
 
     getAddresses(postcode) {
         this.setState({postcode});

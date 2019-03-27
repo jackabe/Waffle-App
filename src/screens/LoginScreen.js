@@ -129,7 +129,7 @@ class LoginScreen extends React.Component {
             >
 
                 <Text style={styles.heading}>waffle</Text>
-                <Text style={styles.slogen}>A smarter way to live</Text>
+                <Text style={styles.slogen}>a smarter way to live</Text>
 
                 <View style={styles.buttons}>
                     <View style={styles.buttonDiv}>

@@ -61,7 +61,7 @@ class AddressScreen extends React.Component {
                 latitudeDelta: 0.1,
                 longitudeDelta: 0.1,
             },
-            loading: true,
+            loading: false,
             markers: [],
             parkingList: [
                 {

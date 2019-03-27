@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, Text, StyleSheet, ImageBackground, Alert, TouchableHighlight} from 'react-native';
+import { View, Text, StyleSheet, ImageBackground, Alert, TouchableHighlight, KeyboardAvoidingView } from 'react-native';
 import {Header, Overlay} from "react-native-elements";
 import Colors from "../config/Colors";
 import Service from "../utils/Service";
@@ -269,63 +269,65 @@ class LoginScreen extends React.Component {
 
                 {
                     this.state.showLogin && (
-                        <Overlay
-                            isVisible
-                            keyboardAvoidingView
-                            overlayBackgroundColor="white"
-                            fullScreen={false}>
+                            <Overlay
+                                width="80%"
+                                height="auto"
+                                isVisible
+                                keyboardAvoidingView
+                                overlayBackgroundColor="white"
+                                fullScreen={false}>
 
-                            <Text style={styles.signUpHeading}>Log in</Text>
+                                <Text style={styles.signUpHeading}>Log in</Text>
 
-                            <TouchableHighlight style={styles.closeView} onPress={this.closeLoginModal}>
-                                <View>
-                                    <Icon
-                                        name="close"
-                                        size={30}
-                                        color="tomato"
+                                <TouchableHighlight style={styles.closeView} onPress={this.closeLoginModal}>
+                                    <View>
+                                        <Icon
+                                            name="close"
+                                            size={30}
+                                            color="tomato"
+                                        />
+                                    </View>
+                                </TouchableHighlight>
+
+                                <View style={styles.signUpContainer}>
+                                    <Input
+                                        leftIcon={{ type: 'font-awesome', name: 'user' }}
+                                        inputStyle={styles.inputStyle}
+                                        inputContainerStyle={styles.inputContainer}
+                                        placeholder='Email'
+                                        containerStyle={styles.inputOuterContainer}
+                                        onChangeText={(text) => this.setState({email: text})}
+                                    />
+
+                                    <Input
+                                        leftIcon={{ type: 'font-awesome', name: 'lock' }}
+                                        inputStyle={styles.inputStyle}
+                                        inputContainerStyle={styles.inputContainer}
+                                        placeholder='Password'
+                                        secureTextEntry={true}
+                                        containerStyle={styles.inputOuterContainer}
+                                        onChangeText={(text) => this.setState({password: text})}
+                                    />
+
+                                    <Text style={styles.text}>Forgotten password?</Text>
+
+                                    <Button
+                                        containerStyle={styles.signUpModalButtonContainer}
+                                        buttonStyle={styles.signUpModalButton}
+                                        disabled={this.checkLogin()}
+                                        onPress={() => {
+                                            this.login();
+                                        }}
+                                        icon={
+                                            <Icon
+                                                name="check"
+                                                size={20}
+                                                color="white"
+                                            />
+                                        }
                                     />
                                 </View>
-                            </TouchableHighlight>
-
-                            <View style={styles.signUpContainer}>
-                                <Input
-                                leftIcon={{ type: 'font-awesome', name: 'user' }}
-                                inputStyle={styles.inputStyle}
-                                inputContainerStyle={styles.inputContainer}
-                                placeholder='Email'
-                                containerStyle={styles.inputOuterContainer}
-                                onChangeText={(text) => this.setState({email: text})}
-                                />
-
-                                <Input
-                                leftIcon={{ type: 'font-awesome', name: 'lock' }}
-                                inputStyle={styles.inputStyle}
-                                inputContainerStyle={styles.inputContainer}
-                                placeholder='Password'
-                                secureTextEntry={true}
-                                containerStyle={styles.inputOuterContainer}
-                                onChangeText={(text) => this.setState({password: text})}
-                                />
-
-                                <Text style={styles.text}>Forgotten password?</Text>
-
-                                <Button
-                                    containerStyle={styles.signUpModalButtonContainer}
-                                    buttonStyle={styles.signUpModalButton}
-                                    disabled={this.checkLogin()}
-                                    onPress={() => {
-                                    this.login();
-                                    }}
-                                    icon={
-                                    <Icon
-                                    name="check"
-                                    size={20}
-                                    color="white"
-                                    />
-                                    }
-                                />
-                            </View>
-                        </Overlay>
+                            </Overlay>
                     )
                 }
             </ImageBackground>

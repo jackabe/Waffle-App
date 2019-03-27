@@ -55,9 +55,9 @@ class OffersScreen extends React.Component {
             if (user) {
                 this.setState({
                     userId: user.uid
-                })
+                });
+                this.getOffers(user.uid);
             }
-            this.getOffers(this.state.userId);
         });
     }
 
@@ -79,15 +79,16 @@ class OffersScreen extends React.Component {
     getOffers(userId){
         let formData = new FormData();
         formData.append('user_id', userId);
+        console.log(userId)
         // GET request
-        fetch('http://18.188.105.214/getOffers', {
+        fetch('http://100.120.89.11:8000/getOffers', {
             method: 'post',
             headers: {
                 'Content-Type': 'multipart/form-data',
             },
             body: formData
         }).then(response => {
-
+            console.log(response)
             let offersList = [];
             let data = JSON.parse(response['_bodyText']);
             let i = 0;

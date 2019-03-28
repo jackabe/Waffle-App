@@ -69,6 +69,14 @@ class AccountScreen extends React.Component {
         return stringBooking;
     }
 
+    convertBoolean(stringBool){
+        if (stringBool === "true"){
+            return true;
+        }else{
+            return false;
+        }
+    }
+
     getBookings(userId){
         let formData = new FormData();
         formData.append('user_id', userId);
@@ -91,8 +99,8 @@ class AccountScreen extends React.Component {
                     arrival: this.convertDate(data[i]['arrival']),
                     departure: this.convertDate(data[i]['departure']),
                     child: data[i]['child_required'],
-                    numberPlate: data[i]['number_plate'],
-                    disabled: data[i]['disabled_required'],
+                    numberPlate: this.convertBoolean(data[i]['number_plate']),
+                    disabled: this.convertBoolean(data[i]['disabled_required']),
 
                 };
 

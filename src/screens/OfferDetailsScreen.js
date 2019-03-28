@@ -21,7 +21,6 @@ class OfferDetailsScreen extends React.Component {
         this.state = {
             showCode: false,
             showButton: true,
-
         }
     }
 
@@ -34,7 +33,17 @@ class OfferDetailsScreen extends React.Component {
             //     })
             // }
         });
+
     }
+
+    componentWillUnmount(){
+
+        this.props.navigation.navigate("Offers", {
+
+            offerRedeemed: true,
+        })
+    }
+
 
     getQR(){
         const visibleQR = this.state.showCode;
@@ -94,17 +103,15 @@ class OfferDetailsScreen extends React.Component {
         let buttonAvailable;
         const offerId = navigation.getParam('offerId')
 
-        if (redemptionDate != ""){
+        if (redemptionDate != "" || isVoucherRedeemed){
             code = <QRCode value={'http://18.188.105.214/validateVoucher?offerId='+offerId} size={250} bgColor='black' fgColor='white'/>;
             buttonAvailable = <Text style={styles.constHeadings}>This offer has been redeemed</Text>
         }else if (!isVoucherRedeemed) {
             // This is an image to a greyed out QR code
             code = <Image style={{width: 250, height: 250}} source={{uri: 'http://1.bp.blogspot.com/-0qeFglJKO38/UBt-0F5POKI/AAAAAAAAALA/4QT5V8J8wLs/s290/qrcode_grey_hotel_en_gris.png'}}/>;
             buttonAvailable = <Button style={styles.bookingButton} containerStyle={styles.bookingButtonContainer} buttonStyle={styles.bookingModalButton} icon={<Ionicons name='md-checkmark' size={25} color={'white'} style={styles.icon}/>} title='Redeem' onPress={() => {this.redeemOffer();}}/>
-        } else {
-            code = <QRCode value={'http://18.188.105.214/validateVoucher?offerId='+offerId} size={250} bgColor='black' fgColor='white'/>;
-            buttonAvailable = <Text style={styles.constHeadings}>This offer has been redeemed</Text>
         }
+
 
         return (
             <View style = {styles.container}>

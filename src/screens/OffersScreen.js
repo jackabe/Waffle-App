@@ -81,7 +81,7 @@ class OffersScreen extends React.Component {
         formData.append('user_id', userId);
         console.log(userId)
         // GET request
-        fetch('http://100.120.89.11:8000/getOffers', {
+        fetch('http://18.188.105.214/getOffers', {
             method: 'post',
             headers: {
                 'Content-Type': 'multipart/form-data',

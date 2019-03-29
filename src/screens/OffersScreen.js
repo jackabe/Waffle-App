@@ -7,6 +7,7 @@ import {Input, ListItem} from "react-native-elements";
 import Icon from "react-native-vector-icons/FontAwesome";
 import Ionicons from "react-native-vector-icons/Ionicons";
 import {Button} from "react-native-elements";
+import { DeviceEventEmitter } from 'react-native';
 
 class OffersScreen extends React.Component {
     static navigationOptions = ({ navigation }) => {
@@ -32,6 +33,15 @@ class OffersScreen extends React.Component {
 
     componentDidMount() {
         this.authSubscription = firebase.auth().onAuthStateChanged((user) => {
+            this.redeemOfferListener = DeviceEventEmitter.addListener('RedeemOffer', (e) => {
+                if (user) {
+                    this.setState({
+                        userId: user.uid
+                    });
+                    this.getOffers(user.uid);
+                }
+            })
+
             if (user) {
                 this.setState({
                     userId: user.uid
@@ -39,6 +49,10 @@ class OffersScreen extends React.Component {
                 this.getOffers(user.uid);
             }
         });
+    }
+
+    componentWillUnmount() {
+        this.redeemOfferListener.remove();
     }
 
 
@@ -57,6 +71,7 @@ class OffersScreen extends React.Component {
     }
 
     getOffers(userId){
+        Alert.alert("Hello");
         let formData = new FormData();
         formData.append('user_id', userId);
         console.log(userId)
@@ -97,7 +112,7 @@ class OffersScreen extends React.Component {
         })
     }
 
-    render() {;
+    render() {
 
         return (
             <View style={styles.content}>

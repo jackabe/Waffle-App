@@ -5,6 +5,7 @@ import firebase from "react-native-firebase";
 import QRCode from 'react-native-qrcode';
 import Ionicons from "react-native-vector-icons/Ionicons";
 import {Button} from "react-native-elements";
+import { DeviceEventEmitter } from 'react-native';
 
 class OfferDetailsScreen extends React.Component {
     static navigationOptions = ({ navigation }) => {
@@ -36,13 +37,22 @@ class OfferDetailsScreen extends React.Component {
 
     }
 
-    componentWillUnmount(){
-
-        this.props.navigation.navigate("Offers", {
-
-            offerRedeemed: true,
-        })
-    }
+    // componentWillUnmount(){
+    //     const {navigation} = this.props;
+    //     const redemptionDate = navigation.getParam('redemptionDate');
+    //     let offerCheck = firebase
+    //     if (redemptionDate != ""){
+    //         offerCheck = true;
+    //     }
+    //
+    //     // https://stackoverflow.com/questions/53032782/updating-state-of-another-screen-in-react-navigation
+    //     const setParamsAction = NavigationActions.setParams({
+    //         params: { check: offerCheck},
+    //         key: 'Offers',
+    //     });
+    //     this.props.navigation.dispatch(setParamsAction);
+    //     Alert.alert(setParamsAction.getParam)
+    // }
 
 
     getQR(){
@@ -81,7 +91,17 @@ class OfferDetailsScreen extends React.Component {
 
         }).then(response => {
             Alert.alert('Offer Redeemed')
-            this.setState({showCode: true})
+            this.setState({showCode: true});
+
+            // if (this.props.navigation.state &&
+            //     this.props.navigation.state.params &&
+            //     this.props.navigation.state.params.callback) {
+            //     this.props.navigation.state.params.callback();
+            // }
+
+            DeviceEventEmitter.emit('RedeemOffer', {isRedeem: true});
+
+
         }).catch(error => {
             const {code, message} = error;
             Alert.alert('An error occurred or has been redeemed before ')
@@ -95,8 +115,6 @@ class OfferDetailsScreen extends React.Component {
         const offer = navigation.getParam('offerName');
         const expiry = navigation.getParam('expiryDate');
         const logo = navigation.getParam('logo');
-
-
         const redemptionDate = navigation.getParam('redemptionDate');
         const isVoucherRedeemed = this.state.showCode;
         let code;
@@ -111,7 +129,6 @@ class OfferDetailsScreen extends React.Component {
             code = <Image style={{width: 250, height: 250}} source={{uri: 'http://1.bp.blogspot.com/-0qeFglJKO38/UBt-0F5POKI/AAAAAAAAALA/4QT5V8J8wLs/s290/qrcode_grey_hotel_en_gris.png'}}/>;
             buttonAvailable = <Button style={styles.bookingButton} containerStyle={styles.bookingButtonContainer} buttonStyle={styles.bookingModalButton} icon={<Ionicons name='md-checkmark' size={25} color={'white'} style={styles.icon}/>} title='Redeem' onPress={() => {this.redeemOffer();}}/>
         }
-
 
         return (
             <View style = {styles.container}>

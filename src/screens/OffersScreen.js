@@ -5,6 +5,9 @@ import ProfileHeaderButton from "../components/ProfileHeaderButton";
 import firebase from "react-native-firebase";
 import {Input, ListItem} from "react-native-elements";
 import Icon from "react-native-vector-icons/FontAwesome";
+import Ionicons from "react-native-vector-icons/Ionicons";
+import {Button} from "react-native-elements";
+import { DeviceEventEmitter } from 'react-native';
 
 class OffersScreen extends React.Component {
     static navigationOptions = ({ navigation }) => {
@@ -20,38 +23,25 @@ class OffersScreen extends React.Component {
         super(props);
         this.state = {
             userId:null,
+
             offerList: [
-                // {
-                //     company:'McDonalds',
-                //     offer:'Free Cheeseburger',
-                //     expiry:'15 March 2019',
-                //     logo: 'https://pbs.twimg.com/profile_images/754316880010108929/ICET1La3_400x400.jpg',
-                //     offerId: 'wqdqhdwqdqvdqjvdgjqw1'
-                // },
-                //
-                // {
-                //     company:'Subway',
-                //     offer:'Free Drink',
-                //     expiry:'15 April 2019',
-                //     logo: 'http://ems-media-prod.s3.amazonaws.com/styles/clio_aotw_ems_image_details_retina/s3/entry_attachments/image/44/1103/26170/44588/BUeW-_VWEzFwNhLYgiqxtk20YNn1f-Trg8KJ1cJUsos.jpg',
-                //     offerId: 'wqdqhdwqdqvdqjvdgjqw2'
-                // },
-                //
-                // {
-                //     company:'Burger King',
-                //     offer:'Free Side',
-                //     expiry:'28 March 2019',
-                //     logo: 'https://wl3-cdn.landsec.com/sites/default/files/images/shops/logos/burger-king_0.png',
-                //     offerId: 'wqdqhdwqdqvdqjvdgjqw3'
-                //
-                // },
             ]
 
         }
     }
 
+
     componentDidMount() {
         this.authSubscription = firebase.auth().onAuthStateChanged((user) => {
+            this.redeemOfferListener = DeviceEventEmitter.addListener('RedeemOffer', (e) => {
+                if (user) {
+                    this.setState({
+                        userId: user.uid
+                    });
+                    this.getOffers(user.uid);
+                }
+            })
+
             if (user) {
                 this.setState({
                     userId: user.uid
@@ -61,8 +51,13 @@ class OffersScreen extends React.Component {
         });
     }
 
+    componentWillUnmount() {
+        this.redeemOfferListener.remove();
+    }
+
 
     goToOfferDetailsScreen(company, offer, expiry, logo, offerId, redemptionDate, scans){
+
         this.props.navigation.navigate("OfferDetails", {
             userId: this.state.userId,
             companyName: company,
@@ -75,13 +70,12 @@ class OffersScreen extends React.Component {
         })
     }
 
-
     getOffers(userId){
         let formData = new FormData();
         formData.append('user_id', userId);
         console.log(userId)
         // GET request
-        fetch('http://100.120.89.11:8000/getOffers', {
+        fetch('http://18.188.105.214/getOffers', {
             method: 'post',
             headers: {
                 'Content-Type': 'multipart/form-data',
@@ -121,6 +115,8 @@ class OffersScreen extends React.Component {
 
         return (
             <View style={styles.content}>
+
+                <ScrollView style={{ width: '100%', height: '100%'}}>
                 {
                     this.state.offerList.map((l, i) => (
                         <ListItem
@@ -151,6 +147,17 @@ class OffersScreen extends React.Component {
                         />
                     ))
                 }
+                </ScrollView>
+                <Button
+                    style={styles.bookingButton}
+                    containerStyle={styles.bookingButtonContainer}
+                    buttonStyle={styles.bookingModalButton}
+                    icon={<Ionicons name='md-refresh' size={25} color={'white'}/>}
+                    title=''
+                    onPress={() => {
+                        this.getOffers();
+                    }}
+                />
             </View>
         );
     }
@@ -267,9 +274,6 @@ class OffersScreen extends React.Component {
     }
 }
 
-export default OffersScreen;
-
-
 const styles = StyleSheet.create({
     available: {
         paddingTop: 10,
@@ -361,4 +365,21 @@ const styles = StyleSheet.create({
         marginTop: -25,
         position: 'absolute'
     },
+    bookingButton : {
+        padding: 10,
+    },
+    bookingButtonContainer : {
+        position: 'absolute',
+        bottom: 10,
+        alignItems: 'center',
+    },
+    bookingModalButton : {
+        width: '120%',
+        backgroundColor: 'tomato',
+        padding: 20,
+    },
 });
+
+export default OffersScreen;
+
+

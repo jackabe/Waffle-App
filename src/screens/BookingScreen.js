@@ -104,8 +104,8 @@ class BookingScreen extends React.Component {
     };
 
     makeBooking() {
-        if (this.state.regNumber.trim().length !== 7) {
-            Alert.alert("Registration Number must be 7 characters");
+        if (this.state.regNumber.trim().length < 1) {
+            Alert.alert("Registration Number must be entered");
         }
         else {
             const { navigation } = this.props;

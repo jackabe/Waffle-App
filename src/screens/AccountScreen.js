@@ -26,14 +26,14 @@ class AccountScreen extends React.Component {
             name: null,
             bookingList: [
                 {
-                    bookingDate: "18-02-2019",
-                    bookingEndDate: "18-02-2019",
-                    endTime: "18:17",
-                    startTime: "17:17",
-                    location: "Cardiff Queen Street Parking",
-                    numberPlate: "TEST301",
-                    disabled: true,
-                    child: true
+                    // bookingDate: "18-02-2019",
+                    // bookingEndDate: "18-02-2019",
+                    // endTime: "18:17",
+                    // startTime: "17:17",
+                    // location: "Cardiff Queen Street Parking",
+                    // numberPlate: "TEST301",
+                    // disabled: true,
+                    // child: true
                 },
             ]
         };
@@ -45,6 +45,7 @@ class AccountScreen extends React.Component {
         this.props.navigation.navigate("Auth");
     }
 
+
     componentDidMount() {
         this.authSubscription = firebase.auth().onAuthStateChanged((user) => {
             if (user) {
@@ -52,9 +53,28 @@ class AccountScreen extends React.Component {
                     userId: user.uid,
                     name: user.email,
                 });
-                this.getBookings(this.state.userId);
+                this.getBookings(user.uid);
             }
         });
+    }
+
+    convertDate(date){
+        let bookingUnix = new Date(date * 1000);
+        // Converting timestamp to date
+        let bookingDD = bookingUnix.getUTCDate();
+        let bookingMM = bookingUnix.getUTCMonth() + 1;
+        let bookingYYYY = bookingUnix.getUTCFullYear();
+
+        let stringBooking = ("" + bookingDD + "/" + bookingMM + "/" + bookingYYYY);
+        return stringBooking;
+    }
+
+    convertBoolean(stringBool){
+        if (stringBool === "true"){
+            return true;
+        }else{
+            return false;
+        }
     }
 
     getBookings(userId){
@@ -76,14 +96,14 @@ class AccountScreen extends React.Component {
             // Get each booking and form JSON
             for (i; i < data.length; i++) {
                 let booking = {
-                    bookingDate: data[i]['booking_date'],
-                    bookingEndDate: data[i]['booking_date'],
-                    endTime: data[i]['end_time'],
-                    startTime: data[i]['start_time'],
-                    location: data[i]['location'],
-                    numberPlate: data[i]['number_plate']
+                    arrival: this.convertDate(data[i]['arrival']),
+                    departure: this.convertDate(data[i]['departure']),
+                    child: data[i]['child_required'],
+                    numberPlate: this.convertBoolean(data[i]['number_plate']),
+                    disabled: this.convertBoolean(data[i]['disabled_required']),
 
                 };
+
                 bookingList.push(booking); // Add to list
 
                 // As not async, check all done before updating state
@@ -105,7 +125,7 @@ class AccountScreen extends React.Component {
                 <View style={styles.profileSection}>
                     <IoniconsProfile name='user-circle' size={50} color={'tomato'} style={styles.profileIcon}  />
                     <View>
-                        <Text style={styles.name}>Jack Allcock</Text>
+                        <Text style={styles.name}>....</Text>
                         <Text style={styles.username}>{this.state.name}</Text>
                     </View>
                     <PencilIcon name='pencil-circle' size={50} color={'tomato'} style={styles.pencilIcon}  />
@@ -125,21 +145,21 @@ class AccountScreen extends React.Component {
                             subtitle={
                                 <View style={styles.subtitleView}>
 
-                                    <View style={styles.section}>
-                                        <Location name='location-pin' size={25} color={'tomato'} style={styles.locationIcon}  />
-                                        <Text style={styles.location}>{l.location}</Text>
-                                    </View>
+                                    {/*<View style={styles.section}>*/}
+                                        {/*<Location name='location-pin' size={25} color={'tomato'} style={styles.locationIcon}  />*/}
+                                        {/*<Text style={styles.location}>{l.location}</Text>*/}
+                                    {/*</View>*/}
 
                                     <Text style={styles.regInfo}>{'Number Plate: ' + l.numberPlate}</Text>
 
                                     <View style={styles.section}>
                                         <Text style={styles.dateHeading}>Arrival:</Text>
-                                        <Text style={styles.dateText}>{l.bookingDate + ' AT ' + l.startTime}</Text>
+                                        <Text style={styles.dateText}>{l.arrival}</Text>
                                      </View>
 
                                     <View style={styles.section}>
                                         <Text style={styles.dateHeading}>Departure:</Text>
-                                        <Text style={styles.dateText}>{l.bookingEndDate + ' AT ' + l.endTime}</Text>
+                                        <Text style={styles.dateText}>{l.departure}</Text>
                                     </View>
 
                                     <View style={styles.section}>

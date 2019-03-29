@@ -5,6 +5,7 @@ import firebase from "react-native-firebase";
 import QRCode from 'react-native-qrcode';
 import Ionicons from "react-native-vector-icons/Ionicons";
 import {Button} from "react-native-elements";
+import { DeviceEventEmitter } from 'react-native';
 
 class OfferDetailsScreen extends React.Component {
     static navigationOptions = ({ navigation }) => {
@@ -21,7 +22,6 @@ class OfferDetailsScreen extends React.Component {
         this.state = {
             showCode: false,
             showButton: true,
-
         }
     }
 
@@ -34,7 +34,9 @@ class OfferDetailsScreen extends React.Component {
             //     })
             // }
         });
+
     }
+
 
     getQR(){
         const visibleQR = this.state.showCode;
@@ -72,7 +74,11 @@ class OfferDetailsScreen extends React.Component {
 
         }).then(response => {
             Alert.alert('Offer Redeemed')
-            this.setState({showCode: true})
+            this.setState({showCode: true});
+
+            DeviceEventEmitter.emit('RedeemOffer', {isRedeem: true});
+
+
         }).catch(error => {
             const {code, message} = error;
             Alert.alert('An error occurred or has been redeemed before ')
@@ -86,24 +92,19 @@ class OfferDetailsScreen extends React.Component {
         const offer = navigation.getParam('offerName');
         const expiry = navigation.getParam('expiryDate');
         const logo = navigation.getParam('logo');
-
-
         const redemptionDate = navigation.getParam('redemptionDate');
         const isVoucherRedeemed = this.state.showCode;
         let code;
         let buttonAvailable;
         const offerId = navigation.getParam('offerId')
 
-        if (redemptionDate != ""){
+        if (redemptionDate != "" || isVoucherRedeemed){
             code = <QRCode value={'http://18.188.105.214/validateVoucher?offerId='+offerId} size={250} bgColor='black' fgColor='white'/>;
             buttonAvailable = <Text style={styles.constHeadings}>This offer has been redeemed</Text>
         }else if (!isVoucherRedeemed) {
             // This is an image to a greyed out QR code
             code = <Image style={{width: 250, height: 250}} source={{uri: 'http://1.bp.blogspot.com/-0qeFglJKO38/UBt-0F5POKI/AAAAAAAAALA/4QT5V8J8wLs/s290/qrcode_grey_hotel_en_gris.png'}}/>;
             buttonAvailable = <Button style={styles.bookingButton} containerStyle={styles.bookingButtonContainer} buttonStyle={styles.bookingModalButton} icon={<Ionicons name='md-checkmark' size={25} color={'white'} style={styles.icon}/>} title='Redeem' onPress={() => {this.redeemOffer();}}/>
-        } else {
-            code = <QRCode value={'http://18.188.105.214/validateVoucher?offerId='+offerId} size={250} bgColor='black' fgColor='white'/>;
-            buttonAvailable = <Text style={styles.constHeadings}>This offer has been redeemed</Text>
         }
 
         return (
@@ -123,25 +124,12 @@ class OfferDetailsScreen extends React.Component {
                         {'Expires: ' + expiry}
                     </Text>
                 {buttonAvailable}
-                {/*</View>*/}
-                {/*<Button*/}
-                    {/*style={styles.bookingButton}*/}
-                    {/*containerStyle={styles.bookingButtonContainer}*/}
-                    {/*buttonStyle={styles.bookingModalButton}*/}
-                    {/*icon={<Ionicons name='md-checkmark' size={25} color={'white'} style={styles.icon}/>}*/}
-                    {/*title='Redeem'*/}
-                    {/*onPress={() => {*/}
-                        {/*this.redeemOffer();*/}
-                    {/*}}*/}
-                {/*/>*/}
 
             </View>
         );
     }
 }
 
-
-// style = {this.getColour(company).container}
 
 const styles = StyleSheet.create({
     account: {

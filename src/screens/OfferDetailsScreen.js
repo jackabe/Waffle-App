@@ -37,23 +37,6 @@ class OfferDetailsScreen extends React.Component {
 
     }
 
-    // componentWillUnmount(){
-    //     const {navigation} = this.props;
-    //     const redemptionDate = navigation.getParam('redemptionDate');
-    //     let offerCheck = firebase
-    //     if (redemptionDate != ""){
-    //         offerCheck = true;
-    //     }
-    //
-    //     // https://stackoverflow.com/questions/53032782/updating-state-of-another-screen-in-react-navigation
-    //     const setParamsAction = NavigationActions.setParams({
-    //         params: { check: offerCheck},
-    //         key: 'Offers',
-    //     });
-    //     this.props.navigation.dispatch(setParamsAction);
-    //     Alert.alert(setParamsAction.getParam)
-    // }
-
 
     getQR(){
         const visibleQR = this.state.showCode;
@@ -92,12 +75,6 @@ class OfferDetailsScreen extends React.Component {
         }).then(response => {
             Alert.alert('Offer Redeemed')
             this.setState({showCode: true});
-
-            // if (this.props.navigation.state &&
-            //     this.props.navigation.state.params &&
-            //     this.props.navigation.state.params.callback) {
-            //     this.props.navigation.state.params.callback();
-            // }
 
             DeviceEventEmitter.emit('RedeemOffer', {isRedeem: true});
 
@@ -147,25 +124,12 @@ class OfferDetailsScreen extends React.Component {
                         {'Expires: ' + expiry}
                     </Text>
                 {buttonAvailable}
-                {/*</View>*/}
-                {/*<Button*/}
-                    {/*style={styles.bookingButton}*/}
-                    {/*containerStyle={styles.bookingButtonContainer}*/}
-                    {/*buttonStyle={styles.bookingModalButton}*/}
-                    {/*icon={<Ionicons name='md-checkmark' size={25} color={'white'} style={styles.icon}/>}*/}
-                    {/*title='Redeem'*/}
-                    {/*onPress={() => {*/}
-                        {/*this.redeemOffer();*/}
-                    {/*}}*/}
-                {/*/>*/}
 
             </View>
         );
     }
 }
 
-
-// style = {this.getColour(company).container}
 
 const styles = StyleSheet.create({
     account: {

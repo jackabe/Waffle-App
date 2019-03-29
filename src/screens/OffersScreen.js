@@ -71,7 +71,6 @@ class OffersScreen extends React.Component {
     }
 
     getOffers(userId){
-        Alert.alert("Hello");
         let formData = new FormData();
         formData.append('user_id', userId);
         console.log(userId)

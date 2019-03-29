@@ -7,7 +7,7 @@ import {Input, ListItem} from "react-native-elements";
 import Icon from "react-native-vector-icons/FontAwesome";
 import Ionicons from "react-native-vector-icons/Ionicons";
 import {Button} from "react-native-elements";
-import { DeviceEventEmitter } from 'react-native';
+import { DeviceEventEmitter, AsyncStorage } from 'react-native';
 
 class OffersScreen extends React.Component {
     static navigationOptions = ({ navigation }) => {
@@ -69,6 +69,52 @@ class OffersScreen extends React.Component {
             scans: scans,
         })
     }
+
+    // setLastUpdate = (data) =>{
+    //     _storeData = async () => {
+    //         try {
+    //             await AsyncStorage.setItem('LastUpdateDate', data.date);
+    //         } catch (error) {
+    //             // Error saving data
+    //         }
+    //     };
+    // }
+    //
+    //
+    // getLastUpdate = () =>{
+    //     _retrieveData = async () => {
+    //         try {
+    //             const value = await AsyncStorage.getItem('LastUpdateDate');
+    //             if (value !== null) {
+    //                 // We have data!!
+    //                 return value;
+    //             }
+    //             else {
+    //                 return 0;
+    //             }
+    //         } catch (error) {
+    //             // Error retrieving data
+    //         }
+    //     };
+    // }
+
+
+    updateOffers = (userId) => {
+        let fornData = new FormData();
+        formData.append('user_id', userId);
+
+        fetch('http://18.188.105.214/postoffers/user', {
+            method: 'post',
+            headers: {
+                'Content-Type': 'multipart/form-data',
+            },
+            body: formData
+        }).then(response => {
+
+        }).catch(error => {
+            const { code, message } = error;
+        })
+    };
 
     getOffers(userId){
         let formData = new FormData();

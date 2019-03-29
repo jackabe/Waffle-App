@@ -33,7 +33,16 @@ class AddressScreen extends React.Component {
                     'message': 'Waffle wants access to your location '
                 }
             );
-            return granted;
+            const granted2 = await PermissionsAndroid.request(
+                PermissionsAndroid.PERMISSIONS.ACCESS_COARSE_LOCATION,
+                {
+                    'title': 'Waffle',
+                    'message': 'Waffle wants access to your location '
+                }
+            );
+            if (granted && granted2) {
+                return granted;
+            }
         } catch (err) {
             console.warn(err)
         }
@@ -86,7 +95,7 @@ class AddressScreen extends React.Component {
         });
         this.requestLocationPermission().then(granted => {
             if (granted === PermissionsAndroid.RESULTS.GRANTED) {
-                // LocationModule.startScanning();
+                LocationModule.startScanning();
                 this.findLocation();
             }
             else {
@@ -98,8 +107,21 @@ class AddressScreen extends React.Component {
         });
     }
 
-    getLotsByLocation = (position) => {
+    findLocation = () => {
+        navigator.geolocation.getCurrentPosition(
+            position => this.getLotsByLocation(position),
+            error => console.log('Failed, trying with coarse location'), navigator.geolocation.getCurrentPosition(
+                position => this.getLotsByLocation(position),
+                error => console.log(error),
+                {enableHighAccuracy: false, timeout: 5000,
+                    maximumAge: 10000},
+            ),
+            {enableHighAccuracy: true, timeout: 5000,
+                maximumAge: 10000}
+        );
+    };
 
+    getLotsByLocation = (position) => {
         let latutude = position.coords.latitude;
         let longitude = position.coords.longitude;
 
@@ -109,7 +131,6 @@ class AddressScreen extends React.Component {
             latitudeDelta: 0.1,
             longitudeDelta: 0.1,
         };
-
         this.onRegionChange(region);
 
         fetch('https://maps.googleapis.com/maps/api/geocode/json?latlng='+latutude+','+longitude+'&key=AIzaSyAblfAuUNvSw0MyuoUlGFAbzAmRlCW2B1M', {
@@ -127,55 +148,8 @@ class AddressScreen extends React.Component {
                 formData.append('latitude', position.coords.latitude);
                 formData.append('longitude', position.coords.longitude);
 
-                // Post to flask and get parking lot response
-                fetch('http://18.188.105.214/getCarParks', {
-                    method: 'post',
-                    headers: {
-                        'Content-Type': 'multipart/form-data',
-                    },
-                    body: formData
-                }).then(response => {
-                    let markers = [];
-                    let data = JSON.parse(response['_bodyText']);
-                    let i = 0;
-                    for (i; i < data.length; i++) {
-                        let details = LotHandler.getLotDetails(data[i]);
-                        let prices = LotHandler.getLotPrices(data[i]);
-                        let spaces = LotHandler.getLotSpaces(data[i], details);
+                this.getLots(formData)
 
-                        let marker = {
-                            details: details,
-                            price: prices['1'].toFixed(2),
-                            spaces: spaces,
-                            coords: {
-                                latitude: details.lat,
-                                longitude: details.long
-                            }
-                        };
-
-                        markers.push(marker);
-
-                        // As not async, check all done before updating state
-                        if (i === data.length-1) {
-                            this.setState({markers : markers});
-                            this.setState({loading : false});
-                        }
-                    }
-                    if (markers.length === 0) {
-                        this.setState({loading : false});
-                        Alert.alert(
-                            'No Parking Lots',
-                            'Sorry, but we currently do not support this area! Check our website to see when we are coming to you!',
-                            [
-                                {text: 'OK', onPress: () => console.log('OK Pressed')},
-                            ],
-                            {cancelable: false},
-                        );
-                    }
-                }).catch(error => {
-                    const { code, message } = error;
-                    Alert.alert(message);
-                });
             }
         }).catch(error => {
             const { code, message } = error;
@@ -184,14 +158,58 @@ class AddressScreen extends React.Component {
 
     };
 
-    findLocation = () => {
-        navigator.geolocation.getCurrentPosition(
-            position => this.getLotsByLocation(position),
-            error => console.log(error),
-            {enableHighAccuracy: true, timeout: 5000}
-        );
-    };
+    getLots = (formData) => {
+        // Post to flask and get parking lot response
+        fetch('http://18.188.105.214/getCarParks', {
+            method: 'post',
+            headers: {
+                'Content-Type': 'multipart/form-data',
+            },
+            body: formData
+        }).then(response => {
+            let markers = [];
+            let data = JSON.parse(response['_bodyText']);
+            let i = 0;
+            for (i; i < data.length; i++) {
+                let details = LotHandler.getLotDetails(data[i]);
+                let prices = LotHandler.getLotPrices(data[i]);
+                let spaces = LotHandler.getLotSpaces(data[i], details);
 
+                let marker = {
+                    details: details,
+                    price: prices['1'].toFixed(2),
+                    spaces: spaces,
+                    coords: {
+                        latitude: details.lat,
+                        longitude: details.long
+                    }
+                };
+
+                markers.push(marker);
+
+                // As not async, check all done before updating state
+                if (i === data.length-1) {
+                    this.setState({markers : markers});
+                    this.setState({loading : false});
+                }
+            }
+            if (markers.length === 0) {
+                this.setState({loading : false});
+                Alert.alert(
+                    'No Parking Lots',
+                    'Sorry, but we currently do not support this area! Check our website to see when we are coming to you!',
+                    [
+                        {text: 'OK', onPress: () => console.log('OK Pressed')},
+                    ],
+                    {cancelable: false},
+                );
+            }
+        }).catch(error => {
+            const { code, message } = error;
+            console.log(message);
+            Alert.alert(message);
+        });
+    };
 
     getAddresses(postcode) {
         this.setState({postcode});
@@ -224,62 +242,10 @@ class AddressScreen extends React.Component {
                     formData.append('latitude', lat);
                     formData.append('longitude', long);
 
-                    this.setState({loading : true});
+                    this.setState({loading: true});
 
-                    // Post to flask and get parking lot response
-                    fetch('http://18.188.105.214/getCarParks', {
-                        method: 'post',
-                        headers: {
-                            'Content-Type': 'multipart/form-data',
-                        },
-                        body: formData
-                    }).then(response => {
-                        let markers = [];
-                        let data = JSON.parse(response['_bodyText']);
-                        let i = 0;
-                        for (i; i < data.length; i++) {
-                            let details = LotHandler.getLotDetails(data[i]);
-                            let prices = LotHandler.getLotPrices(data[i]);
-                            let spaces = LotHandler.getLotSpaces(data[i], details);
-
-                            let marker = {
-                                details: details,
-                                price: prices[1].toFixed(2),
-                                spaces: spaces,
-                                coords: {
-                                    latitude: details.lat,
-                                    longitude: details.long
-                                }
-                            };
-
-                            markers.push(marker);
-
-                            // As not async, check all done before updating state
-                            if (i === data.length-1) {
-                                this.setState({markers : markers});
-                                this.setState({loading : false});
-                            }
-                        }
-                        if (markers.length === 0) {
-                            this.setState({loading : false});
-                            Alert.alert(
-                                'No Parking Lots',
-                                'Sorry, but we currently do not support this area! Check our website to see when we are coming to you!',
-                                [
-                                    {text: 'OK', onPress: () => console.log('OK Pressed')},
-                                ],
-                                {cancelable: false},
-                            );
-                        }
-                    }).catch(error => {
-                        const { code, message } = error;
-                        Alert.alert(message);
-                    });
-                }
-            }).catch(error => {
-                const { code, message } = error;
-                Alert.alert(message);
-            });
+                    this.getLots(formData)
+                }});
         }
     };
 

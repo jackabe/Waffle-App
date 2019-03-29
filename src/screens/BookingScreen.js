@@ -56,7 +56,8 @@ class BookingScreen extends React.Component {
         const parkingLotId = navigation.getParam('parkingLotId');
         Service.getLatestPrices(parkingLotId)
             .then(response => {
-                let prices = LotHandler.getLotPrices(response);
+                let prices = LotHandler.getLotPrices(response[0]);
+                console.log(prices)
                 this.setState({
                     prices: prices
                 });

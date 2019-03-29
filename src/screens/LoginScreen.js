@@ -1,9 +1,9 @@
 import React from 'react';
-import { View, Text, StyleSheet, ImageBackground, Alert, TouchableHighlight} from 'react-native';
+import { View, Text, StyleSheet, ImageBackground, Alert, TouchableHighlight, KeyboardAvoidingView } from 'react-native';
 import {Header, Overlay} from "react-native-elements";
 import Colors from "../config/Colors";
 import Service from "../utils/Service";
-import Icon from 'react-native-vector-icons/FontAwesome';
+import Icon from 'react-native-vector-icons/AntDesign';
 import { Input, Button} from 'react-native-elements';
 import firebase from 'react-native-firebase';
 import DatePicker from 'react-native-datepicker'
@@ -20,7 +20,8 @@ class LoginScreen extends React.Component {
             date: '',
             firstName: '',
             surname: '',
-            showSignUp: false
+            showSignUp: false,
+            showLogin: false
         };
     }
     /**
@@ -78,6 +79,18 @@ class LoginScreen extends React.Component {
         })
     };
 
+    openLoginModal = () => {
+        this.setState({
+            showLogin: true
+        })
+    };
+
+    closeLoginModal = () => {
+        this.setState({
+            showLogin: false
+        })
+    };
+
     onRegister = () => {
         const { firstName, surname, email, password, date } = this.state;
         firebase.auth().createUserWithEmailAndPassword(email.trim(), password)
@@ -111,9 +124,49 @@ class LoginScreen extends React.Component {
     render() {
         return (
             <ImageBackground
-                source={{uri: 'https://www.pixelstalk.net/wp-content/uploads/images2/Minimalist-Abstract_arrows-wallpaper-2560x1600.jpg'}}
+                source={{uri: 'http://18.188.105.214/static/background.png'}}
                 style={styles.container}
             >
+
+                <Text style={styles.heading}>waffle</Text>
+                <Text style={styles.slogen}>a smarter way to live</Text>
+
+                <View style={styles.buttons}>
+                    <View style={styles.buttonDiv}>
+                        <Button
+                            buttonStyle={styles.button}
+                            titleStyle={styles.normalTitleStyle}
+                            title='Log in with Email'
+                            onPress={() => {
+                                this.openLoginModal()
+                            }}
+                            raised={true}
+                            icon={
+                                <Icon
+                                    name="mail"
+                                    size={25}
+                                    style={styles.buttonIcon}
+                                    color="white"/>}
+                        />
+
+                        <View style={styles.buttonDiv}>
+                            <Button
+                                buttonStyle={styles.signUpButton}
+                                titleStyle={styles.titleStyle}
+                                title='Sign Up'
+                                onPress={() => {
+                                    this.openSignUpModal();
+                                }}
+                                raised={true}
+                            />
+                        </View>
+                    </View>
+                </View>
+
+                <View style={styles.conditions}>
+                    <Text style={styles.conditionsText}>By signing in you agree to our terms and conditions</Text>
+                </View>
+
                 {
                     this.state.showSignUp && (
                         <Overlay
@@ -214,81 +267,69 @@ class LoginScreen extends React.Component {
                     )
                 }
 
-                <Header style={{borderBottomWidth: 0}}
-                        barStyle="light-content"
-                        centerComponent={<Text style={styles.heading}>waffle </Text>}
-                        containerStyle={{
-                            width: '100%',
-                            backgroundColor: 'transparent',
-                            shadowRadius: 0,
-                            shadowOffset: {
-                                height: 0,
-                            },
-                            shadowColor: 'transparent',
-                            borderBottomWidth: 0
-                        }}
-                />
+                {
+                    this.state.showLogin && (
+                            <Overlay
+                                width="80%"
+                                height="auto"
+                                isVisible
+                                keyboardAvoidingView
+                                overlayBackgroundColor="white"
+                                fullScreen={false}>
 
-                <View style={styles.inputs}>
+                                <Text style={styles.signUpHeading}>Log in</Text>
 
-                    {/*<Button*/}
-                    {/*containerStyle={styles.signUpContainer}*/}
-                    {/*buttonStyle={styles.signUpButton}*/}
-                    {/*iconContainerStyle={styles.icon}*/}
-                    {/*raised*/}
-                    {/*icon={*/}
-                    {/*<Icon*/}
-                    {/*style={styles.icon}*/}
-                    {/*name="user-plus"*/}
-                    {/*size={15}*/}
-                    {/*color="white"*/}
-                    {/*/>*/}
-                    {/*}*/}
-                    {/*title='Create account' />*/}
-                    <Text style={styles.slogen}>A smarter way to live</Text>
+                                <TouchableHighlight style={styles.closeView} onPress={this.closeLoginModal}>
+                                    <View>
+                                        <Icon
+                                            name="close"
+                                            size={30}
+                                            color="tomato"
+                                        />
+                                    </View>
+                                </TouchableHighlight>
 
-                    <Input
-                        leftIcon={{ type: 'font-awesome', name: 'user' }}
-                        inputStyle={styles.inputStyle}
-                        inputContainerStyle={styles.inputContainer}
-                        placeholder='Email'
-                        containerStyle={styles.inputOuterContainer}
-                        onChangeText={(text) => this.setState({email: text})}
-                    />
+                                <View style={styles.signUpContainer}>
+                                    <Input
+                                        leftIcon={{ type: 'font-awesome', name: 'user' }}
+                                        inputStyle={styles.inputStyle}
+                                        inputContainerStyle={styles.inputContainer}
+                                        placeholder='Email'
+                                        containerStyle={styles.inputOuterContainer}
+                                        onChangeText={(text) => this.setState({email: text})}
+                                    />
 
-                    <Input
-                        leftIcon={{ type: 'font-awesome', name: 'lock' }}
-                        inputStyle={styles.inputStyle}
-                        inputContainerStyle={styles.inputContainer}
-                        placeholder='Password'
-                        secureTextEntry={true}
-                        containerStyle={styles.inputOuterContainer}
-                        onChangeText={(text) => this.setState({password: text})}
-                    />
+                                    <Input
+                                        leftIcon={{ type: 'font-awesome', name: 'lock' }}
+                                        inputStyle={styles.inputStyle}
+                                        inputContainerStyle={styles.inputContainer}
+                                        placeholder='Password'
+                                        secureTextEntry={true}
+                                        containerStyle={styles.inputOuterContainer}
+                                        onChangeText={(text) => this.setState({password: text})}
+                                    />
 
-                    <Text style={styles.text}>Forgotten password?</Text>
+                                    <Text style={styles.text}>Forgotten password?</Text>
 
-                    <Button
-                        containerStyle={styles.buttonContainer}
-                        buttonStyle={styles.button}
-                        disabled={this.checkLogin()}
-                        onPress={() => {
-                            this.login();
-                        }}
-                        icon={
-                            <Icon
-                                name="check"
-                                size={20}
-                                color="white"
-                            />
-                        }
-                    />
-
-                    <Text onPress={this.openSignUpModal} style={styles.createAccount}>Don't have an account? <Text style={{color: 'tomato'}}>
-                        Sign up
-                    </Text></Text>
-
-                </View>
+                                    <Button
+                                        containerStyle={styles.signUpModalButtonContainer}
+                                        buttonStyle={styles.signUpModalButton}
+                                        disabled={this.checkLogin()}
+                                        onPress={() => {
+                                            this.login();
+                                        }}
+                                        icon={
+                                            <Icon
+                                                name="check"
+                                                size={20}
+                                                color="white"
+                                            />
+                                        }
+                                    />
+                                </View>
+                            </Overlay>
+                    )
+                }
             </ImageBackground>
         );
     }
@@ -310,20 +351,68 @@ const styles = StyleSheet.create({
         marginTop: -100
     },
     heading: {
+        marginTop: 30,
+        textAlign: 'center',
         color: 'tomato',
-        fontSize: 35,
+        fontSize: 50,
         letterSpacing: 1.2,
         fontWeight: "bold",
         padding: 10,
     },
     slogen: {
-        color: 'tomato',
+        color: 'white',
         fontSize: 20,
         letterSpacing: 1.2,
         fontWeight: "normal",
         padding: 10,
-        marginTop: -80,
-        marginBottom: 80,
+        textAlign: 'center'
+    },
+    buttons: {
+        width: '100%',
+        marginTop: '30%',
+    },
+    buttonDiv: {
+        width: '100%',
+        marginTop: '10%',
+        alignItems: 'center',
+        textAlign: 'center',
+    },
+    titleStyle: {
+        textAlign: 'center',
+        fontSize: 20,
+        width: '100%',
+        color: 'tomato',
+    },
+    normalTitleStyle: {
+        fontSize: 20,
+        textAlign: 'center',
+        width: '100%',
+        color: 'white',
+    },
+    conditions: {
+      bottom: 10,
+        position: 'absolute',
+      color: 'white',
+        width: '100%'
+    },
+    conditionsText: {
+        textAlign: 'center',
+        bottom: 10,
+        color: 'white'
+    },
+    button : {
+        height: 80,
+        padding: 30,
+        width: '80%',
+        backgroundColor: 'tomato'
+    },
+    signUpButton : {
+        height: 80,
+        padding: 30,
+        width: '82%',
+        backgroundColor: 'transparent'
+    },
+    buttonIcon: {
     },
     inputs: {
         width: '100%',
@@ -336,21 +425,11 @@ const styles = StyleSheet.create({
     },
     inputStyle: {
         textAlign: 'center'
-
     },
     inputOuterContainer : {
         borderRadius: 50,
         width: '80%',
         margin: 20,
-    },
-    buttonContainer : {
-        marginTop: '20%',
-        backgroundColor: 'tomato',
-        alignItems: 'center',
-    },
-    button : {
-        padding: 20,
-        backgroundColor: 'tomato'
     },
     createAccount: {
         paddingTop: 20,
@@ -360,10 +439,6 @@ const styles = StyleSheet.create({
         width: '100%',
         alignItems: 'center',
         textAlign: 'center',
-    },
-    signUpButton : {
-        padding: 10,
-        backgroundColor: 'tomato'
     },
     icon: {
         paddingRight: 5

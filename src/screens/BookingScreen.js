@@ -127,6 +127,7 @@ class BookingScreen extends React.Component {
             formData.append('child_required', childChecked);
             formData.append('disabled_required', disabledChecked);
             formData.append('paid', true);
+            formData.append('price', this.getPrice());
 
             // POST request
             fetch('http://18.188.105.214/makeBooking', {
@@ -187,10 +188,10 @@ class BookingScreen extends React.Component {
             else {
                 price = prices['24']*dateDifference;
             }
-            return '£ ' +price.toFixed(2);
+            return price.toFixed(2);
         }
         else {
-            return '£0.00'
+            return 0
         }
     }
 
@@ -381,7 +382,7 @@ class BookingScreen extends React.Component {
 
                 <View style={styles.priceContainer}>
                     <Text style={styles.priceLabel}>Price:</Text>
-                    <Text style={styles.price}>{this.getPrice()}</Text>
+                    <Text style={styles.price}>£{this.getPrice()}</Text>
                 </View>
 
                 <Button

@@ -1,13 +1,11 @@
 import React from 'react';
-import {View, Text, StyleSheet, ScrollView, Alert} from 'react-native';
+import {AsyncStorage, DeviceEventEmitter, ScrollView, StyleSheet, Text, View} from 'react-native';
 import headerStyling from "../styles/ui/Header";
 import ProfileHeaderButton from "../components/ProfileHeaderButton";
 import firebase from "react-native-firebase";
-import {Input, ListItem} from "react-native-elements";
+import {Button, ListItem} from "react-native-elements";
 import Icon from "react-native-vector-icons/FontAwesome";
 import Ionicons from "react-native-vector-icons/Ionicons";
-import {Button} from "react-native-elements";
-import { DeviceEventEmitter, AsyncStorage } from 'react-native';
 
 class OffersScreen extends React.Component {
     static navigationOptions = ({ navigation }) => {
@@ -18,6 +16,7 @@ class OffersScreen extends React.Component {
             headerRight: <ProfileHeaderButton navigation={navigation}/>,
         };
     };
+
 
     constructor(props) {
         super(props);
@@ -38,23 +37,63 @@ class OffersScreen extends React.Component {
                     this.setState({
                         userId: user.uid
                     });
+                    this.updateOffers(user.uid);
+                    console.log("=========MOVING ON=============");
                     this.getOffers(user.uid);
                 }
-            })
+            });
+                    // let lastUpdated = this.getLastUpdate();
+                    // let today = new Date();
+                    //
+                    // if (lastUpdated === 0) {  // if logging in for the first time
+                    //     this.updateOffers(user.uid);
+                    //     this.setLastUpdate({'date': new Date(today.getFullYear(), today.getMonth(), today.getDate())})
+                    // } else {
+                    //     if (today >= this.getNextUpdateDate){
+                    //         this.updateOffers(user.uid);
+                    //         this.setLastUpdate({'date': new Date(today.getFullYear(), today.getMonth(), today.getDate())})
+                    //     } else {
+                    //         this.getOffers(user.uid);
+                    //     }
+                    // }
+                if (user){
+                    this.updateOffers(user.uid);
+                    this.getOffers(user.uid);
+                }
+            });
 
-            if (user) {
-                this.setState({
-                    userId: user.uid
-                });
-                this.getOffers(user.uid);
-            }
-        });
+            // if (user) {
+            //     this.setState({
+            //         userId: user.uid
+            //     });
+            //
+            //     let lastUpdated = this.getLastUpdate();
+            //     let today = new Date();
+            //     console.log(today);
+            //     console.log(lastUpdated);
+            //     if (lastUpdated === 0) {  // if logging in for the first time
+            //         this.updateOffers(user.uid);
+            //         this.setLastUpdate({'date': new Date(today.getFullYear(), today.getMonth(), today.getDate())})
+            //     } else {
+            //         if (today >= this.getNextUpdateDate){
+            //             this.updateOffers(user.uid);
+            //             this.setLastUpdate({'date': new Date(today.getFullYear(), today.getMonth(), today.getDate())})
+            //         } else {
+            //             this.getOffers(user.uid);
+            //         }
+            //     }
+            // }
+        // });
     }
 
     componentWillUnmount() {
         this.redeemOfferListener.remove();
     }
 
+    getNextUpdateDate = () =>{
+        let today = new Date();
+        return new Date(today.getFullYear(), today.getMonth(), today.getDate() + 5);
+    };
 
     goToOfferDetailsScreen(company, offer, expiry, logo, offerId, redemptionDate, scans){
 
@@ -70,39 +109,41 @@ class OffersScreen extends React.Component {
         })
     }
 
-    // setLastUpdate = (data) =>{
-    //     _storeData = async () => {
-    //         try {
-    //             await AsyncStorage.setItem('LastUpdateDate', data.date);
-    //         } catch (error) {
-    //             // Error saving data
-    //         }
-    //     };
-    // }
-    //
-    //
-    // getLastUpdate = () =>{
-    //     _retrieveData = async () => {
-    //         try {
-    //             const value = await AsyncStorage.getItem('LastUpdateDate');
-    //             if (value !== null) {
-    //                 // We have data!!
-    //                 return value;
-    //             }
-    //             else {
-    //                 return 0;
-    //             }
-    //         } catch (error) {
-    //             // Error retrieving data
-    //         }
-    //     };
-    // }
+    setLastUpdate = (data) =>{
+        _storeData = async () => {
+            try {
+                await AsyncStorage.setItem('LastUpdateDate', data.date);
+            } catch (error) {
+                // Error saving data
+            }
+        };
+    };
+
+
+    getLastUpdate = () => {
+        _retrieveData = async () => {
+            try {
+                const value = await AsyncStorage.getItem('LastUpdateDate');
+                if (value !== null) {
+                    // We have data!!
+                    console.log("================================VALUE=======================")
+                    return value;
+                }
+                else {
+                    console.log("================================NO VALUE=======================")
+                    return 0;
+                }
+            } catch (error) {
+                console.log("================================ERROR=======================")
+            }
+        };
+    };
 
 
     updateOffers = (userId) => {
-        let fornData = new FormData();
+        let formData = new FormData();
         formData.append('user_id', userId);
-
+        console.log("UPDATING OFFERS!!!!!");
         fetch('http://18.188.105.214/postoffers/user', {
             method: 'post',
             headers: {
@@ -110,7 +151,8 @@ class OffersScreen extends React.Component {
             },
             body: formData
         }).then(response => {
-
+            console.log("====================UPDATED====================")
+            console.log(response)
         }).catch(error => {
             const { code, message } = error;
         })

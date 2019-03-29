@@ -347,18 +347,56 @@ class OffersScreen extends React.Component {
                 paddingBottom: 35
             },
         });
+        const other = StyleSheet.create({
+            available: {
+                paddingTop: 10,
+                fontWeight: 'bold',
+                color: 'white'
+            },
+            price: {
+                paddingTop: 10,
+                fontWeight: 'bold',
+                color: 'white'
+            },
+            carParkTitle: {
+                fontWeight: 'bold',
+                color: 'white',
+                fontSize: 15
+            },
+            subtitleStyle: {
+                color: 'white',
+            },
+            subtitleView: {
+                color: 'white',
+                backgroundColor: 'tomato'
+            },
+            listContainer: {
+                width: '100%',
+            },
+            listContentContainer: {
+                backgroundColor: 'tomato',
+                padding: 20,
+                paddingBottom: 35
+            },
+        });
 
         var colours = {
             'McDonalds': m_styles,
             'Subway': s_styles,
-            'Burger King': b_styles
+            'Burger King': b_styles,
+            'Other': other
         };
 
-        try {
-            return colours[company]
-        } catch (e) {
-            return "Company Doesn\'t Exist"
+        if (company === "McDonalds" || company === "Burger King" || company === "Subway"){
+            return colours[company];
+        }else{
+            colours[other];
         }
+        // try {
+        //     return colours[company]
+        // } catch (e) {
+        //     return "Company Doesn\'t Exist"
+        // }
     }
 }
 

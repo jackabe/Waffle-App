@@ -37,33 +37,20 @@ class OffersScreen extends React.Component {
                     this.setState({
                         userId: user.uid
                     });
-                    this.shouldUpdateOffers(user.uid);
-                    if (this.state.shouldUpdate == 'true'){
-                        this.updateOffers(user.uid);
-                    }
                     this.getOffers(user.uid);
                 }
             });
 
-            if (user) {
-                this.setState({
-                    userId: user.uid
-                });
-                this.shouldUpdateOffers(user.uid);
-                if (this.state.shouldUpdate == 'true'){
-                    this.updateOffers(user.uid);
-                }
+            if (user){
                 this.getOffers(user.uid);
             }
         });
+
     }
-
-
 
     componentWillUnmount() {
         this.redeemOfferListener.remove();
     }
-
 
     goToOfferDetailsScreen(company, offer, expiry, logo, offerId, redemptionDate, scans){
 
@@ -78,40 +65,6 @@ class OffersScreen extends React.Component {
             scans: scans,
         })
     }
-
-    shouldUpdateOffers = (userId) => {
-        let formData = new FormData();
-        formData.append('user_id', userId);
-        fetch('http://18.188.105.214/should/updateoffers', {
-            method: 'post',
-            headers: {
-                'Content-Type': 'multipart/form-data',
-            },
-            body: formData
-        }).then(response => {
-            console.log(response)
-            let data = JSON.parse(response['_bodyText']);
-            this.setState({shouldUpdate : data});
-        }).catch(error => {
-            const { code, message } = error;
-        })
-    };
-
-    updateOffers = (userId) => {
-        let formData = new FormData();
-        formData.append('user_id', userId);
-        fetch('http://18.188.105.214/postoffers/user', {
-            method: 'post',
-            headers: {
-                'Content-Type': 'multipart/form-data',
-            },
-            body: formData
-        }).then(response => {
-            console.log("====================UPDATED====================")
-        }).catch(error => {
-            const { code, message } = error;
-        })
-    };
 
     getOffers(userId){
         let formData = new FormData();
@@ -160,36 +113,36 @@ class OffersScreen extends React.Component {
             <View style={styles.content}>
 
                 <ScrollView style={{ width: '100%', height: '100%'}}>
-                {
-                    this.state.offerList.map((l, i) => (
-                        <ListItem
-                            containerStyle={this.getColour(l.company).listContainer}
-                            contentContainerStyle={this.getColour(l.company).listContentContainer}
-                            titleStyle={this.getColour(l.company).carParkTitle}
-                            subtitleStyle={this.getColour(l.company).subtitleStyle}
-                            leftAvatar={{ source: { uri: l.logo } }}
-                            key={i}
-                            onPress={() => {
-                                this.goToOfferDetailsScreen(l.company, l.offer, l.expiry, l.logo, l.offerId, l.redemptionDate, l.scans)
-                            }}
-                            title={l.company}
-                            subtitle={
-                                <View style={this.getColour(l.company).subtitleView}>
-                                    {l.favourite ?
-                                        <Icon
-                                            style={styles.icon}
-                                            name="star"
-                                            size={25}
-                                            color="white"
-                                        /> : null }
-                                    <Text style={this.getColour(l.company).available}>{'Offer: ' + l.offer }</Text>
-                                    <Text style={this.getColour(l.company).price}>{'This offer will expire on: ' + l.expiry}</Text>
-                                </View>
-                            }
-                            // leftAvatar={{ source: require('../images/avatar1.jpg') }}
-                        />
-                    ))
-                }
+                    {
+                        this.state.offerList.map((l, i) => (
+                            <ListItem
+                                containerStyle={this.getColour(l.company).listContainer}
+                                contentContainerStyle={this.getColour(l.company).listContentContainer}
+                                titleStyle={this.getColour(l.company).carParkTitle}
+                                subtitleStyle={this.getColour(l.company).subtitleStyle}
+                                leftAvatar={{ source: { uri: l.logo } }}
+                                key={i}
+                                onPress={() => {
+                                    this.goToOfferDetailsScreen(l.company, l.offer, l.expiry, l.logo, l.offerId, l.redemptionDate, l.scans)
+                                }}
+                                title={l.company}
+                                subtitle={
+                                    <View style={this.getColour(l.company).subtitleView}>
+                                        {l.favourite ?
+                                            <Icon
+                                                style={styles.icon}
+                                                name="star"
+                                                size={25}
+                                                color="white"
+                                            /> : null }
+                                        <Text style={this.getColour(l.company).available}>{'Offer: ' + l.offer }</Text>
+                                        <Text style={this.getColour(l.company).price}>{'This offer will expire on: ' + l.expiry}</Text>
+                                    </View>
+                                }
+                                // leftAvatar={{ source: require('../images/avatar1.jpg') }}
+                            />
+                        ))
+                    }
                 </ScrollView>
                 <Button
                     style={styles.bookingButton}

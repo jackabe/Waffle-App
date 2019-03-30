@@ -37,63 +37,33 @@ class OffersScreen extends React.Component {
                     this.setState({
                         userId: user.uid
                     });
-                    this.updateOffers(user.uid);
-                    console.log("=========MOVING ON=============");
-                    this.getOffers(user.uid);
-                }
-            });
-                    // let lastUpdated = this.getLastUpdate();
-                    // let today = new Date();
-                    //
-                    // if (lastUpdated === 0) {  // if logging in for the first time
-                    //     this.updateOffers(user.uid);
-                    //     this.setLastUpdate({'date': new Date(today.getFullYear(), today.getMonth(), today.getDate())})
-                    // } else {
-                    //     if (today >= this.getNextUpdateDate){
-                    //         this.updateOffers(user.uid);
-                    //         this.setLastUpdate({'date': new Date(today.getFullYear(), today.getMonth(), today.getDate())})
-                    //     } else {
-                    //         this.getOffers(user.uid);
-                    //     }
-                    // }
-                if (user){
-                    this.updateOffers(user.uid);
+                    this.shouldUpdateOffers(user.uid);
+                    if (this.state.shouldUpdate == 'true'){
+                        this.updateOffers(user.uid);
+                    }
                     this.getOffers(user.uid);
                 }
             });
 
-            // if (user) {
-            //     this.setState({
-            //         userId: user.uid
-            //     });
-            //
-            //     let lastUpdated = this.getLastUpdate();
-            //     let today = new Date();
-            //     console.log(today);
-            //     console.log(lastUpdated);
-            //     if (lastUpdated === 0) {  // if logging in for the first time
-            //         this.updateOffers(user.uid);
-            //         this.setLastUpdate({'date': new Date(today.getFullYear(), today.getMonth(), today.getDate())})
-            //     } else {
-            //         if (today >= this.getNextUpdateDate){
-            //             this.updateOffers(user.uid);
-            //             this.setLastUpdate({'date': new Date(today.getFullYear(), today.getMonth(), today.getDate())})
-            //         } else {
-            //             this.getOffers(user.uid);
-            //         }
-            //     }
-            // }
-        // });
+            if (user) {
+                this.setState({
+                    userId: user.uid
+                });
+                this.shouldUpdateOffers(user.uid);
+                if (this.state.shouldUpdate == 'true'){
+                    this.updateOffers(user.uid);
+                }
+                this.getOffers(user.uid);
+            }
+        });
     }
+
+
 
     componentWillUnmount() {
         this.redeemOfferListener.remove();
     }
 
-    getNextUpdateDate = () =>{
-        let today = new Date();
-        return new Date(today.getFullYear(), today.getMonth(), today.getDate() + 5);
-    };
 
     goToOfferDetailsScreen(company, offer, expiry, logo, offerId, redemptionDate, scans){
 
@@ -109,41 +79,27 @@ class OffersScreen extends React.Component {
         })
     }
 
-    setLastUpdate = (data) =>{
-        _storeData = async () => {
-            try {
-                await AsyncStorage.setItem('LastUpdateDate', data.date);
-            } catch (error) {
-                // Error saving data
-            }
-        };
+    shouldUpdateOffers = (userId) => {
+        let formData = new FormData();
+        formData.append('user_id', userId);
+        fetch('http://18.188.105.214/should/updateoffers', {
+            method: 'post',
+            headers: {
+                'Content-Type': 'multipart/form-data',
+            },
+            body: formData
+        }).then(response => {
+            console.log(response)
+            let data = JSON.parse(response['_bodyText']);
+            this.setState({shouldUpdate : data});
+        }).catch(error => {
+            const { code, message } = error;
+        })
     };
-
-
-    getLastUpdate = () => {
-        _retrieveData = async () => {
-            try {
-                const value = await AsyncStorage.getItem('LastUpdateDate');
-                if (value !== null) {
-                    // We have data!!
-                    console.log("================================VALUE=======================")
-                    return value;
-                }
-                else {
-                    console.log("================================NO VALUE=======================")
-                    return 0;
-                }
-            } catch (error) {
-                console.log("================================ERROR=======================")
-            }
-        };
-    };
-
 
     updateOffers = (userId) => {
         let formData = new FormData();
         formData.append('user_id', userId);
-        console.log("UPDATING OFFERS!!!!!");
         fetch('http://18.188.105.214/postoffers/user', {
             method: 'post',
             headers: {
@@ -152,7 +108,6 @@ class OffersScreen extends React.Component {
             body: formData
         }).then(response => {
             console.log("====================UPDATED====================")
-            console.log(response)
         }).catch(error => {
             const { code, message } = error;
         })

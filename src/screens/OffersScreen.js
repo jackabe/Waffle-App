@@ -386,11 +386,14 @@ class OffersScreen extends React.Component {
             'Burger King': b_styles,
             'Other': other
         };
-
-        if (company === "McDonalds" || company === "Burger King" || company === "Subway"){
-            return colours[company];
-        }else{
-            colours[other];
+        try {
+            if (company === "McDonalds" || company === "Burger King" || company === "Subway") {
+                return colours[company];
+            } else {
+                return colours['Other'];
+            }
+        }catch (e) {
+            return "Company Doesn\'t Exist"
         }
         // try {
         //     return colours[company]

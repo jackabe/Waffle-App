@@ -17,7 +17,6 @@ class OffersScreen extends React.Component {
         };
     };
 
-
     constructor(props) {
         super(props);
         this.state = {
@@ -28,7 +27,6 @@ class OffersScreen extends React.Component {
 
         }
     }
-
 
     componentDidMount() {
         this.authSubscription = firebase.auth().onAuthStateChanged((user) => {

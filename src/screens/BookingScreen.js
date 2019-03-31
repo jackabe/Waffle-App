@@ -47,7 +47,8 @@ class BookingScreen extends React.Component {
             disabledChecked: false,
             childChecked: false,
             prices: {},
-            price: 0
+            price: 0,
+            surge: 0
         }
     };
 
@@ -57,10 +58,16 @@ class BookingScreen extends React.Component {
         Service.getLatestPrices(parkingLotId)
             .then(response => {
                 let prices = LotHandler.getLotPrices(response[0]);
-                console.log(prices)
+                console.log(prices);
                 this.setState({
                     prices: prices
                 });
+                Service.getSurgePrice(parkingLotId)
+                    .then(response => {
+                        this.setState({surge: response})
+                    }).catch(error => {
+                    console.log(error.message);
+                })
             }).catch(error => {
                 console.log(error.message);
                 Alert.alert(error.message);
@@ -120,7 +127,7 @@ class BookingScreen extends React.Component {
             // formData.append('username', user.uid);
             formData.append('user_id', userId);
             formData.append('lot_id', navigation.getParam('parkingLotId'));
-            formData.append('location', parkingLotName);
+            formData.append('lot_name', parkingLotName);
             formData.append('number_plate', regNumber.toUpperCase());
             formData.append('arrival', this.convertDate(arrivalDate, arrivalTime));
             formData.append('departure', this.convertDate(departureDate, departureTime));
@@ -188,7 +195,13 @@ class BookingScreen extends React.Component {
             else {
                 price = prices['24']*dateDifference;
             }
-            return price.toFixed(2);
+
+            if (this.state.surge > 1) {
+                return (price * this.state.surge).toFixed(2);
+            }
+            else {
+                return price.toFixed(2);
+            }
         }
         else {
             return 0

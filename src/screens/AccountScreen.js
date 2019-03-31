@@ -25,16 +25,6 @@ class AccountScreen extends React.Component {
             userId: null,
             name: null,
             bookingList: [
-                {
-                    // bookingDate: "18-02-2019",
-                    // bookingEndDate: "18-02-2019",
-                    // endTime: "18:17",
-                    // startTime: "17:17",
-                    // location: "Cardiff Queen Street Parking",
-                    // numberPlate: "TEST301",
-                    // disabled: true,
-                    // child: true
-                },
             ]
         };
     }
@@ -125,7 +115,7 @@ class AccountScreen extends React.Component {
                 <View style={styles.profileSection}>
                     <IoniconsProfile name='user-circle' size={50} color={'tomato'} style={styles.profileIcon}  />
                     <View>
-                        <Text style={styles.name}>....</Text>
+                        <Text style={styles.name}>Jack Allcock</Text>
                         <Text style={styles.username}>{this.state.name}</Text>
                     </View>
                     <PencilIcon name='pencil-circle' size={50} color={'tomato'} style={styles.pencilIcon}  />

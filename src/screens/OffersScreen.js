@@ -144,16 +144,16 @@ class OffersScreen extends React.Component {
                         ))
                     }
                 </ScrollView>
-                <Button
-                    style={styles.bookingButton}
-                    containerStyle={styles.bookingButtonContainer}
-                    buttonStyle={styles.bookingModalButton}
-                    icon={<Ionicons name='md-refresh' size={25} color={'white'}/>}
-                    title=''
-                    onPress={() => {
-                        this.getOffers();
-                    }}
-                />
+                {/*<Button*/}
+                    {/*style={styles.bookingButton}*/}
+                    {/*containerStyle={styles.bookingButtonContainer}*/}
+                    {/*buttonStyle={styles.bookingModalButton}*/}
+                    {/*icon={<Ionicons name='md-refresh' size={25} color={'white'}/>}*/}
+                    {/*title=''*/}
+                    {/*onPress={() => {*/}
+                        {/*this.getOffers(this.state.userId);*/}
+                    {/*}}*/}
+                {/*/>*/}
             </View>
         );
     }
@@ -303,11 +303,6 @@ class OffersScreen extends React.Component {
         }catch (e) {
             return "Company Doesn\'t Exist"
         }
-        // try {
-        //     return colours[company]
-        // } catch (e) {
-        //     return "Company Doesn\'t Exist"
-        // }
     }
 }
 

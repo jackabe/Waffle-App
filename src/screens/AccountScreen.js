@@ -98,10 +98,10 @@ class AccountScreen extends React.Component {
                 let booking = {
                     arrival: this.convertDate(data[i]['arrival']),
                     departure: this.convertDate(data[i]['departure']),
-                    child: data[i]['child_required'],
-                    numberPlate: this.convertBoolean(data[i]['number_plate']),
+                    child: this.convertBoolean(data[i]['disabled_required']),
+                    numberPlate: data[i]['number_plate'],
                     disabled: this.convertBoolean(data[i]['disabled_required']),
-
+                    location: data[i]['lot_name']
                 };
 
                 bookingList.push(booking); // Add to list
@@ -145,10 +145,10 @@ class AccountScreen extends React.Component {
                             subtitle={
                                 <View style={styles.subtitleView}>
 
-                                    {/*<View style={styles.section}>*/}
-                                        {/*<Location name='location-pin' size={25} color={'tomato'} style={styles.locationIcon}  />*/}
-                                        {/*<Text style={styles.location}>{l.location}</Text>*/}
-                                    {/*</View>*/}
+                                    <View style={styles.section}>
+                                        <Location name='location-pin' size={25} color={'tomato'} style={styles.locationIcon}  />
+                                        <Text style={styles.location}>{l.location}</Text>
+                                    </View>
 
                                     <Text style={styles.regInfo}>{'Number Plate: ' + l.numberPlate}</Text>
 

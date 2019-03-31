@@ -55,8 +55,12 @@ class ViewBookingsScreen extends React.Component {
         let bookingDD = bookingUnix.getUTCDate();
         let bookingMM = bookingUnix.getUTCMonth() + 1;
         let bookingYYYY = bookingUnix.getUTCFullYear();
+        let minutes = bookingUnix.getMinutes();
 
-        let stringBooking = ("" + bookingDD + "/" + bookingMM + "/" + bookingYYYY);
+        if (minutes.length === 1) {
+            minutes = minutes + '0'
+        }
+        let stringBooking = (bookingUnix.toISOString().substr(0, 16).replace('T', ' '))
         return stringBooking;
     }
 
@@ -92,7 +96,8 @@ class ViewBookingsScreen extends React.Component {
                     child: this.convertBoolean(data[i]['disabled_required']),
                     numberPlate: data[i]['number_plate'],
                     disabled: this.convertBoolean(data[i]['disabled_required']),
-                    location: data[i]['lot_name']
+                    location: data[i]['lot_name'],
+                    ref: data[i]['lot_id']
                 };
 
                 bookingList.push(booking); // Add to list
@@ -128,13 +133,18 @@ class ViewBookingsScreen extends React.Component {
 
                                         <View>
                                             <View style={styles.section}>
-                                                <Location name='location-pin' size={25} color={'tomato'} style={styles.locationIcon}  />
+                                                <Location name='location-pin' size={25} color={'gray'} style={styles.locationIcon}  />
                                                 <Text style={styles.location}>{l.location}</Text>
-                                                <Text style={styles.dateText}>{l.arrival} - {l.departure}</Text>
                                             </View>
                                         </View>
 
+                                        <Text style={styles.dateText}>A: {l.arrival} - D: {l.departure}</Text>
+
                                         <Text style={styles.regInfo}>{'Number Plate: ' + l.numberPlate}</Text>
+
+                                        <View style={styles.line}></View>
+
+                                        <Text style={styles.regInfo}>{'Ref number: ' + l.ref}</Text>
 
                                         <View style={styles.section}>
                                             {l.disabled ?
@@ -146,7 +156,9 @@ class ViewBookingsScreen extends React.Component {
 
                                         </View>
 
-                                        <View style={styles.line}></View>
+                                        <View style={styles.card1}></View>
+                                        <View style={styles.card2}></View>
+
                                     </View>
                                 }
                             />
@@ -178,11 +190,11 @@ const styles = StyleSheet.create({
     },
     line: {
         height: 1,
-        marginLeft: -70,
-        width: '200%',
-        borderWidth: 0.5,
+        width: '100%',
+        borderWidth: 0.2,
         borderColor: 'grey',
-        marginTop: 5
+        marginTop: 8,
+        marginBottom: 5
     },
     name: {
         fontSize: 18,
@@ -206,6 +218,22 @@ const styles = StyleSheet.create({
         marginTop: 10,
         marginRight: 25
     },
+    card1: {
+        width: '102%',
+        height: 4,
+        marginTop: 3,
+        marginLeft: -12,
+        borderWidth: 1,
+        borderColor: '#e2e2e2',
+    },
+    card2: {
+        width: '100%',
+        height: 4,
+        marginLeft: -9,
+        marginTop: 0,
+        borderWidth: 1,
+        borderColor: '#e2e2e2',
+    },
     info: {
         paddingRight: 10,
     },
@@ -216,7 +244,7 @@ const styles = StyleSheet.create({
     },
     location: {
         color: 'grey',
-        fontSize: 20,
+        fontSize: 17,
         paddingBottom: 10
     },
     section: {
@@ -257,8 +285,6 @@ const styles = StyleSheet.create({
     dateText: {
         color: 'grey',
         fontSize: 15,
-        marginTop: -6,
-        marginLeft: 50,
     },
     carParkTitle: {
         fontWeight: 'bold',
@@ -269,7 +295,11 @@ const styles = StyleSheet.create({
         color: 'white',
     },
     subtitleView: {
-        paddingLeft: 10,
+        paddingTop: 15,
+        borderWidth: 1,
+        borderColor: '#e2e2e2',
+        borderRadius: 15,
+        paddingLeft: 15,
         marginTop: -30,
         color: 'white',
     },

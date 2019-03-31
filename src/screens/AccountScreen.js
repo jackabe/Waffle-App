@@ -22,10 +22,6 @@ class AccountScreen extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            userId: null,
-            name: null,
-            bookingList: [
-            ]
         };
     }
 
@@ -43,69 +39,10 @@ class AccountScreen extends React.Component {
                     userId: user.uid,
                     name: user.email,
                 });
-                this.getBookings(user.uid);
             }
         });
     }
 
-    convertDate(date){
-        let bookingUnix = new Date(date * 1000);
-        // Converting timestamp to date
-        let bookingDD = bookingUnix.getUTCDate();
-        let bookingMM = bookingUnix.getUTCMonth() + 1;
-        let bookingYYYY = bookingUnix.getUTCFullYear();
-
-        let stringBooking = ("" + bookingDD + "/" + bookingMM + "/" + bookingYYYY);
-        return stringBooking;
-    }
-
-    convertBoolean(stringBool){
-        if (stringBool === "true"){
-            return true;
-        }else{
-            return false;
-        }
-    }
-
-    getBookings(userId){
-        let formData = new FormData();
-        formData.append('user_id', userId);
-
-        // GET request
-        fetch('http://18.188.105.214/getBookings', {
-            method: 'post',
-            headers: {
-                'Content-Type': 'multipart/form-data',
-            },
-            body: formData
-        }).then(response => {
-            console.log(response);
-            let bookingList = [];
-            let data = JSON.parse(response['_bodyText']);
-            let i = 0;
-            // Get each booking and form JSON
-            for (i; i < data.length; i++) {
-                let booking = {
-                    arrival: this.convertDate(data[i]['arrival']),
-                    departure: this.convertDate(data[i]['departure']),
-                    child: this.convertBoolean(data[i]['disabled_required']),
-                    numberPlate: data[i]['number_plate'],
-                    disabled: this.convertBoolean(data[i]['disabled_required']),
-                    location: data[i]['lot_name']
-                };
-
-                bookingList.push(booking); // Add to list
-
-                // As not async, check all done before updating state
-                if (i === data.length-1) {
-                    this.setState({bookingList : bookingList});
-                }
-            }
-
-        }).catch(error => {
-            const { code, message } = error;
-        })
-    }
 
     render() {
 
@@ -120,53 +57,6 @@ class AccountScreen extends React.Component {
                     </View>
                     <PencilIcon name='pencil-circle' size={50} color={'tomato'} style={styles.pencilIcon}  />
                 </View>
-
-                <Text style={styles.bookingHeading}>Your Bookings</Text>
-
-                <ScrollView style={{ width: '100%', height: '100%'}}>
-                {
-                    this.state.bookingList.map((l, i) => (
-                        <ListItem
-                            containerStyle={styles.listContainer}
-                            contentContainerStyle={styles.listContentContainer}
-                            titleStyle={styles.carParkTitle}
-                            subtitleStyle={styles.subtitleStyle}
-                            key={i}
-                            subtitle={
-                                <View style={styles.subtitleView}>
-
-                                    <View style={styles.section}>
-                                        <Location name='location-pin' size={25} color={'tomato'} style={styles.locationIcon}  />
-                                        <Text style={styles.location}>{l.location}</Text>
-                                    </View>
-
-                                    <Text style={styles.regInfo}>{'Number Plate: ' + l.numberPlate}</Text>
-
-                                    <View style={styles.section}>
-                                        <Text style={styles.dateHeading}>Arrival:</Text>
-                                        <Text style={styles.dateText}>{l.arrival}</Text>
-                                     </View>
-
-                                    <View style={styles.section}>
-                                        <Text style={styles.dateHeading}>Departure:</Text>
-                                        <Text style={styles.dateText}>{l.departure}</Text>
-                                    </View>
-
-                                    <View style={styles.section}>
-                                        {l.disabled ?
-                                            <Text style={styles.info}>Disabled</Text> : null
-                                        }
-                                        {l.child ?
-                                            <Text style={styles.info}>Parent and child</Text> : null
-                                        }
-
-                                    </View>
-                                </View>
-                            }
-                        />
-                    ))
-                }
-                </ScrollView>
 
                 <Button
                     style={styles.bookingButton}

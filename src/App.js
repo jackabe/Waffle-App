@@ -2,6 +2,7 @@ import React from "react";
 import { Platform } from "react-native";
 import { createStackNavigator, createSwitchNavigator, createBottomTabNavigator } from "react-navigation";
 import Ionicons from 'react-native-vector-icons/Ionicons';
+import BookingsIcon from 'react-native-vector-icons/FontAwesome';
 import IoniconsProfile from "react-native-vector-icons/FontAwesome";
 
 import headerStyling from "./styles/ui/Header";
@@ -16,6 +17,7 @@ import SettingsScreen from "./screens/SettingsScreen";
 import LoginScreen from "./screens/LoginScreen";
 import ScannerScreen from "./screens/QRScannerScreen";
 import OfferDetailsScreen from "./screens/OfferDetailsScreen";
+import ViewBookingsScreen from "./screens/ViewBookingsScreen";
 
 
 const strings = Tools.getStrings();
@@ -50,8 +52,8 @@ const AppStack = createBottomTabNavigator(
                 Booking: AddressScreen,
                 GetSpace: BookingScreen,
                 Confirm: ConfirmationScreen,
-                Settings: SettingsScreen,
-                QRScanner: ScannerScreen
+                QRScanner: ScannerScreen,
+                Account: AccountScreen
             },
             tabBarScreenOptions("Booking")
         ),
@@ -59,16 +61,16 @@ const AppStack = createBottomTabNavigator(
             {
                 Offers: OffersScreen,
                 OfferDetails: OfferDetailsScreen,
-                // Account: AccountScreen
+                Account: AccountScreen
             },
             tabBarScreenOptions("Offers")
         ),
-        Account: createStackNavigator(
+        Bookings: createStackNavigator(
             {
+                Bookings: ViewBookingsScreen,
                 Account: AccountScreen
-                // Account: AccountScreen
             },
-            tabBarScreenOptions("Account")
+            tabBarScreenOptions("Bookings")
         ),
     },
     {
@@ -102,7 +104,7 @@ const AppStack = createBottomTabNavigator(
                     return <Ionicons name={iconName} size={horizontal ? 20 : 25} color={tintColor} />;
                 }
                 else {
-                    iconName = `user-circle`;
+                    iconName = `calendar`;
                     return <IoniconsProfile name={iconName} size={horizontal ? 20 : 25} color={tintColor} />;
                 }
 

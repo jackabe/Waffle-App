@@ -136,8 +136,10 @@ class BookingScreen extends React.Component {
             formData.append('paid', true);
             formData.append('price', this.getPrice());
 
+            console.log('make a booking')
+
             // POST request
-            fetch('http://18.188.105.214/makeBooking', {
+            fetch('http://18.188.105.214//makeBooking', {
                 method: 'post',
                 headers: {
                     'Content-Type': 'multipart/form-data',
@@ -145,17 +147,22 @@ class BookingScreen extends React.Component {
                 body: formData
             }).then(response => {
                 console.log(response);
-                this.props.navigation.navigate("Confirm", {
-                    parkingLotName: navigation.getParam('parkingLotName'),
-                    reg: this.state.regNumber,
-                    arrivalTime: this.state.arrivalTime,
-                    arrivalDate: this.state.arrivalDate,
-                    departureTime: this.state.departureTime,
-                    departureDate: this.state.departureDate,
-                    child: childChecked,
-                    disabled: disabledChecked,
-                    price: this.getPrice()
-                })
+                if (response['status'] !== '200') {
+                    Alert.alert('Sorry, there are no current spaces available at this time :(');
+                }
+                else {
+                    this.props.navigation.navigate("Confirm", {
+                        parkingLotName: navigation.getParam('parkingLotName'),
+                        reg: this.state.regNumber,
+                        arrivalTime: this.state.arrivalTime,
+                        arrivalDate: this.state.arrivalDate,
+                        departureTime: this.state.departureTime,
+                        departureDate: this.state.departureDate,
+                        child: childChecked,
+                        disabled: disabledChecked,
+                        price: this.getPrice()
+                    })
+                }
             }).catch(error => {
                 const { code, message } = error;
                 console.log(message);

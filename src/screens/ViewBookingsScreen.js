@@ -1,14 +1,12 @@
 import React from 'react';
-import {View, Text, StyleSheet, Alert, ScrollView} from 'react-native';
+import {View, Text, StyleSheet, Alert, ScrollView, TouchableOpacity} from 'react-native';
 import headerStyling from "../styles/ui/Header";
 import { Input, Button, ListItem} from 'react-native-elements';
 import firebase from 'react-native-firebase';
-import Ionicons from "react-native-vector-icons/Ionicons";
 import Location from "react-native-vector-icons/Entypo";
-import PencilIcon from "react-native-vector-icons/MaterialCommunityIcons";
 import Icon from "react-native-vector-icons/FontAwesome";
-import IoniconsProfile from "react-native-vector-icons/FontAwesome";
 import ProfileHeaderButton from "../components/ProfileHeaderButton";
+import ConfirmationScreen from "./ConfirmationScreen";
 
 class ViewBookingsScreen extends React.Component {
     static navigationOptions = ({ navigation }) => {
@@ -97,6 +95,8 @@ class ViewBookingsScreen extends React.Component {
                     numberPlate: data[i]['number_plate'],
                     disabled: this.convertBoolean(data[i]['disabled_required']),
                     location: data[i]['lot_name'],
+                    name: data[i]['lot_name'],
+                    price: data[i]['price'],
                     ref: data[i]['lot_id']
                 };
 
@@ -113,6 +113,22 @@ class ViewBookingsScreen extends React.Component {
         })
     }
 
+    navigateToConfirmation = (lot) => {
+        const { navigation } = this.props;
+        navigation.navigate("Confirm", {
+            bookingNew: false,
+            reg: lot.numberPlate,
+            parkingLotName: lot.location,
+            arrivalTime: lot.arrival,
+            arrivalDate: lot.arrival,
+            departureTime: lot.departure,
+            departureDate: lot.departure,
+            child: lot.child,
+            disabled: lot.disabled,
+            price: lot.price
+        })
+    };
+
     render() {
 
         return (
@@ -124,6 +140,7 @@ class ViewBookingsScreen extends React.Component {
                     {
                         this.state.bookingList.map((l, i) => (
                             <ListItem
+                                onPress={() => this.navigateToConfirmation(l)}
                                 containerStyle={styles.listContainer}
                                 contentContainerStyle={styles.listContentContainer}
                                 subtitleStyle={styles.subtitleStyle}
@@ -138,7 +155,10 @@ class ViewBookingsScreen extends React.Component {
                                             </View>
                                         </View>
 
-                                        <Text style={styles.dateText}>A: {l.arrival} - D: {l.departure}</Text>
+                                        <View style={styles.section}>
+                                             <Text style={styles.dateText}>A: {l.arrival} - D: {l.departure}</Text>
+                                            <Icon name='chevron-right' size={15} color={'tomato'} style={styles.icon}  />
+                                        </View>
 
                                         <Text style={styles.regInfo}>{'Number Plate: ' + l.numberPlate}</Text>
 
@@ -183,6 +203,9 @@ const styles = StyleSheet.create({
     pencilIcon: {
         marginLeft: '10%',
     },
+    icon: {
+        marginLeft: 50,
+    },
     username: {
         color: 'grey',
         marginTop: 5,
@@ -207,9 +230,6 @@ const styles = StyleSheet.create({
         fontSize: 35,
         fontWeight: "bold",
         padding: 10,
-    },
-    icon: {
-        paddingRight: 15
     },
     account: {
         color: 'tomato',
@@ -243,7 +263,7 @@ const styles = StyleSheet.create({
         // fontWeight: "bold",
     },
     location: {
-        color: 'grey',
+        color: 'tomato',
         fontSize: 17,
         paddingBottom: 10
     },
@@ -324,4 +344,4 @@ const styles = StyleSheet.create({
 
 });
 
-export default ViewBookingsScreen;
+export default (ViewBookingsScreen);

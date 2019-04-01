@@ -9,12 +9,21 @@ import {Button} from "react-native-elements";
 
 class ConfirmationScreen extends React.Component {
     static navigationOptions = ({ navigation }) => {
-        return {
-            headerLeft: null,
-            headerStyle: headerStyling.headerStyle,
-            headerTitleStyle: headerStyling.headerTitleStyle,
-            headerTitle: "waffle  ",
-        };
+        if  (navigation.getParam('newBooking') === true) {
+            return {
+                headerLeft: null,
+                headerStyle: headerStyling.headerStyle,
+                headerTitleStyle: headerStyling.headerTitleStyle,
+                headerTitle: "waffle  ",
+            };
+        }
+        else {
+            return {
+                headerStyle: headerStyling.headerStyle,
+                headerTitleStyle: headerStyling.headerTitleStyle,
+                headerTitle: "waffle  ",
+            };
+        }
     };
 
     componentDidMount() {

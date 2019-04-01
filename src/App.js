@@ -13,7 +13,6 @@ import AccountScreen from "./screens/AccountScreen";
 import AddressScreen from "./screens/AddressScreen";
 import ConfirmationScreen from "./screens/ConfirmationScreen";
 import OffersScreen from "./screens/OffersScreen";
-import SettingsScreen from "./screens/SettingsScreen";
 import LoginScreen from "./screens/LoginScreen";
 import ScannerScreen from "./screens/QRScannerScreen";
 import OfferDetailsScreen from "./screens/OfferDetailsScreen";
@@ -68,7 +67,8 @@ const AppStack = createBottomTabNavigator(
         Bookings: createStackNavigator(
             {
                 Bookings: ViewBookingsScreen,
-                Account: AccountScreen
+                Account: AccountScreen,
+                Confirm: ConfirmationScreen
             },
             tabBarScreenOptions("Bookings")
         ),

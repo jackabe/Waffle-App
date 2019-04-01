@@ -153,6 +153,7 @@ class BookingScreen extends React.Component {
                 else {
                     this.props.navigation.navigate("Confirm", {
                         parkingLotName: navigation.getParam('parkingLotName'),
+                        bookingNew: true,
                         reg: this.state.regNumber,
                         arrivalTime: this.state.arrivalTime,
                         arrivalDate: this.state.arrivalDate,

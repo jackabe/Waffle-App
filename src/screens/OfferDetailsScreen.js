@@ -100,7 +100,7 @@ class OfferDetailsScreen extends React.Component {
 
         if (redemptionDate != "" || isVoucherRedeemed){
             code = <QRCode value={'http://18.188.105.214/validateVoucher?offerId='+offerId} size={250} bgColor='black' fgColor='white'/>;
-            buttonAvailable = <Text style={styles.constHeadings}>This offer has been redeemed</Text>
+            buttonAvailable = <Text style={styles.redeemText}>This offer has been redeemed </Text>
         }else if (!isVoucherRedeemed) {
             // This is an image to a greyed out QR code
             code = <Image style={{width: 250, height: 250}} source={{uri: 'http://1.bp.blogspot.com/-0qeFglJKO38/UBt-0F5POKI/AAAAAAAAALA/4QT5V8J8wLs/s290/qrcode_grey_hotel_en_gris.png'}}/>;
@@ -109,12 +109,8 @@ class OfferDetailsScreen extends React.Component {
 
         return (
             <View style = {styles.container}>
-                <View style={styles.qrContainer}>
-                    {code}
-                </View>
-
-                {/*<View styles={styles.detailsContainer}>*/}
-                    <Text style={styles.constHeadings}>
+                <View style={styles.detailsContainer}>
+                    <Text style={styles.storeHeading}>
                         {company}
                     </Text>
                     <Text style={styles.constHeadings}>
@@ -123,8 +119,12 @@ class OfferDetailsScreen extends React.Component {
                     <Text style={styles.constHeadings}>
                         {'Expires: ' + expiry}
                     </Text>
+                </View>
+                <View style={styles.line}></View>
+                <View style={styles.qrContainer}>
+                    {code}
+                </View>
                 {buttonAvailable}
-
             </View>
         );
     }
@@ -143,12 +143,21 @@ const styles = StyleSheet.create({
         color: 'tomato',
         fontSize: 20,
         padding: 12,
-
     },
-    imageLogo:{
-        // padding:'20px',
-        width: 250,
-        height:250
+    storeHeading: {
+        color: 'tomato',
+        fontSize: 25,
+        // fontWeight: 'bold',
+        padding: 12,
+    },
+    redeemText: {
+        color: 'tomato',
+        fontSize: 25,
+        // fontWeight: 'bold',
+        padding: 10,
+        bottom: 30,
+        position: 'absolute',
+        textAlign: 'center',
     },
     bookingButton : {
         padding: 10,
@@ -170,7 +179,10 @@ const styles = StyleSheet.create({
         textAlign: 'center',
     },
     qrContainer: {
-        justifyContent: 'center',
+        // justifyContent: 'center',
+        // alignItems: 'center',
+        position: 'absolute',
+        bottom: 120,
         alignItems: 'center',
     },
     offerDetails: {
@@ -178,11 +190,21 @@ const styles = StyleSheet.create({
         alignItems: 'center',
     },
     detailsContainer:{
-        padding: 10,
+        top: 50,
         alignItems: 'center',
         textAlign: 'center',
-        justifyContent: 'center'
-    }
+        position: 'absolute'
+    },
+    line: {
+        height: 1,
+        width: '100%',
+        borderWidth: 0.2,
+        borderColor: 'tomato',
+        marginTop: 225,
+        marginBottom: 5
+    },
+
+
 
 });
 

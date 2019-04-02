@@ -139,7 +139,7 @@ class BookingScreen extends React.Component {
             console.log('make a booking')
 
             // POST request
-            fetch('http://18.188.105.214//makeBooking', {
+            fetch('http://18.188.105.214/makeBooking', {
                 method: 'post',
                 headers: {
                     'Content-Type': 'multipart/form-data',
@@ -147,7 +147,7 @@ class BookingScreen extends React.Component {
                 body: formData
             }).then(response => {
                 console.log(response);
-                if (response['status'] !== '200') {
+                if (response['status'] !== 200) {
                     Alert.alert('Sorry, there are no current spaces available at this time :(');
                 }
                 else {

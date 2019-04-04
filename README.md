@@ -48,6 +48,11 @@ You will require the following to run the application:
     ```
    This builds and runs the application on the connected Android device. Once the build is complete you will be able to access the application (waffle_app) on the device and use it.
 
+6. Error
+   ```
+    Failed to delete/parse google-services.json
+    ```
+    It is possible that the build could fail due to the google-services JSON file. If the above error occurs, first run the build command again. If it still failes, delete the file given in the error - 'android/build/generated/debug'
 ## Coding Styles
 
 We have used [camelCase](https://google.github.io/styleguide/jsguide.html#naming-camel-case-defined) throughout the application, when naming variables and functions.
